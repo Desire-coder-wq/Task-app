@@ -62,7 +62,11 @@ export default function RegisterPage() {
       toast.success('Account created successfully!')
       router.push('/auth/login')
     } catch (error: any) {
-      toast.error(error.message || 'Registration failed')
+      if (error.code === 'ECONNREFUSED' || error.message?.includes('Network Error')) {
+        toast.error('Cannot connect to server. Please check if backend is running on http://localhost:3002')
+      } else {
+        toast.error(error.message || 'Registration failed')
+      }
     } finally {
       setIsLoading(false)
     }

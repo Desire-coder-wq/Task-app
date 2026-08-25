@@ -2,7 +2,7 @@ import axios from 'axios';
 import { ApiResponse } from '@/types/api';
 import { User } from '@/types/task';
 
-const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001/api';
+const API_URL = process.env.NEXT_PUBLIC_API_URL || '/api';
 
 export interface UsersResponse {
   items: User[]

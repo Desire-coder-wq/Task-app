@@ -1,8 +1,8 @@
-import axios, { type InternalAxiosRequestConfig, type AxiosResponse } from 'axios';
+import axios, { type InternalAxiosRequestConfig } from 'axios';
 import { Task, CreateTaskDto, UpdateTaskDto } from '@/types/task';
 import { PaginatedResponse } from '@/types/api';
 
-const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001/api';
+const API_URL = process.env.NEXT_PUBLIC_API_URL || '/api';
 
 const api = axios.create({
   baseURL: API_URL,
