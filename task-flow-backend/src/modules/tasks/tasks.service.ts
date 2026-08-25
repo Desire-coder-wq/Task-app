@@ -1,6 +1,8 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
-import { PrismaService } from '../../prisma/prisma.service';
-import { CreateTaskDto, TaskFiltersDto } from '../dto';
+import { PrismaService } from '../../../prisma/prisma.service';
+import { CreateTaskDto } from './dto/create-task.dto';
+import { TaskFiltersDto } from './dto/task-filters.dto';
+import { UpdateTaskDto } from './dto/update-task.dto';
 import { PaginatedResponse } from '../../common/interfaces/app-response.interface';
 
 @Injectable()

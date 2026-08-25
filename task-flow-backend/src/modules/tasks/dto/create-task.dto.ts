@@ -17,27 +17,27 @@ export class CreateTaskDto {
   @ApiProperty({ example: 'Design dashboard layout', description: 'Task title' })
   @IsString()
   @IsNotEmpty()
-  title: string;
+  title!: string;
 
   @ApiProperty({ example: 'Create responsive dashboard with sidebar', description: 'Task description' })
   @IsString()
   @IsNotEmpty()
-  description: string;
+  description!: string;
 
   @ApiProperty({ enum: TaskStatus, example: 'TODO' })
   @IsEnum(TaskStatus)
-  status: TaskStatus;
+  status!: TaskStatus;
 
   @ApiProperty({ enum: TaskPriority, example: 'MEDIUM' })
   @IsEnum(TaskPriority)
-  priority: TaskPriority;
+  priority!: TaskPriority;
 
   @ApiProperty({ example: '2026-09-01', description: 'Due date' })
   @IsDateString()
-  dueDate: string;
+  dueDate!: string;
 
   @ApiProperty({ example: 'user-id', description: 'Assigned user ID' })
   @IsString()
   @IsNotEmpty()
-  assignedUserId: string;
+  assignedUserId!: string;
 }

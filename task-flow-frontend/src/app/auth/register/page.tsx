@@ -1,45 +1,66 @@
 'use client'
 
 import { useState } from 'react'
+import Image from 'next/image'
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
-import { Eye, EyeOff, Mail, Lock, User, Building } from 'lucide-react'
+import { Eye, EyeOff, Mail, Lock, User, Users, BarChart3 } from 'lucide-react'
 import toast from 'react-hot-toast'
+import { useForm } from 'react-hook-form'
+import { zodResolver } from '@hookform/resolvers/zod'
+import { z } from 'zod'
+import { authService, type RegisterRequest } from '@/services/auth.service'
+
+const registerSchema = z.object({
+  name: z.string().min(1, 'Name is required').min(2, 'Name must be at least 2 characters'),
+  email: z.string().email('Please enter a valid email address'),
+  password: z
+    .string()
+    .min(1, 'Password is required')
+    .min(6, 'Password must be at least 6 characters')
+    .regex(/[A-Z]/, 'Password must contain at least one uppercase letter')
+    .regex(/[a-z]/, 'Password must contain at least one lowercase letter')
+    .regex(/[0-9]/, 'Password must contain at least one number'),
+})
+
+type RegisterFormData = z.infer<typeof registerSchema>
 
 export default function RegisterPage() {
   const router = useRouter()
   const [showPassword, setShowPassword] = useState(false)
   const [isLoading, setIsLoading] = useState(false)
-  const [formData, setFormData] = useState({
-    name: '',
-    company: '',
-    email: '',
-    password: ''
+  const [agreed, setAgreed] = useState(false)
+
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+  } = useForm<RegisterFormData>({
+    resolver: zodResolver(registerSchema),
+    defaultValues: {
+      name: '',
+      email: '',
+      password: '',
+    },
   })
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault()
+  const onSubmit = async (data: RegisterFormData) => {
+    if (!agreed) {
+      toast.error('Please agree to the Terms and Privacy Policy')
+      return
+    }
+
     setIsLoading(true)
-    
+
     try {
-      const response = await fetch('http://localhost:3001/api/auth/register', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          name: formData.name,
-          email: formData.email,
-          password: formData.password
-        })
+      const response = await authService.register({
+        name: data.name,
+        email: data.email,
+        password: data.password,
       })
 
-      const data = await response.json()
-      
-      if (!response.ok) {
-        throw new Error(data.message || 'Registration failed')
-      }
-
       toast.success('Account created successfully!')
-      router.push('/login')
+      router.push('/auth/login')
     } catch (error: any) {
       toast.error(error.message || 'Registration failed')
     } finally {
@@ -48,122 +69,175 @@ export default function RegisterPage() {
   }
 
   return (
-    <div className="min-h-screen flex">
-      <div className="flex-1 flex items-center justify-center px-4 py-12 bg-white">
+    <div className="min-h-screen flex bg-slate-50">
+      {/* Left: form */}
+      <div className="flex-1 flex items-center justify-center px-4 py-12">
         <div className="w-full max-w-md">
-          <div className="mb-8">
-            <div className="flex items-center gap-2 mb-4">
-              <div className="w-10 h-10 bg-blue-600 rounded-lg flex items-center justify-center font-bold text-white text-xl">
-                TP
-              </div>
-              <span className="text-2xl font-bold text-gray-900">TaskPilot</span>
-            </div>
-            <h1 className="text-3xl font-bold text-gray-900">Create your account</h1>
-            <p className="text-gray-500 mt-2">Join thousands of teams managing projects efficiently.</p>
+          {/* Logo + brand, centered */}
+          <div className="flex flex-col items-center mb-8">
+            <Image
+              src="/images/logo.png"
+              alt="TaskPilot"
+              width={56}
+              height={56}
+              className="mb-3"
+              priority
+            />
+            <span className="text-2xl font-bold text-gray-900">TaskPilot</span>
           </div>
 
-          <form onSubmit={handleSubmit} className="space-y-5">
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
-                FULL NAME
-              </label>
-              <div className="relative">
-                <User className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" size={20} />
-                <input
-                  type="text"
-                  placeholder="John Doe"
-                  className="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                  value={formData.name}
-                  onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-                  required
-                />
-              </div>
+          {/* Card */}
+          <div className="bg-slate-100/80 border border-slate-200 rounded-2xl p-8">
+            <div className="text-center mb-8">
+              <h1 className="text-2xl font-bold text-gray-900">Create your account</h1>
+              <p className="text-gray-500 mt-2 text-sm">
+                Join thousands of teams managing projects efficiently.
+              </p>
             </div>
 
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
-                COMPANY
-              </label>
-              <div className="relative">
-                <Building className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" size={20} />
-                <input
-                  type="text"
-                  placeholder="Company name"
-                  className="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                  value={formData.company}
-                  onChange={(e) => setFormData({ ...formData, company: e.target.value })}
-                />
+            <form onSubmit={handleSubmit(onSubmit)} className="space-y-5">
+              <div>
+                <label className="block text-xs font-semibold tracking-wide text-gray-700 mb-2">
+                  FULL NAME
+                </label>
+                <div className="relative">
+                  <User className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" size={20} />
+                  <input
+                    type="text"
+                    className="w-full pl-10 pr-4 py-3 bg-white border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                    {...register('name')}
+                  />
+                </div>
+                {errors.name && (
+                  <p className="mt-1 text-sm text-red-600">{errors.name.message}</p>
+                )}
               </div>
-            </div>
 
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
-                EMAIL ADDRESS
-              </label>
-              <div className="relative">
-                <Mail className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" size={20} />
-                <input
-                  type="email"
-                  placeholder="name@company.com"
-                  className="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                  value={formData.email}
-                  onChange={(e) => setFormData({ ...formData, email: e.target.value })}
-                  required
-                />
+              <div>
+                <label className="block text-xs font-semibold tracking-wide text-gray-700 mb-2">
+                  EMAIL ADDRESS
+                </label>
+                <div className="relative">
+                  <Mail className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" size={20} />
+                  <input
+                    type="email"
+                    className="w-full pl-10 pr-4 py-3 bg-white border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                    {...register('email')}
+                  />
+                </div>
+                {errors.email && (
+                  <p className="mt-1 text-sm text-red-600">{errors.email.message}</p>
+                )}
               </div>
-            </div>
 
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
-                PASSWORD
-              </label>
-              <div className="relative">
-                <Lock className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" size={20} />
-                <input
-                  type={showPassword ? 'text' : 'password'}
-                  placeholder="Create a password"
-                  className="w-full pl-10 pr-10 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                  value={formData.password}
-                  onChange={(e) => setFormData({ ...formData, password: e.target.value })}
-                  required
-                />
-                <button
-                  type="button"
-                  onClick={() => setShowPassword(!showPassword)}
-                  className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-600"
-                >
-                  {showPassword ? <EyeOff size={20} /> : <Eye size={20} />}
-                </button>
+              <div>
+                <label className="block text-xs font-semibold tracking-wide text-gray-700 mb-2">
+                  PASSWORD
+                </label>
+                <div className="relative">
+                  <Lock className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" size={20} />
+                  <input
+                    type={showPassword ? 'text' : 'password'}
+                    className="w-full pl-10 pr-10 py-3 bg-white border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                    {...register('password')}
+                  />
+                  <button
+                    type="button"
+                    onClick={() => setShowPassword(!showPassword)}
+                    className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600"
+                  >
+                    {showPassword ? <EyeOff size={20} /> : <Eye size={20} />}
+                  </button>
+                </div>
+                {errors.password && (
+                  <p className="mt-1 text-sm text-red-600">{errors.password.message}</p>
+                )}
+                <p className="mt-1 text-xs text-gray-500">
+                  Must be at least 6 characters with uppercase, lowercase, and a number.
+                </p>
               </div>
-            </div>
 
-            <button
-              type="submit"
-              disabled={isLoading}
-              className="w-full py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors font-medium disabled:opacity-50"
-            >
-              {isLoading ? 'Creating account...' : 'Create Account'}
-            </button>
-          </form>
+              <label className="flex items-start gap-2">
+                <input
+                  type="checkbox"
+                  className="mt-0.5 rounded border-gray-300 text-blue-600 focus:ring-blue-500"
+                  checked={agreed}
+                  onChange={(e) => setAgreed(e.target.checked)}
+                />
+                <span className="text-sm text-gray-600">
+                  I agree to the{' '}
+                  <Link href="/terms" className="text-blue-600 hover:text-blue-700">
+                    Terms
+                  </Link>{' '}
+                  and{' '}
+                  <Link href="/privacy" className="text-blue-600 hover:text-blue-700">
+                    Privacy Policy
+                  </Link>
+                </span>
+              </label>
 
-          <p className="mt-6 text-center text-sm text-gray-600">
-            Already have an account?{' '}
-            <Link href="/login" className="text-blue-600 hover:text-blue-700 font-medium">
-              Sign in
-            </Link>
+              <button
+                type="submit"
+                disabled={isLoading}
+                className="w-full py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors font-medium disabled:opacity-50 flex items-center justify-center gap-2"
+              >
+                {isLoading ? 'Creating account...' : <>Create Account →</>}
+              </button>
+            </form>
+
+            <p className="mt-6 text-center text-sm text-gray-600">
+              Already have an account?{' '}
+              <Link href="/auth/login" className="text-blue-600 hover:text-blue-700 font-medium">
+                Sign in
+              </Link>
+            </p>
+          </div>
+
+          <p className="mt-6 text-center text-xs text-gray-500">
+            © 2024 TaskPilot Productivity Suite. All rights reserved.
           </p>
         </div>
       </div>
 
-      <div className="hidden lg:flex flex-1 bg-gradient-to-br from-blue-600 to-blue-800 items-center justify-center p-12">
-        <div className="text-white text-center">
-          <h2 className="text-4xl font-bold mb-4">TaskPilot</h2>
-          <p className="text-xl text-blue-100">Task management made simple</p>
-          <div className="mt-8 space-y-3 text-blue-100">
-            <p>✓ Organize Your Team</p>
-            <p>✓ Collaborate seamlessly</p>
-            <p>✓ Track efficiency with intelligent dashboards</p>
+      {/* Right: image with floating feature cards */}
+      <div className="hidden lg:flex flex-1 relative items-center justify-center overflow-hidden">
+        <Image
+          src="/images/screen.png"
+          alt="TaskPilot workspace"
+          fill
+          className="object-cover"
+          priority
+        />
+        <div className="absolute inset-0 bg-gradient-to-br from-blue-500/20 via-pink-200/30 to-orange-100/30 backdrop-blur-[2px]" />
+
+        <div className="relative z-10 w-full max-w-sm px-8 space-y-6">
+          <div className="bg-white rounded-xl p-5 shadow-lg flex gap-4 items-start">
+            <div className="w-11 h-11 rounded-full bg-blue-600 flex items-center justify-center shrink-0">
+              <Users className="text-white" size={20} />
+            </div>
+            <div>
+              <p className="font-semibold text-gray-900">Team Collaboration</p>
+              <p className="text-sm text-gray-500 mt-1">
+                Organize Your Team: Collaborate seamlessly with unified workspaces.
+              </p>
+            </div>
           </div>
+
+          <div className="bg-white rounded-xl p-5 shadow-lg flex gap-4 items-start">
+            <div className="w-11 h-11 rounded-lg bg-orange-600 flex items-center justify-center shrink-0">
+              <BarChart3 className="text-white" size={20} />
+            </div>
+            <div>
+              <p className="font-semibold text-gray-900">Progress Tracking</p>
+              <p className="text-sm text-gray-500 mt-1">
+                Track Efficiently: Visualize progress with intelligent dashboards.
+              </p>
+            </div>
+          </div>
+
+          <p className="text-center text-xs tracking-wider text-gray-600 font-medium pt-2">
+            EMPOWERING OVER 10,000 TEAMS
+          </p>
         </div>
       </div>
     </div>

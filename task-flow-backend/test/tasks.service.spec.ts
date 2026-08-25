@@ -1,6 +1,6 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { TasksService } from '../src/modules/tasks/tasks.service';
-import { PrismaService } from '../src/prisma/prisma.service';
+import { PrismaService } from '../prisma/prisma.service';
 import { NotFoundException } from '@nestjs/common';
 
 describe('TasksService', () => {
@@ -82,10 +82,11 @@ describe('TasksService', () => {
       const createDto = {
         title: 'New Task',
         description: 'New Description',
-        status: 'TODO',
-        priority: 'MEDIUM',
+        status: 'TODO' as any,
+        priority: 'MEDIUM' as any,
         dueDate: '2026-09-01',
         assignedUserId: 'user1',
+        createdById: 'user1',
       };
 
       mockPrismaService.task.create.mockResolvedValue({ ...mockTask, ...createDto });

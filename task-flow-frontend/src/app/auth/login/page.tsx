@@ -6,39 +6,48 @@ import Link from 'next/link'
 import { useRouter } from 'next/navigation'
 import { Eye, EyeOff, Mail, Lock, ArrowRight } from 'lucide-react'
 import toast from 'react-hot-toast'
+import { useForm } from 'react-hook-form'
+import { zodResolver } from '@hookform/resolvers/zod'
+import { z } from 'zod'
+import { authService, type LoginRequest } from '@/services/auth.service'
+
+const loginSchema = z.object({
+  email: z.string().email('Please enter a valid email address'),
+  password: z.string().min(1, 'Password is required'),
+  remember: z.boolean().optional(),
+})
+
+type LoginFormData = z.infer<typeof loginSchema>
 
 export default function LoginPage() {
   const router = useRouter()
   const [showPassword, setShowPassword] = useState(false)
   const [isLoading, setIsLoading] = useState(false)
-  const [formData, setFormData] = useState({
-    email: '',
-    password: '',
-    remember: false
+
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+  } = useForm<LoginFormData>({
+    resolver: zodResolver(loginSchema),
+    defaultValues: {
+      email: '',
+      password: '',
+      remember: false,
+    },
   })
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault()
+  const onSubmit = async (data: LoginFormData) => {
     setIsLoading(true)
 
     try {
-      const response = await fetch('http://localhost:3001/api/auth/login', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          email: formData.email,
-          password: formData.password
-        })
+      const response = await authService.login({
+        email: data.email,
+        password: data.password,
       })
 
-      const data = await response.json()
-
-      if (!response.ok) {
-        throw new Error(data.message || 'Login failed')
-      }
-
-      localStorage.setItem('token', data.data.token)
-      localStorage.setItem('user', JSON.stringify(data.data.user))
+      localStorage.setItem('token', response.token)
+      localStorage.setItem('user', JSON.stringify(response.user))
 
       toast.success('Welcome back!')
       router.push('/dashboard')
@@ -74,7 +83,7 @@ export default function LoginPage() {
               <p className="text-gray-500 mt-2">Sign in to your TaskPilot account.</p>
             </div>
 
-            <form onSubmit={handleSubmit} className="space-y-5">
+            <form onSubmit={handleSubmit(onSubmit)} className="space-y-5">
               <div>
                 <label className="block text-xs font-semibold tracking-wide text-gray-700 mb-2">
                   EMAIL ADDRESS
@@ -83,13 +92,13 @@ export default function LoginPage() {
                   <Mail className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" size={20} />
                   <input
                     type="email"
-                    placeholder="name@company.com"
                     className="w-full pl-10 pr-4 py-3 bg-white border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                    value={formData.email}
-                    onChange={(e) => setFormData({ ...formData, email: e.target.value })}
-                    required
+                    {...register('email')}
                   />
                 </div>
+                {errors.email && (
+                  <p className="mt-1 text-sm text-red-600">{errors.email.message}</p>
+                )}
               </div>
 
               <div>
@@ -105,11 +114,8 @@ export default function LoginPage() {
                   <Lock className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" size={20} />
                   <input
                     type={showPassword ? 'text' : 'password'}
-                    placeholder="Enter your password"
                     className="w-full pl-10 pr-10 py-3 bg-white border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                    value={formData.password}
-                    onChange={(e) => setFormData({ ...formData, password: e.target.value })}
-                    required
+                    {...register('password')}
                   />
                   <button
                     type="button"
@@ -119,14 +125,16 @@ export default function LoginPage() {
                     {showPassword ? <EyeOff size={20} /> : <Eye size={20} />}
                   </button>
                 </div>
+                {errors.password && (
+                  <p className="mt-1 text-sm text-red-600">{errors.password.message}</p>
+                )}
               </div>
 
               <label className="flex items-center">
                 <input
                   type="checkbox"
                   className="rounded border-gray-300 text-blue-600 focus:ring-blue-500"
-                  checked={formData.remember}
-                  onChange={(e) => setFormData({ ...formData, remember: e.target.checked })}
+                  {...register('remember')}
                 />
                 <span className="ml-2 text-sm text-gray-600">Remember me for 30 days</span>
               </label>
@@ -146,14 +154,14 @@ export default function LoginPage() {
 
             <p className="mt-6 text-center text-sm text-gray-600">
               Don't have an account?{' '}
-              <Link href="/register" className="text-blue-600 hover:text-blue-700 font-medium">
+              <Link href="/auth/register" className="text-blue-600 hover:text-blue-700 font-medium">
                 Create one now
               </Link>
             </p>
           </div>
 
           <p className="mt-6 text-center text-xs text-gray-500">
-            © 2024 TaskPilot Productivity Suite. All rights reserved.
+            © 2026 TaskPilot Productivity Suite. All rights reserved.
           </p>
         </div>
       </div>

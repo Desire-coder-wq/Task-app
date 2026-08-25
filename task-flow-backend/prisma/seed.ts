@@ -4,32 +4,32 @@ import * as bcrypt from 'bcrypt';
 const prisma = new PrismaClient();
 
 async function main() {
-  console.log(' Seeding database...');
+  console.log('Seeding database...');
 
   // Create demo users
   const users = [
     {
-      email: 'john@example.com',
+      email: 'desire@example.com',
       password: await bcrypt.hash('password123', 10),
-      name: 'John Doe',
+      name: 'Desire',
       role: 'ADMIN',
     },
     {
-      email: 'jane@example.com',
+      email: 'mary@example.com',
       password: await bcrypt.hash('password123', 10),
-      name: 'Jane Smith',
+      name: 'Mary Precious',
       role: 'USER',
     },
     {
-      email: 'bob@example.com',
+      email: 'bright@example.com',
       password: await bcrypt.hash('password123', 10),
-      name: 'Bob Johnson',
+      name: 'Bright Musinguzi',
       role: 'USER',
     },
     {
       email: 'alex@example.com',
       password: await bcrypt.hash('password123', 10),
-      name: 'Alex Rivers',
+      name: 'Alex Ssempera',
       role: 'USER',
     },
   ];
@@ -44,10 +44,15 @@ async function main() {
 
   // Get users for task assignment
   const dbUsers = await prisma.user.findMany();
-  const john = dbUsers.find(u => u.email === 'john@example.com');
-  const jane = dbUsers.find(u => u.email === 'jane@example.com');
-  const bob = dbUsers.find(u => u.email === 'bob@example.com');
+  const desire = dbUsers.find(u => u.email === 'desire@example.com');
+  const mary = dbUsers.find(u => u.email === 'mary@example.com');
+  const bright = dbUsers.find(u => u.email === 'bright@example.com');
   const alex = dbUsers.find(u => u.email === 'alex@example.com');
+
+  if (!desire || !mary || !bright || !alex) {
+    console.error('Required users not found');
+    process.exit(1);
+  }
 
   // Create sample tasks
   const tasks = [
@@ -57,8 +62,8 @@ async function main() {
       status: 'IN_PROGRESS',
       priority: 'HIGH',
       dueDate: new Date('2026-09-01'),
-      assignedUserId: john.id,
-      createdById: john.id,
+      assignedUserId: desire.id,
+      createdById: desire.id,
     },
     {
       title: 'Implement task CRUD operations',
@@ -66,8 +71,8 @@ async function main() {
       status: 'TODO',
       priority: 'MEDIUM',
       dueDate: new Date('2026-08-30'),
-      assignedUserId: jane.id,
-      createdById: john.id,
+      assignedUserId: mary.id,
+      createdById: desire.id,
     },
     {
       title: 'Setup API integration',
@@ -75,8 +80,8 @@ async function main() {
       status: 'COMPLETED',
       priority: 'HIGH',
       dueDate: new Date('2026-08-25'),
-      assignedUserId: john.id,
-      createdById: john.id,
+      assignedUserId: desire.id,
+      createdById: desire.id,
     },
     {
       title: 'Write unit tests',
@@ -84,8 +89,8 @@ async function main() {
       status: 'TODO',
       priority: 'LOW',
       dueDate: new Date('2026-09-10'),
-      assignedUserId: bob.id,
-      createdById: jane.id,
+      assignedUserId: bright.id,
+      createdById: mary.id,
     },
     {
       title: 'Deploy to AWS',
@@ -93,8 +98,8 @@ async function main() {
       status: 'IN_PROGRESS',
       priority: 'HIGH',
       dueDate: new Date('2026-09-05'),
-      assignedUserId: jane.id,
-      createdById: john.id,
+      assignedUserId: mary.id,
+      createdById: desire.id,
     },
     {
       title: 'Q3 Financial Report',
@@ -102,8 +107,8 @@ async function main() {
       status: 'TODO',
       priority: 'HIGH',
       dueDate: new Date('2026-09-15'),
-      assignedUserId: john.id,
-      createdById: john.id,
+      assignedUserId: desire.id,
+      createdById: desire.id,
     },
     {
       title: 'Client Presentation Deck',
@@ -112,7 +117,7 @@ async function main() {
       priority: 'MEDIUM',
       dueDate: new Date('2026-09-20'),
       assignedUserId: alex.id,
-      createdById: jane.id,
+      createdById: mary.id,
     },
     {
       title: 'API Integration Test',
@@ -120,8 +125,26 @@ async function main() {
       status: 'TODO',
       priority: 'HIGH',
       dueDate: new Date('2026-09-12'),
-      assignedUserId: bob.id,
-      createdById: john.id,
+      assignedUserId: bright.id,
+      createdById: desire.id,
+    },
+    {
+      title: 'Q3 Financial Review',
+      description: 'Review quarterly financial performance and prepare reports',
+      status: 'TODO',
+      priority: 'HIGH',
+      dueDate: new Date('2026-10-01'),
+      assignedUserId: desire.id,
+      createdById: desire.id,
+    },
+    {
+      title: 'Design System Overhaul',
+      description: 'Update the design system with new components and patterns',
+      status: 'IN_PROGRESS',
+      priority: 'MEDIUM',
+      dueDate: new Date('2026-09-28'),
+      assignedUserId: alex.id,
+      createdById: mary.id,
     },
   ];
 
@@ -131,17 +154,18 @@ async function main() {
     });
   }
 
-  console.log(' Database seeded successfully!');
-  console.log(' Demo users:');
-  console.log('  - john@example.com / password123 (ADMIN)');
-  console.log('  - jane@example.com / password123 (USER)');
-  console.log('  - bob@example.com / password123 (USER)');
+  console.log('Database seeded successfully');
+  console.log('Demo users:');
+  console.log('  - desire@example.com / password123 (ADMIN)');
+  console.log('  - mary@example.com / password123 (USER)');
+  console.log('  - bright@example.com / password123 (USER)');
   console.log('  - alex@example.com / password123 (USER)');
+  console.log('Total tasks created:', tasks.length);
 }
 
 main()
   .catch((e) => {
-    console.error(' Error seeding database:', e);
+    console.error('Error seeding database:', e);
     process.exit(1);
   })
   .finally(async () => {
