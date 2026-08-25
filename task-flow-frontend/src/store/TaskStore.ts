@@ -15,7 +15,7 @@ export const useTaskStore = create<TaskState>((set) => ({
   isModalOpen: false,
   modalMode: null,
   setSelectedTask: (task) => set({ selectedTask: task }),
-  openModal: (mode, task = null) =>
+  openModal: (mode, task = undefined) =>
     set({ modalMode: mode, selectedTask: task, isModalOpen: true }),
   closeModal: () =>
     set({ isModalOpen: false, selectedTask: null, modalMode: null }),

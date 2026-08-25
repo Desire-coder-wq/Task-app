@@ -1,6 +1,6 @@
 'use client'
 
-import { useTaskStore } from '@/store/task.store'
+import { useTaskStore } from '@/store/TaskStore'
 import { useTasks } from '@/hooks/useTasks'
 import { TaskForm } from './TaskForm'
 import { X } from 'lucide-react'

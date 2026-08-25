@@ -1,13 +1,14 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
-import { taskService, TaskFilters } from '@/services/task.service'
-import { CreateTaskDto, UpdateTaskDto, TaskStatus } from '@/types/task'
+import { taskService, TaskFilters } from '@/services/TaskService'
+import { CreateTaskDto, UpdateTaskDto, TaskStatus, Task } from '@/types/task'
+import { PaginatedResponse } from '@/types/api'
 import { useState } from 'react'
 
 export function useTasks() {
   const [filters, setFilters] = useState<TaskFilters>({})
   const queryClient = useQueryClient()
 
-  const { data, isLoading, error } = useQuery({
+  const { data, isLoading, error } = useQuery<PaginatedResponse<Task>, Error>({
     queryKey: ['tasks', filters],
     queryFn: () => taskService.getTasks(filters),
   })

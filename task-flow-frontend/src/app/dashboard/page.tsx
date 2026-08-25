@@ -2,6 +2,7 @@
 
 import { Layout } from '@/components/layout/Layout'
 import { useTasks } from '@/hooks/useTasks'
+import { useRouter } from 'next/navigation'
 import { 
   CheckCircle, 
   Clock, 
@@ -19,6 +20,7 @@ import {
 } from 'lucide-react'
 
 export default function DashboardPage() {
+  const router = useRouter()
   const { tasks } = useTasks()
 
   const stats = {
@@ -107,7 +109,10 @@ export default function DashboardPage() {
             <button className="px-4 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors text-sm">
               Export
             </button>
-            <button className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors text-sm">
+            <button
+              onClick={() => router.push('/tasks')}
+              className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors text-sm"
+            >
               Create Task
             </button>
           </div>

@@ -1,6 +1,6 @@
 'use client'
 
-import { TaskFilters as FiltersType } from '@/services/task.service'
+import { TaskFilters as FiltersType } from '@/services/TaskService'
 import { Search } from 'lucide-react'
 import { useDebounce } from '@/hooks/useDebounce'
 import { useEffect, useState } from 'react'

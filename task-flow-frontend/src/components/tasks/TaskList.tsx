@@ -1,8 +1,8 @@
 'use client'
 
-import { Task } from '@/types/task'
+import { Task, TaskStatus } from '@/types/task'
 import { TaskCard } from './TaskCard'
-import { useTaskStore } from '@/store/task.store'
+import { useTaskStore } from '@/store/TaskStore'
 import { useTasks } from '@/hooks/useTasks'
 
 interface TaskListProps {
@@ -23,7 +23,7 @@ export function TaskList({ tasks }: TaskListProps) {
     openModal('delete')
   }
 
-  const handleStatusChange = (task: Task, status: string) => {
+  const handleStatusChange = (task: Task, status: TaskStatus) => {
     updateStatus({ id: task.id, status })
   }
 
