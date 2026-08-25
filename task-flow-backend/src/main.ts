@@ -7,10 +7,9 @@ import { TransformInterceptor } from './common/interceptors/transform.intercepto
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
-  
 
   app.enableCors({
-    origin: (origin, callback) => {
+    origin: (origin: string | undefined, callback: (err?: Error) => void) => {
       const allowedOrigins = [
         'http://localhost:3000',
         'http://localhost:3001',
@@ -25,13 +24,13 @@ async function bootstrap() {
       if (process.env.NODE_ENV === 'production') {
         const prodOrigins = process.env.ALLOWED_ORIGINS?.split(',') || [];
         if (origin && prodOrigins.includes(origin)) {
-          callback(null, true);
+          callback();
         } else {
           callback(new Error('Not allowed by CORS'));
         }
       } else {
         if (!origin || allowedOrigins.includes(origin)) {
-          callback(null, true);
+          callback();
         } else {
           callback(new Error('Not allowed by CORS'));
         }
@@ -39,24 +38,19 @@ async function bootstrap() {
     },
     credentials: true,
   });
-  
-  
+
   app.setGlobalPrefix('api');
-  
 
   app.useGlobalPipes(new ValidationPipe({
     whitelist: true,
     transform: true,
     forbidNonWhitelisted: true,
   }));
-  
-  
+
   app.useGlobalFilters(new HttpExceptionFilter());
-  
-  
+
   app.useGlobalInterceptors(new TransformInterceptor());
 
-  
   const config = new DocumentBuilder()
     .setTitle('TaskPilot API')
     .setDescription('Task Management API Documentation')
@@ -76,7 +70,7 @@ async function bootstrap() {
     .addTag('tasks', 'Task management endpoints')
     .addTag('users', 'User management endpoints')
     .build();
-  
+
   const document = SwaggerModule.createDocument(app, config);
   SwaggerModule.setup('api/docs', app, document, {
     swaggerOptions: {
@@ -84,7 +78,7 @@ async function bootstrap() {
     },
   });
 
-  const port = process.env.PORT || 3001;
+  const port = process.env.PORT || 3002;
   await app.listen(port);
   console.log(` Application is running on: http://localhost:${port}`);
   console.log(` Swagger documentation: http://localhost:${port}/api/docs`);
