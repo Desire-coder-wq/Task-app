@@ -1,0 +1,65 @@
+import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
+import { taskService, TaskFilters } from '@/services/task.service'
+import { CreateTaskDto, UpdateTaskDto, TaskStatus } from '@/types/task'
+import { useState } from 'react'
+
+export function useTasks() {
+  const [filters, setFilters] = useState<TaskFilters>({})
+  const queryClient = useQueryClient()
+
+  const { data, isLoading, error } = useQuery({
+    queryKey: ['tasks', filters],
+    queryFn: () => taskService.getTasks(filters),
+  })
+
+  const createMutation = useMutation({
+    mutationFn: (data: CreateTaskDto) => taskService.createTask(data),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['tasks'] })
+    },
+  })
+
+  const updateMutation = useMutation({
+    mutationFn: ({ id, data }: { id: string; data: UpdateTaskDto }) =>
+      taskService.updateTask(id, data),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['tasks'] })
+    },
+  })
+
+  const deleteMutation = useMutation({
+    mutationFn: (id: string) => taskService.deleteTask(id),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['tasks'] })
+    },
+  })
+
+  const statusMutation = useMutation({
+    mutationFn: ({ id, status }: { id: string; status: TaskStatus }) =>
+      taskService.updateTaskStatus(id, status),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['tasks'] })
+    },
+  })
+
+  return {
+    tasks: data?.items || [],
+    pagination: {
+      total: data?.total || 0,
+      page: data?.page || 1,
+      totalPages: data?.totalPages || 0,
+    },
+    isLoading,
+    error,
+    filters,
+    setFilters,
+    createTask: createMutation.mutate,
+    isCreating: createMutation.isPending,
+    updateTask: updateMutation.mutate,
+    isUpdating: updateMutation.isPending,
+    deleteTask: deleteMutation.mutate,
+    isDeleting: deleteMutation.isPending,
+    updateStatus: statusMutation.mutate,
+    isUpdatingStatus: statusMutation.isPending,
+  }
+}
