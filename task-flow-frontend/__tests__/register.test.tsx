@@ -34,20 +34,20 @@ describe('RegisterPage', () => {
   it('renders registration form', () => {
     render(<RegisterPage />);
     expect(screen.getByText('Create your account')).toBeInTheDocument();
-    expect(screen.getByPlaceholderText('Jane Doe')).toBeInTheDocument();
-    expect(screen.getByPlaceholderText('jane@example.com')).toBeInTheDocument();
-    expect(screen.getByPlaceholderText('••••••••')).toBeInTheDocument();
+    expect(screen.getByLabelText(/full name/i)).toBeInTheDocument();
+    expect(screen.getByLabelText(/email address/i)).toBeInTheDocument();
+    expect(screen.getByLabelText(/^password$/i)).toBeInTheDocument();
   });
 
   it('allows user to fill in the form', async () => {
     const user = userEvent.setup();
     render(<RegisterPage />);
 
-    await user.type(screen.getByPlaceholderText('Jane Doe'), 'Test User');
-    await user.type(screen.getByPlaceholderText('jane@example.com'), 'test@example.com');
-    await user.type(screen.getByPlaceholderText('••••••••'), 'password123');
+    await user.type(screen.getByLabelText(/full name/i), 'Test User');
+    await user.type(screen.getByLabelText(/email address/i), 'test@example.com');
+    await user.type(screen.getByLabelText(/^password$/i), 'password123');
 
-    expect(screen.getByPlaceholderText('Jane Doe')).toHaveValue('Test User');
-    expect(screen.getByPlaceholderText('jane@example.com')).toHaveValue('test@example.com');
+    expect(screen.getByLabelText(/full name/i)).toHaveValue('Test User');
+    expect(screen.getByLabelText(/email address/i)).toHaveValue('test@example.com');
   });
 });

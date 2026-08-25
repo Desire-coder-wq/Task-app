@@ -97,12 +97,13 @@ export default function RegisterPage() {
 
             <form onSubmit={handleSubmit(onSubmit)} className="space-y-5">
               <div>
-                <label className="block text-xs font-semibold tracking-wide text-gray-700 mb-2">
+                <label htmlFor="register-name" className="block text-xs font-semibold tracking-wide text-gray-700 mb-2">
                   FULL NAME
                 </label>
                 <div className="relative">
                   <User className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" size={20} />
                   <input
+                    id="register-name"
                     type="text"
                     className="w-full pl-10 pr-4 py-3 bg-white border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                     {...register('name')}
@@ -114,12 +115,13 @@ export default function RegisterPage() {
               </div>
 
               <div>
-                <label className="block text-xs font-semibold tracking-wide text-gray-700 mb-2">
+                <label htmlFor="register-email" className="block text-xs font-semibold tracking-wide text-gray-700 mb-2">
                   EMAIL ADDRESS
                 </label>
                 <div className="relative">
                   <Mail className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" size={20} />
                   <input
+                    id="register-email"
                     type="email"
                     className="w-full pl-10 pr-4 py-3 bg-white border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                     {...register('email')}
@@ -131,12 +133,13 @@ export default function RegisterPage() {
               </div>
 
               <div>
-                <label className="block text-xs font-semibold tracking-wide text-gray-700 mb-2">
+                <label htmlFor="register-password" className="block text-xs font-semibold tracking-wide text-gray-700 mb-2">
                   PASSWORD
                 </label>
                 <div className="relative">
                   <Lock className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" size={20} />
                   <input
+                    id="register-password"
                     type={showPassword ? 'text' : 'password'}
                     className="w-full pl-10 pr-10 py-3 bg-white border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                     {...register('password')}

@@ -34,16 +34,16 @@ describe('LoginPage', () => {
   it('renders login form', () => {
     render(<LoginPage />);
     expect(screen.getByText('Welcome Back')).toBeInTheDocument();
-    expect(screen.getByPlaceholderText('name@company.com')).toBeInTheDocument();
-    expect(screen.getByPlaceholderText('Enter your password')).toBeInTheDocument();
+    expect(screen.getByLabelText(/email address/i)).toBeInTheDocument();
+    expect(screen.getByLabelText(/password/i)).toBeInTheDocument();
   });
 
   it('allows user to fill in the form', async () => {
     const user = userEvent.setup();
     render(<LoginPage />);
 
-    const emailInput = screen.getByPlaceholderText('name@company.com');
-    const passwordInput = screen.getByPlaceholderText('Enter your password');
+    const emailInput = screen.getByLabelText(/email address/i);
+    const passwordInput = screen.getByLabelText(/password/i);
 
     await user.type(emailInput, 'test@example.com');
     await user.type(passwordInput, 'password123');

@@ -71,7 +71,7 @@ export default function TeamPage() {
                 <div className="flex items-start justify-between">
                   <div className="flex items-center gap-3">
                     <div className="w-12 h-12 bg-blue-500 rounded-full flex items-center justify-center text-white font-semibold">
-                      {member.name.split(' ').map(n => n[0]).join('').slice(0, 2)}
+                      {member.name.split(' ').map((n) => n[0]).join('').slice(0, 2)}
                     </div>
                     <div>
                       <h3 className="font-semibold text-gray-900">{member.name}</h3>
