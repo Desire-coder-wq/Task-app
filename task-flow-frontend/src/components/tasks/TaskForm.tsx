@@ -1,9 +1,10 @@
-'use client'
+'use client';
 
-import { useForm } from 'react-hook-form'
-import { zodResolver } from '@hookform/resolvers/zod'
-import { z } from 'zod'
-import { Task, CreateTaskDto } from '@/types/task'
+import { useForm } from 'react-hook-form';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { z } from 'zod';
+import { Task, CreateTaskDto } from '@/types/task';
+import toast from 'react-hot-toast';
 
 const taskSchema = z.object({
   title: z.string().min(1, 'Title is required').max(100, 'Title is too long'),
@@ -12,23 +13,23 @@ const taskSchema = z.object({
   priority: z.enum(['LOW', 'MEDIUM', 'HIGH']),
   dueDate: z.string().min(1, 'Due date is required'),
   assignedUserId: z.string().min(1, 'Assigned user is required'),
-})
+});
 
-type TaskFormData = z.infer<typeof taskSchema>
+type TaskFormData = z.infer<typeof taskSchema>;
 
 interface TaskFormProps {
-  initialData?: Task
-  onSubmit: (data: CreateTaskDto) => void
-  onCancel: () => void
-  isSubmitting?: boolean
+  initialData?: Task;
+  onSubmit: (data: CreateTaskDto) => void;
+  onCancel: () => void;
+  isSubmitting?: boolean;
 }
 
 const users = [
-  { id: 'user1', name: 'John Doe' },
-  { id: 'user2', name: 'Jane Smith' },
-  { id: 'user3', name: 'Bob Johnson' },
-  { id: 'user4', name: 'Alice Williams' },
-]
+  { id: 'desire-id', name: 'Desire' },
+  { id: 'mary-id', name: 'Mary Precious' },
+  { id: 'bright-id', name: 'Bright Musinguzi' },
+  { id: 'alex-id', name: 'Alex Ssempera' },
+];
 
 export function TaskForm({ initialData, onSubmit, onCancel, isSubmitting }: TaskFormProps) {
   const { register, handleSubmit, formState: { errors } } = useForm<TaskFormData>({
@@ -43,11 +44,21 @@ export function TaskForm({ initialData, onSubmit, onCancel, isSubmitting }: Task
     } : {
       status: 'TODO',
       priority: 'MEDIUM',
+      dueDate: new Date().toISOString().split('T')[0],
     },
-  })
+  });
+
+  const handleFormSubmit = (data: TaskFormData) => {
+    try {
+      onSubmit(data);
+      toast.success(initialData ? 'Task updated successfully' : 'Task created successfully');
+    } catch (error) {
+      toast.error('Failed to save task. Please try again.');
+    }
+  };
 
   return (
-    <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
+    <form onSubmit={handleSubmit(handleFormSubmit)} className="space-y-4">
       <div>
         <label htmlFor="title" className="block text-sm font-medium text-gray-700">
           Title
@@ -56,7 +67,7 @@ export function TaskForm({ initialData, onSubmit, onCancel, isSubmitting }: Task
           id="title"
           type="text"
           {...register('title')}
-          className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
+          className="mt-1 block w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
         />
         {errors.title && (
           <p className="mt-1 text-sm text-red-600">{errors.title.message}</p>
@@ -71,7 +82,7 @@ export function TaskForm({ initialData, onSubmit, onCancel, isSubmitting }: Task
           id="description"
           rows={3}
           {...register('description')}
-          className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
+          className="mt-1 block w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
         />
         {errors.description && (
           <p className="mt-1 text-sm text-red-600">{errors.description.message}</p>
@@ -86,7 +97,7 @@ export function TaskForm({ initialData, onSubmit, onCancel, isSubmitting }: Task
           <select
             id="status"
             {...register('status')}
-            className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
+            className="mt-1 block w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
           >
             <option value="TODO">To Do</option>
             <option value="IN_PROGRESS">In Progress</option>
@@ -101,7 +112,7 @@ export function TaskForm({ initialData, onSubmit, onCancel, isSubmitting }: Task
           <select
             id="priority"
             {...register('priority')}
-            className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
+            className="mt-1 block w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
           >
             <option value="LOW">Low</option>
             <option value="MEDIUM">Medium</option>
@@ -118,7 +129,7 @@ export function TaskForm({ initialData, onSubmit, onCancel, isSubmitting }: Task
           id="dueDate"
           type="date"
           {...register('dueDate')}
-          className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
+          className="mt-1 block w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
         />
         {errors.dueDate && (
           <p className="mt-1 text-sm text-red-600">{errors.dueDate.message}</p>
@@ -132,7 +143,7 @@ export function TaskForm({ initialData, onSubmit, onCancel, isSubmitting }: Task
         <select
           id="assignedUserId"
           {...register('assignedUserId')}
-          className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
+          className="mt-1 block w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
         >
           <option value="">Select a user</option>
           {users.map((user) => (
@@ -150,18 +161,18 @@ export function TaskForm({ initialData, onSubmit, onCancel, isSubmitting }: Task
         <button
           type="button"
           onClick={onCancel}
-          className="px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-md hover:bg-gray-50"
+          className="px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors"
         >
           Cancel
         </button>
         <button
           type="submit"
           disabled={isSubmitting}
-          className="px-4 py-2 text-sm font-medium text-white bg-blue-600 border border-transparent rounded-md hover:bg-blue-700 disabled:opacity-50"
+          className="px-4 py-2 text-sm font-medium text-white bg-blue-600 border border-transparent rounded-lg hover:bg-blue-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
         >
           {isSubmitting ? 'Saving...' : initialData ? 'Update Task' : 'Create Task'}
         </button>
       </div>
     </form>
-  )
+  );
 }

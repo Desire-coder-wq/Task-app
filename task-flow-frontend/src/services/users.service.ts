@@ -1,8 +1,6 @@
-import axios from 'axios';
+import api from '@/lib/axios';
 import { ApiResponse } from '@/types/api';
 import { User } from '@/types/task';
-
-const API_URL = process.env.NEXT_PUBLIC_API_URL || '/api';
 
 export interface UsersResponse {
   items: User[]
@@ -14,8 +12,18 @@ export interface UsersResponse {
 
 export class UsersService {
   async getUsers(): Promise<User[]> {
-    const response = await axios.get<ApiResponse<UsersResponse>>(`${API_URL}/users`);
+    const response = await api.get<ApiResponse<UsersResponse>>('/users');
     return response.data.data.items;
+  }
+
+  async getUserById(id: string): Promise<User> {
+    const response = await api.get<ApiResponse<User>>(`/users/${id}`);
+    return response.data.data;
+  }
+
+  async updateUser(id: string, data: Partial<User>): Promise<User> {
+    const response = await api.patch<ApiResponse<User>>(`/users/${id}`, data);
+    return response.data.data;
   }
 }
 

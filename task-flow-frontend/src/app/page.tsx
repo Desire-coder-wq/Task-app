@@ -41,7 +41,7 @@ export default function LandingPage() {
               Organize projects, track progress, and accelerate productivity.
             </p>
             <Link
-              href="/register"
+              href="/auth/register"
               className="inline-block mt-8 px-6 py-3.5 bg-blue-600 text-white rounded-full font-medium hover:bg-blue-700 transition-colors"
             >
               Get Started for Free
@@ -117,7 +117,7 @@ export default function LandingPage() {
             conquer their goals.
           </p>
           <Link
-            href="/register"
+            href="/auth/register"
             className="inline-block mt-8 px-7 py-3.5 bg-blue-600 text-white rounded-full font-medium hover:bg-blue-700 transition-colors"
           >
             Create Account

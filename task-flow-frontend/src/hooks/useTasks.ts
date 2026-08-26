@@ -1,47 +1,64 @@
-import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
-import { taskService, TaskFilters } from '@/services/TaskService'
-import { CreateTaskDto, UpdateTaskDto, TaskStatus, Task } from '@/types/task'
-import { PaginatedResponse } from '@/types/api'
-import { useState } from 'react'
+import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
+import { taskService, TaskFilters } from '@/services/TaskService';
+import { CreateTaskDto, UpdateTaskDto, TaskStatus, Task } from '@/types/task';
+import { PaginatedResponse } from '@/types/api';
+import { useState } from 'react';
+import toast from 'react-hot-toast';
 
 export function useTasks() {
-  const [filters, setFilters] = useState<TaskFilters>({})
-  const queryClient = useQueryClient()
+  const [filters, setFilters] = useState<TaskFilters>({});
+  const queryClient = useQueryClient();
 
   const { data, isLoading, error } = useQuery<PaginatedResponse<Task>, Error>({
     queryKey: ['tasks', filters],
     queryFn: () => taskService.getTasks(filters),
-  })
+  });
 
   const createMutation = useMutation({
     mutationFn: (data: CreateTaskDto) => taskService.createTask(data),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['tasks'] })
+      queryClient.invalidateQueries({ queryKey: ['tasks'] });
+      toast.success('Task created successfully');
     },
-  })
+    onError: (error: Error) => {
+      toast.error(error.message || 'Failed to create task');
+    },
+  });
 
   const updateMutation = useMutation({
     mutationFn: ({ id, data }: { id: string; data: UpdateTaskDto }) =>
       taskService.updateTask(id, data),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['tasks'] })
+      queryClient.invalidateQueries({ queryKey: ['tasks'] });
+      toast.success('Task updated successfully');
     },
-  })
+    onError: (error: Error) => {
+      toast.error(error.message || 'Failed to update task');
+    },
+  });
 
   const deleteMutation = useMutation({
     mutationFn: (id: string) => taskService.deleteTask(id),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['tasks'] })
+      queryClient.invalidateQueries({ queryKey: ['tasks'] });
+      toast.success('Task deleted successfully');
     },
-  })
+    onError: (error: Error) => {
+      toast.error(error.message || 'Failed to delete task');
+    },
+  });
 
   const statusMutation = useMutation({
     mutationFn: ({ id, status }: { id: string; status: TaskStatus }) =>
       taskService.updateTaskStatus(id, status),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['tasks'] })
+      queryClient.invalidateQueries({ queryKey: ['tasks'] });
+      toast.success('Task status updated');
     },
-  })
+    onError: (error: Error) => {
+      toast.error(error.message || 'Failed to update status');
+    },
+  });
 
   return {
     tasks: data?.items || [],
@@ -62,5 +79,5 @@ export function useTasks() {
     isDeleting: deleteMutation.isPending,
     updateStatus: statusMutation.mutate,
     isUpdatingStatus: statusMutation.isPending,
-  }
+  };
 }

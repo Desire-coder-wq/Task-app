@@ -1,16 +1,15 @@
-
 'use client'
 
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
-import { 
-  LayoutDashboard, 
-  ListTodo, 
-  Users, 
+import Image from 'next/image'
+import {
+  LayoutDashboard,
+  ListTodo,
+  Users,
   Settings,
   ChevronLeft,
   ChevronRight,
-  BarChart3
 } from 'lucide-react'
 import { useState } from 'react'
 
@@ -26,7 +25,7 @@ export function Sidebar() {
   const [isCollapsed, setIsCollapsed] = useState(false)
 
   return (
-    <aside 
+    <aside
       className={`bg-gray-900 text-white transition-all duration-300 flex flex-col ${
         isCollapsed ? 'w-16' : 'w-64'
       }`}
@@ -34,16 +33,26 @@ export function Sidebar() {
       <div className="flex items-center justify-between p-4 border-b border-gray-800">
         {!isCollapsed && (
           <div className="flex items-center gap-2">
-            <div className="w-8 h-8 bg-blue-600 rounded-lg flex items-center justify-center font-bold text-white">
-              TP
-            </div>
+            <Image
+              src="/images/logo.png"
+              alt="TaskPilot"
+              width={32}
+              height={32}
+              className="rounded-lg"
+              priority
+            />
             <span className="text-xl font-bold">TaskPilot</span>
           </div>
         )}
         {isCollapsed && (
-          <div className="w-8 h-8 bg-blue-600 rounded-lg flex items-center justify-center font-bold text-white mx-auto">
-            TP
-          </div>
+          <Image
+            src="/images/logo.png"
+            alt="TaskPilot"
+            width={32}
+            height={32}
+            className="rounded-lg mx-auto"
+            priority
+          />
         )}
         <button
           onClick={() => setIsCollapsed(!isCollapsed)}
@@ -54,17 +63,17 @@ export function Sidebar() {
       </div>
 
       <nav className="flex-1 p-4 space-y-1">
-        {navigationItems.map((item) => {
+        {navigationItems.map(item => {
           const Icon = item.icon
           const isActive = pathname === item.href || pathname?.startsWith(item.href + '/')
-          
+
           return (
             <Link
               key={item.href}
               href={item.href}
               className={`flex items-center gap-3 px-3 py-2.5 rounded-lg transition-colors ${
-                isActive 
-                  ? 'bg-blue-600 text-white' 
+                isActive
+                  ? 'bg-blue-600 text-white'
                   : 'hover:bg-gray-800 text-gray-300'
               }`}
             >
@@ -82,8 +91,8 @@ export function Sidebar() {
               <Users size={16} />
             </div>
             <div>
-              <p className="text-sm font-medium">John Doe</p>
-              <p className="text-xs text-gray-400">Administrator</p>
+              <p className="text-sm font-medium">User</p>
+              <p className="text-xs text-gray-400">Team Member</p>
             </div>
           </div>
         ) : (

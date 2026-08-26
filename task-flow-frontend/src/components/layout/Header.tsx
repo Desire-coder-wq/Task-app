@@ -1,10 +1,27 @@
 'use client'
 
-import { Search, Bell, Moon, Sun, Settings, User } from 'lucide-react'
-import { useState } from 'react'
+import { Search, Bell, Moon, Sun, Settings } from 'lucide-react'
+import { useState, useEffect } from 'react'
+import Image from 'next/image'
 
 export function Header() {
   const [isDarkMode, setIsDarkMode] = useState(false)
+  const [userName, setUserName] = useState('User')
+
+  useEffect(() => {
+    const stored = localStorage.getItem('user')
+    if (stored) {
+      const parsed = JSON.parse(stored)
+      setUserName(parsed.name || 'User')
+    }
+  }, [])
+
+  const initials = userName
+    .split(' ')
+    .map((n: string) => n[0])
+    .join('')
+    .slice(0, 2)
+    .toUpperCase()
 
   return (
     <header className="bg-white border-b border-gray-200 px-4 py-3">
@@ -27,18 +44,18 @@ export function Header() {
           >
             {isDarkMode ? <Sun size={18} /> : <Moon size={18} />}
           </button>
-          
+
           <button className="p-2 text-gray-600 hover:bg-gray-100 rounded-lg transition-colors relative">
             <Bell size={18} />
             <span className="absolute top-1.5 right-1.5 w-2 h-2 bg-red-500 rounded-full"></span>
           </button>
-          
+
           <button className="p-2 text-gray-600 hover:bg-gray-100 rounded-lg transition-colors">
             <Settings size={18} />
           </button>
-          
+
           <div className="w-8 h-8 bg-blue-600 rounded-full flex items-center justify-center text-white font-semibold text-sm ml-1">
-            JD
+            {initials}
           </div>
         </div>
       </div>

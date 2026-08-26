@@ -9,33 +9,7 @@ async function bootstrap() {
   const app = await NestFactory.create(AppModule);
 
   app.enableCors({
-    origin: (origin: string | undefined, callback: (err?: Error) => void) => {
-      const allowedOrigins = [
-        'http://localhost:3000',
-        'http://localhost:3001',
-        'http://localhost:3002',
-        'http://localhost:3003',
-        'http://127.0.0.1:3000',
-        'http://127.0.0.1:3001',
-        'http://127.0.0.1:3002',
-        'http://127.0.0.1:3003',
-      ];
-
-      if (process.env.NODE_ENV === 'production') {
-        const prodOrigins = process.env.ALLOWED_ORIGINS?.split(',') || [];
-        if (origin && prodOrigins.includes(origin)) {
-          callback();
-        } else {
-          callback(new Error('Not allowed by CORS'));
-        }
-      } else {
-        if (!origin || allowedOrigins.includes(origin)) {
-          callback();
-        } else {
-          callback(new Error('Not allowed by CORS'));
-        }
-      }
-    },
+    origin: ['http://localhost:3000', 'http://localhost:3001', 'http://localhost:3002', 'http://localhost:3003'],
     credentials: true,
   });
 

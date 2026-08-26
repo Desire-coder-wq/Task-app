@@ -1,15 +1,15 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useMemo } from 'react'
 import Image from 'next/image'
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
-import { Eye, EyeOff, Mail, Lock, User, Users, BarChart3 } from 'lucide-react'
+import { Eye, EyeOff, Mail, Lock, User, Users, BarChart3, CheckCircle2, XCircle } from 'lucide-react'
 import toast from 'react-hot-toast'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { z } from 'zod'
-import { authService, type RegisterRequest } from '@/services/auth.service'
+import { authService } from '@/services/auth.service'
 
 const registerSchema = z.object({
   name: z.string().min(1, 'Name is required').min(2, 'Name must be at least 2 characters'),
@@ -30,6 +30,7 @@ export default function RegisterPage() {
   const [showPassword, setShowPassword] = useState(false)
   const [isLoading, setIsLoading] = useState(false)
   const [agreed, setAgreed] = useState(false)
+  const [passwordValue, setPasswordValue] = useState('')
 
   const {
     register,
@@ -43,6 +44,15 @@ export default function RegisterPage() {
       password: '',
     },
   })
+
+  const passwordRequirements = useMemo(() => {
+    return [
+      { label: 'At least 6 characters', met: passwordValue.length >= 6 },
+      { label: 'One uppercase letter', met: /[A-Z]/.test(passwordValue) },
+      { label: 'One lowercase letter', met: /[a-z]/.test(passwordValue) },
+      { label: 'One number', met: /[0-9]/.test(passwordValue) },
+    ]
+  }, [passwordValue])
 
   const onSubmit = async (data: RegisterFormData) => {
     if (!agreed) {
@@ -62,11 +72,7 @@ export default function RegisterPage() {
       toast.success('Account created successfully!')
       router.push('/auth/login')
     } catch (error: any) {
-      if (error.code === 'ECONNREFUSED' || error.message?.includes('Network Error')) {
-        toast.error('Cannot connect to server. Please check if backend is running on http://localhost:3002')
-      } else {
-        toast.error(error.message || 'Registration failed')
-      }
+      toast.error(error.message || 'Registration failed')
     } finally {
       setIsLoading(false)
     }
@@ -74,10 +80,8 @@ export default function RegisterPage() {
 
   return (
     <div className="min-h-screen flex bg-slate-50">
-      {/* Left: form */}
       <div className="flex-1 flex items-center justify-center px-4 py-12">
         <div className="w-full max-w-md">
-          {/* Logo + brand, centered */}
           <div className="flex flex-col items-center mb-8">
             <Image
               src="/images/logo.png"
@@ -90,7 +94,6 @@ export default function RegisterPage() {
             <span className="text-2xl font-bold text-gray-900">TaskPilot</span>
           </div>
 
-          {/* Card */}
           <div className="bg-slate-100/80 border border-slate-200 rounded-2xl p-8">
             <div className="text-center mb-8">
               <h1 className="text-2xl font-bold text-gray-900">Create your account</h1>
@@ -147,6 +150,10 @@ export default function RegisterPage() {
                     type={showPassword ? 'text' : 'password'}
                     className="w-full pl-10 pr-10 py-3 bg-white border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                     {...register('password')}
+                    onChange={(e) => {
+                      register('password').onChange(e)
+                      setPasswordValue(e.target.value)
+                    }}
                   />
                   <button
                     type="button"
@@ -159,9 +166,25 @@ export default function RegisterPage() {
                 {errors.password && (
                   <p className="mt-1 text-sm text-red-600">{errors.password.message}</p>
                 )}
-                <p className="mt-1 text-xs text-gray-500">
-                  Must be at least 6 characters with uppercase, lowercase, and a number.
-                </p>
+
+                <div className="mt-3 space-y-2">
+                  {passwordRequirements.map((req, idx) => (
+                    <div key={idx} className="flex items-center gap-2">
+                      {req.met ? (
+                        <CheckCircle2 className="text-green-600" size={16} />
+                      ) : (
+                        <XCircle className="text-gray-400" size={16} />
+                      )}
+                      <span
+                        className={`text-xs ${
+                          req.met ? 'text-green-700 font-medium' : 'text-gray-500'
+                        }`}
+                      >
+                        {req.label}
+                      </span>
+                    </div>
+                  ))}
+                </div>
               </div>
 
               <label className="flex items-start gap-2">
@@ -206,7 +229,6 @@ export default function RegisterPage() {
         </div>
       </div>
 
-      {/* Right: image with floating feature cards */}
       <div className="hidden lg:flex flex-1 relative items-center justify-center overflow-hidden">
         <Image
           src="/images/screen.png"
