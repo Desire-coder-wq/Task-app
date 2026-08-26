@@ -14,18 +14,20 @@ export default function TasksPage() {
   const { openModal, setSelectedTask } = useTaskStore();
 
   const handleEdit = (task: Task) => {
-    setSelectedTask(task)
-    openModal('edit')
-  }
+    console.log('Editing task:', task); // Debug
+    setSelectedTask(task);
+    openModal('edit', task); // ✅ Pass the task!
+  };
 
   const handleDelete = (task: Task) => {
-    setSelectedTask(task)
-    openModal('delete')
-  }
+    console.log('Deleting task:', task); // Debug
+    setSelectedTask(task);
+    openModal('delete', task); // ✅ Pass the task!
+  };
 
   const handleStatusChange = (task: Task, status: TaskStatus) => {
-    updateStatus({ id: task.id, status })
-  }
+    updateStatus({ id: task.id, status });
+  };
 
   return (
     <Layout>
