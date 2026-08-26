@@ -12,6 +12,7 @@ import {
   FileText,
   Code,
   Briefcase,
+  TrendingUp,
 } from 'lucide-react';
 
 export default function DashboardPage() {
@@ -24,7 +25,7 @@ export default function DashboardPage() {
     .filter(task => task.status !== 'COMPLETED')
     .slice(0, 3);
 
-  // Filter tasks for recent activity (completed or updated)
+  // Filter tasks for recent activity
   const recentTasks = tasks
     .slice(0, 3)
     .map(task => ({
@@ -41,7 +42,6 @@ export default function DashboardPage() {
       type: task.status === 'COMPLETED' ? 'complete' : 'update'
     }));
 
-  // Get icon based on task title or default
   const getIcon = (title: string) => {
     const lower = title.toLowerCase();
     if (lower.includes('report') || lower.includes('financial')) return FileText;
@@ -79,56 +79,45 @@ export default function DashboardPage() {
           </div>
         </div>
 
-        {/* Stats Cards */}
+        {/* Stats Cards - Clean design without icon backgrounds */}
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
           <div className="bg-white rounded-xl shadow-sm hover:shadow-md transition-shadow p-6">
-            <div className="flex items-center justify-between">
+            <div className="flex items-center gap-4">
+              <ListTodo className="text-blue-600" size={28} />
               <div>
                 <p className="text-sm text-gray-500">Total Tasks</p>
                 <p className="text-2xl font-bold text-gray-900">{stats.total}</p>
-                <p className="text-xs text-gray-500 mt-1">All tasks</p>
-              </div>
-              <div className="p-3 bg-blue-100 rounded-lg">
-                <ListTodo className="text-blue-600" size={24} />
               </div>
             </div>
           </div>
 
           <div className="bg-white rounded-xl shadow-sm hover:shadow-md transition-shadow p-6">
-            <div className="flex items-center justify-between">
+            <div className="flex items-center gap-4">
+              <CheckCircle className="text-green-600" size={28} />
               <div>
                 <p className="text-sm text-gray-500">Completed</p>
                 <p className="text-2xl font-bold text-green-600">{stats.completed}</p>
-                <p className="text-xs text-gray-500 mt-1">Finished tasks</p>
-              </div>
-              <div className="p-3 bg-green-100 rounded-lg">
-                <CheckCircle className="text-green-600" size={24} />
               </div>
             </div>
           </div>
 
           <div className="bg-white rounded-xl shadow-sm hover:shadow-md transition-shadow p-6">
-            <div className="flex items-center justify-between">
+            <div className="flex items-center gap-4">
+              <Clock className="text-blue-600" size={28} />
               <div>
                 <p className="text-sm text-gray-500">In Progress</p>
                 <p className="text-2xl font-bold text-blue-600">{stats.inProgress}</p>
-                <p className="text-xs text-gray-500 mt-1">Active tasks</p>
-              </div>
-              <div className="p-3 bg-blue-100 rounded-lg">
-                <Clock className="text-blue-600" size={24} />
               </div>
             </div>
           </div>
 
           <div className="bg-white rounded-xl shadow-sm hover:shadow-md transition-shadow p-6">
-            <div className="flex items-center justify-between">
+            <div className="flex items-center gap-4">
+              <AlertCircle className="text-red-600" size={28} />
               <div>
                 <p className="text-sm text-gray-500">Overdue</p>
                 <p className="text-2xl font-bold text-red-600">{stats.overdue}</p>
-                <p className="text-xs text-red-600 mt-1">Requires action</p>
-              </div>
-              <div className="p-3 bg-red-100 rounded-lg">
-                <AlertCircle className="text-red-600" size={24} />
+                <p className="text-xs text-red-600 mt-1">requires action</p>
               </div>
             </div>
           </div>
@@ -147,34 +136,33 @@ export default function DashboardPage() {
                   upcomingTasks.map((task) => {
                     const Icon = getIcon(task.title);
                     return (
-                      <div key={task.id} className="flex items-start gap-4 p-4 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors">
-                        <div className="p-2 bg-white rounded-lg shadow-sm">
-                          <Icon size={20} className="text-blue-600" />
-                        </div>
-                        <div className="flex-1 min-w-0">
-                          <div className="flex items-center justify-between">
+                      <div key={task.id} className="border-b border-gray-100 last:border-0 pb-4 last:pb-0">
+                        <div className="flex items-start justify-between">
+                          <div className="flex-1">
                             <h3 className="font-semibold text-gray-900">{task.title}</h3>
-                            <span className="text-xs font-medium text-gray-500">
-                              {new Date(task.dueDate).toLocaleDateString('en-US', { 
-                                month: 'short', 
-                                day: 'numeric' 
-                              })}
-                            </span>
-                          </div>
-                          <p className="text-sm text-gray-600 mt-1 line-clamp-2">{task.description}</p>
-                          <div className="flex items-center gap-2 mt-2">
-                            <span className={`text-xs px-2 py-1 rounded-full ${
-                              task.status === 'IN_PROGRESS' ? 'bg-blue-100 text-blue-800' :
-                              task.status === 'TODO' ? 'bg-yellow-100 text-yellow-800' :
-                              'bg-green-100 text-green-800'
-                            }`}>
-                              {task.status}
-                            </span>
-                            {task.assignedUser && (
-                              <span className="text-xs text-gray-500">
-                                {task.assignedUser.name}
+                            <p className="text-sm text-gray-600 mt-1">{task.description}</p>
+                            <div className="flex items-center gap-3 mt-2">
+                              <span className={`text-xs px-2 py-1 rounded-full ${
+                                task.status === 'IN_PROGRESS' ? 'bg-blue-100 text-blue-800' :
+                                task.status === 'TODO' ? 'bg-yellow-100 text-yellow-800' :
+                                'bg-green-100 text-green-800'
+                              }`}>
+                                {task.status === 'IN_PROGRESS' ? 'In Progress' : 
+                                 task.status === 'TODO' ? 'To Do' : 'Completed'}
                               </span>
-                            )}
+                              <span className="text-xs text-gray-500">
+                                {task.assignedUser?.name || 'Unassigned'}
+                              </span>
+                              <span className="text-xs text-gray-400">
+                                {new Date(task.dueDate).toLocaleDateString('en-US', { 
+                                  month: 'short', 
+                                  day: 'numeric' 
+                                })}
+                              </span>
+                            </div>
+                          </div>
+                          <div className="ml-4">
+                            <Icon className="text-blue-600" size={20} />
                           </div>
                         </div>
                       </div>
@@ -192,20 +180,13 @@ export default function DashboardPage() {
                   <p className="text-gray-500 text-center py-8">No recent activity</p>
                 ) : (
                   recentTasks.map((activity) => (
-                    <div key={activity.id} className="flex items-start gap-3 pb-4 border-b border-gray-100 last:border-0 last:pb-0">
-                      <div className={`w-2 h-2 rounded-full mt-2 ${
-                        activity.type === 'update' ? 'bg-blue-500' :
-                        activity.type === 'comment' ? 'bg-yellow-500' :
-                        'bg-green-500'
-                      }`} />
-                      <div className="flex-1">
-                        <p className="text-sm">
-                          <span className="font-semibold text-gray-900">{activity.user}</span>
-                          <span className="text-gray-600"> {activity.action}</span>
-                        </p>
-                        <p className="text-sm text-gray-500 mt-1">{activity.comment}</p>
-                        <p className="text-xs text-gray-400 mt-1">{activity.time}</p>
-                      </div>
+                    <div key={activity.id} className="border-b border-gray-100 last:border-0 pb-4 last:pb-0">
+                      <p className="text-sm">
+                        <span className="font-semibold text-gray-900">{activity.user}</span>
+                        <span className="text-gray-600"> {activity.action}</span>
+                      </p>
+                      <p className="text-sm text-gray-500 mt-1">{activity.comment}</p>
+                      <p className="text-xs text-gray-400 mt-1">{activity.time}</p>
                     </div>
                   ))
                 )}
