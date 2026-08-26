@@ -1,7 +1,7 @@
 import { Module } from '@nestjs/common';
 import { MailerModule } from '@nestjs-modules/mailer';
-import { ConfigModule, ConfigService } from '@nestjs/config';
 import { MailService } from './mail.service';
+import { ConfigModule, ConfigService } from '@nestjs/config';
 
 @Module({
   imports: [
@@ -10,7 +10,7 @@ import { MailService } from './mail.service';
       useFactory: async (configService: ConfigService) => ({
         transport: {
           host: configService.get('SMTP_HOST'),
-          port: configService.get('SMTP_PORT'),
+          port: parseInt(configService.get('SMTP_PORT') || '587'),
           secure: false,
           auth: {
             user: configService.get('SMTP_USER'),
@@ -18,7 +18,7 @@ import { MailService } from './mail.service';
           },
         },
         defaults: {
-          from: `"TaskPilot" <${configService.get('SMTP_FROM')}>`,
+          from: configService.get('SMTP_FROM'),
         },
       }),
       inject: [ConfigService],

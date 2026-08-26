@@ -15,15 +15,13 @@ model User {
   avatar        String?
   role          String   @default("USER")
   isActive      Boolean  @default(true)
-  invitationToken String?
-  invitationExpires DateTime?
   createdAt     DateTime @default(now())
   updatedAt     DateTime @updatedAt
-  
-  assignedTasks Task[]   @relation("AssignedTasks")
-  createdTasks  Task[]   @relation("CreatedTasks")
-  sentInvites   Invitation[] @relation("SentInvites")
-  receivedInvites Invitation[] @relation("ReceivedInvites")
+
+  assignedTasks   Task[]      @relation("AssignedTasks")
+  createdTasks    Task[]      @relation("CreatedTasks")
+  sentInvites     Invitation[] @relation("SentInvites")
+  receivedInvite  Invitation?  @relation("ReceivedInvite")
 }
 
 model Task {
@@ -37,22 +35,23 @@ model Task {
   createdById     String
   createdAt       DateTime @default(now())
   updatedAt       DateTime @updatedAt
-  
+
   assignedUser   User @relation("AssignedTasks", fields: [assignedUserId], references: [id])
   createdBy      User @relation("CreatedTasks", fields: [createdById], references: [id])
 }
 
 model Invitation {
-  id              String   @id @default(cuid())
-  email           String
-  token           String   @unique
-  invitedById     String
-  invitedUserId   String?
-  status          String   @default("PENDING") // PENDING, ACCEPTED, EXPIRED
-  expiresAt       DateTime
-  createdAt       DateTime @default(now())
-  updatedAt       DateTime @updatedAt
-  
-  invitedBy       User @relation("SentInvites", fields: [invitedById], references: [id])
-  invitedUser     User? @relation("ReceivedInvites", fields: [invitedUserId], references: [id])
+  id             String   @id @default(cuid())
+  email          String
+  token          String   @unique
+  status         String   @default("PENDING") // PENDING, ACCEPTED, EXPIRED
+  expiresAt      DateTime
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+
+  invitedById    String
+  invitedBy      User     @relation("SentInvites", fields: [invitedById], references: [id])
+
+  invitedUserId  String?  @unique
+  invitedUser    User?    @relation("ReceivedInvite", fields: [invitedUserId], references: [id])
 }
