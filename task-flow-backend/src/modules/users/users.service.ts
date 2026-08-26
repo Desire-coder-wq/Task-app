@@ -20,6 +20,9 @@ export class UsersService {
         createdAt: true,
         updatedAt: true,
       },
+       orderBy: {
+        createdAt: 'desc',
+      },
     });
   }
 
@@ -53,7 +56,7 @@ export class UsersService {
       data.password = await bcrypt.hash(updateUserDto.password, 10);
     }
 
-    return this.prisma.user.update({
+    const updatedUser = await this.prisma.user.update({
       where: { id },
       data,
       select: {
@@ -67,6 +70,7 @@ export class UsersService {
         updatedAt: true,
       },
     });
+    return updatedUser;
   }
 
   async remove(id: string) {
@@ -75,5 +79,6 @@ export class UsersService {
       where: { id },
       data: { isActive: false },
     });
+    return { message: 'User deactivated Successfully'}
   }
 }

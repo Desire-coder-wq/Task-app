@@ -14,41 +14,45 @@ import { UsersService } from './users.service';
 import { UpdateUserDto } from './dto/update-user.dto';
 
 @ApiTags('users')
+@ApiBearerAuth('JWT-auth')
 @Controller('users')
 export class UsersController {
   constructor(private readonly usersService: UsersService) {}
 
   @Get()
+  @UseGuards(AuthGuard('jwt'))
   @ApiOperation({ summary: 'Get all users' })
   @ApiResponse({ status: 200, description: 'Users retrieved successfully' })
+  @ApiResponse({ status: 401, description: 'Unauthorized' })
   async findAll() {
-    return this.usersService.findAll();
+    const users = await this.usersService.findAll();
+    return users;
   }
 
   @Get(':id')
+  @UseGuards(AuthGuard('jwt'))
   @ApiOperation({ summary: 'Get a user by ID' })
   @ApiResponse({ status: 200, description: 'User retrieved successfully' })
   @ApiResponse({ status: 404, description: 'User not found' })
-  @UseGuards(AuthGuard('jwt'))
-  async findOne(@Param('id') id: string, @Request() req: any) {
+  async findOne(@Param('id') id: string) {
     return this.usersService.findOne(id);
   }
 
   @Patch(':id')
+  @UseGuards(AuthGuard('jwt'))
   @ApiOperation({ summary: 'Update a user' })
   @ApiResponse({ status: 200, description: 'User updated successfully' })
   @ApiResponse({ status: 404, description: 'User not found' })
-  @UseGuards(AuthGuard('jwt'))
-  async update(@Param('id') id: string, @Body() updateUserDto: UpdateUserDto, @Request() req: any) {
+  async update(@Param('id') id: string, @Body() updateUserDto: UpdateUserDto) {
     return this.usersService.update(id, updateUserDto);
   }
 
   @Delete(':id')
+  @UseGuards(AuthGuard('jwt'))
   @ApiOperation({ summary: 'Delete a user' })
   @ApiResponse({ status: 204, description: 'User deleted successfully' })
   @ApiResponse({ status: 404, description: 'User not found' })
-  @UseGuards(AuthGuard('jwt'))
-  async remove(@Param('id') id: string, @Request() req: any) {
+  async remove(@Param('id') id: string) {
     return this.usersService.remove(id);
   }
 }
