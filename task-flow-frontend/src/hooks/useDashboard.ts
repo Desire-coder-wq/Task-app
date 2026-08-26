@@ -1,11 +1,24 @@
 import { useQuery } from '@tanstack/react-query'
 import { dashboardService, type DashboardStats } from '@/services/dashboard.service'
+import { useRouter } from 'next/navigation'
+import { useEffect } from 'react'
 
 export function useDashboardStats() {
+  const router = useRouter()
+
   const { data, isLoading, error } = useQuery<DashboardStats>({
     queryKey: ['dashboard', 'stats'],
     queryFn: () => dashboardService.getStats(),
   })
+
+  useEffect(() => {
+    if (error && typeof error === 'object' && 'response' in error) {
+      const status = (error as any).response?.status
+      if (status === 401) {
+        router.push('/auth/login')
+      }
+    }
+  }, [error, router])
 
   return {
     stats: data || {

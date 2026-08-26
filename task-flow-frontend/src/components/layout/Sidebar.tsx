@@ -42,27 +42,37 @@ export function Sidebar() {
 
   return (
     <aside
-      className={`bg-gray-900 text-white transition-all duration-300 flex flex-col ${
+      className={`bg-gray-50 border-r border-gray-200 text-gray-700 transition-all duration-300 flex flex-col ${
         isCollapsed ? 'w-16' : 'w-64'
       }`}
     >
-      <div className="flex items-center justify-between p-4 border-b border-gray-800">
+      <div className="flex items-center justify-between p-4 border-b border-gray-200">
         {!isCollapsed && (
-          <div className="flex items-center gap-2">
-            <div className="w-8 h-8 bg-blue-600 rounded-lg flex items-center justify-center font-bold text-white text-sm">
-              TP
-            </div>
-            <span className="text-xl font-bold">TaskPilot</span>
+          <div className="flex items-center gap-3">
+            <Image
+              src="/images/logo.png"
+              alt="TaskPilot Logo"
+              width={32}
+              height={32}
+              className="rounded-lg"
+              priority
+            />
+            <span className="text-xl font-bold text-blue-600">TaskPilot</span>
           </div>
         )}
         {isCollapsed && (
-          <div className="w-8 h-8 bg-blue-600 rounded-lg flex items-center justify-center font-bold text-white text-sm mx-auto">
-            TP
-          </div>
+          <Image
+            src="/images/logo.png"
+            alt="TaskPilot Logo"
+            width={32}
+            height={32}
+            className="rounded-lg"
+            priority
+          />
         )}
         <button
           onClick={() => setIsCollapsed(!isCollapsed)}
-          className="p-1 rounded hover:bg-gray-800 transition-colors"
+          className="p-1 rounded hover:bg-gray-200 transition-colors text-gray-500"
         >
           {isCollapsed ? <ChevronRight size={20} /> : <ChevronLeft size={20} />}
         </button>
@@ -80,7 +90,7 @@ export function Sidebar() {
               className={`flex items-center gap-3 px-3 py-2.5 rounded-lg transition-colors ${
                 isActive
                   ? 'bg-blue-600 text-white'
-                  : 'hover:bg-gray-800 text-gray-300'
+                  : 'hover:bg-gray-200 text-gray-600'
               }`}
             >
               <Icon size={20} />
@@ -90,14 +100,14 @@ export function Sidebar() {
         })}
       </nav>
 
-      <div className="p-4 border-t border-gray-800">
+      <div className="p-4 border-t border-gray-200">
         {!isCollapsed ? (
           <div className="flex items-center gap-3 px-3 py-2">
             <div className="w-8 h-8 bg-blue-600 rounded-full flex items-center justify-center text-white font-semibold text-sm">
               {initials}
             </div>
             <div>
-              <p className="text-sm font-medium">{userName}</p>
+              <p className="text-sm font-medium text-gray-700">{userName}</p>
               <p className="text-xs text-gray-400">Team Member</p>
             </div>
           </div>

@@ -178,6 +178,7 @@ export default function LoginPage() {
           src="/images/screen.png"
           alt="TaskPilot workspace"
           fill
+          sizes="(max-width: 1024px) 0vw, 50vw"
           className="object-cover"
           priority
         />

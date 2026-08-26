@@ -1,7 +1,5 @@
-import axios from 'axios';
+import api from '@/lib/axios';
 import { ApiResponse } from '@/types/api';
-
-const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3002/api';
 
 export interface DashboardStats {
   total: number;
@@ -30,12 +28,12 @@ export interface UpcomingDeadline {
 
 export class DashboardService {
   async getStats(): Promise<DashboardStats> {
-    const response = await axios.get<ApiResponse<DashboardStats>>(`${API_URL}/dashboard/stats`);
+    const response = await api.get<ApiResponse<DashboardStats>>('/dashboard/stats');
     return response.data.data;
   }
 
   async getUpcoming(): Promise<UpcomingDeadline[]> {
-    const response = await axios.get<ApiResponse<UpcomingDeadline[]>>(`${API_URL}/dashboard/upcoming`);
+    const response = await api.get<ApiResponse<UpcomingDeadline[]>>('/dashboard/upcoming');
     return response.data.data;
   }
 }

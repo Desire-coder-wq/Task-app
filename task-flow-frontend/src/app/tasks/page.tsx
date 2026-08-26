@@ -7,10 +7,25 @@ import { useTasks } from '@/hooks/useTasks';
 import { useTaskStore } from '@/store/TaskStore';
 import { Layout } from '@/components/layout/Layout';
 import { Plus } from 'lucide-react';
+import { Task, TaskStatus } from '@/types/task';
 
 export default function TasksPage() {
-  const { tasks, isLoading, error, filters, setFilters } = useTasks();
-  const { openModal } = useTaskStore();
+  const { tasks, isLoading, error, filters, setFilters, updateStatus, deleteTask } = useTasks();
+  const { openModal, setSelectedTask } = useTaskStore();
+
+  const handleEdit = (task: Task) => {
+    setSelectedTask(task)
+    openModal('edit')
+  }
+
+  const handleDelete = (task: Task) => {
+    setSelectedTask(task)
+    openModal('delete')
+  }
+
+  const handleStatusChange = (task: Task, status: TaskStatus) => {
+    updateStatus({ id: task.id, status })
+  }
 
   return (
     <Layout>
@@ -51,7 +66,12 @@ export default function TasksPage() {
             </button>
           </div>
         ) : (
-          <TaskList tasks={tasks} />
+          <TaskList 
+            tasks={tasks} 
+            onEdit={handleEdit}
+            onDelete={handleDelete}
+            onStatusChange={handleStatusChange}
+          />
         )}
       </div>
 

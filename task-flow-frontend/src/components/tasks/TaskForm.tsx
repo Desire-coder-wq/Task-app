@@ -4,7 +4,9 @@ import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
 import { Task, CreateTaskDto } from '@/types/task';
-import toast from 'react-hot-toast';
+import { useQuery } from '@tanstack/react-query';
+import { usersService } from '@/services/users.service';
+import { useEffect } from 'react';
 
 const taskSchema = z.object({
   title: z.string().min(1, 'Title is required').max(100, 'Title is too long'),
@@ -24,15 +26,13 @@ interface TaskFormProps {
   isSubmitting?: boolean;
 }
 
-const users = [
-  { id: 'desire-id', name: 'Desire' },
-  { id: 'mary-id', name: 'Mary Precious' },
-  { id: 'bright-id', name: 'Bright Musinguzi' },
-  { id: 'alex-id', name: 'Alex Ssempera' },
-];
-
 export function TaskForm({ initialData, onSubmit, onCancel, isSubmitting }: TaskFormProps) {
-  const { register, handleSubmit, formState: { errors } } = useForm<TaskFormData>({
+  const { data: users = [], isLoading: usersLoading } = useQuery({
+    queryKey: ['users'],
+    queryFn: () => usersService.getUsers(),
+  });
+
+  const { register, handleSubmit, formState: { errors }, reset } = useForm<TaskFormData>({
     resolver: zodResolver(taskSchema),
     defaultValues: initialData ? {
       title: initialData.title,
@@ -48,17 +48,21 @@ export function TaskForm({ initialData, onSubmit, onCancel, isSubmitting }: Task
     },
   });
 
-  const handleFormSubmit = (data: TaskFormData) => {
-    try {
-      onSubmit(data);
-      toast.success(initialData ? 'Task updated successfully' : 'Task created successfully');
-    } catch (error) {
-      toast.error('Failed to save task. Please try again.');
+  useEffect(() => {
+    if (initialData) {
+      reset({
+        title: initialData.title,
+        description: initialData.description,
+        status: initialData.status,
+        priority: initialData.priority,
+        dueDate: new Date(initialData.dueDate).toISOString().split('T')[0],
+        assignedUserId: initialData.assignedUserId,
+      });
     }
-  };
+  }, [initialData, reset]);
 
   return (
-    <form onSubmit={handleSubmit(handleFormSubmit)} className="space-y-4">
+    <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
       <div>
         <label htmlFor="title" className="block text-sm font-medium text-gray-700">
           Title
@@ -144,9 +148,10 @@ export function TaskForm({ initialData, onSubmit, onCancel, isSubmitting }: Task
           id="assignedUserId"
           {...register('assignedUserId')}
           className="mt-1 block w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+          disabled={usersLoading}
         >
           <option value="">Select a user</option>
-          {users.map((user) => (
+          {users.map(user => (
             <option key={user.id} value={user.id}>
               {user.name}
             </option>

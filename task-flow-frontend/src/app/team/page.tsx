@@ -71,11 +71,23 @@ export default function TeamPage() {
               {invitations
                 .filter(inv => inv.status === 'PENDING')
                 .map((inv) => (
-                  <div key={inv.id} className="flex items-center justify-between text-sm">
+                  <div key={inv.id} className="flex flex-col sm:flex-row sm:items-center sm:justify-between text-sm gap-2">
                     <span className="text-yellow-700">{inv.email}</span>
-                    <span className="text-xs text-yellow-600">
-                      Expires: {new Date(inv.expiresAt).toLocaleDateString()}
-                    </span>
+                    <div className="flex items-center gap-3">
+                      <span className="text-xs text-yellow-600">
+                        Expires: {new Date(inv.expiresAt).toLocaleDateString()}
+                      </span>
+                      {(inv as any).acceptUrl && (
+                        <a
+                          href={(inv as any).acceptUrl}
+                          target="_blank"
+                          rel="noreferrer"
+                          className="text-xs text-blue-600 hover:text-blue-700 underline"
+                        >
+                          Copy invite link
+                        </a>
+                      )}
+                    </div>
                   </div>
                 ))}
             </div>

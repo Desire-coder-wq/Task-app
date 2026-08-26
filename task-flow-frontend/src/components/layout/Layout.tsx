@@ -1,11 +1,11 @@
-'use client'
+'use client';
 
-import { Sidebar } from './Sidebar'
-import { Header } from './Header'
-import { ReactNode } from 'react'
+import { Sidebar } from './Sidebar';
+import { Header } from './Header';
+import { ReactNode } from 'react';
 
 interface LayoutProps {
-  children: ReactNode
+  children: ReactNode;
 }
 
 export function Layout({ children }: LayoutProps) {
@@ -19,5 +19,5 @@ export function Layout({ children }: LayoutProps) {
         </main>
       </div>
     </div>
-  )
+  );
 }

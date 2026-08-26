@@ -25,6 +25,7 @@ export interface Invitation {
   status: 'PENDING' | 'ACCEPTED' | 'EXPIRED';
   expiresAt: string;
   createdAt: string;
+  acceptUrl?: string;
 }
 
 export class InvitationService {

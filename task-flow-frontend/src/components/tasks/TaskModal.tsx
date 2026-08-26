@@ -42,7 +42,6 @@ export function TaskModal() {
           <button
             onClick={closeModal}
             className="p-1 text-gray-400 hover:text-gray-600 transition-colors"
-            aria-label="Close modal"
           >
             <X size={24} />
           </button>
@@ -52,7 +51,7 @@ export function TaskModal() {
           {modalMode === 'delete' ? (
             <div>
               <p className="text-gray-700">
-                Are you sure you want to delete the task "{selectedTask?.title}"? This action cannot be undone.
+                Are you sure you want to delete the task "{selectedTask?.title || '?'}"? This action cannot be undone.
               </p>
               <div className="flex justify-end gap-3 mt-6 pt-4 border-t border-gray-200">
                 <button

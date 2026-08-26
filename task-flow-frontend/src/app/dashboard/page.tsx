@@ -1,20 +1,18 @@
-'use client'
+'use client';
 
-import { Layout } from '@/components/layout/Layout'
-import { useDashboardStats } from '@/hooks/useDashboard'
-import { useRouter } from 'next/navigation'
+import { Layout } from '@/components/layout/Layout';
+import { useDashboardStats } from '@/hooks/useDashboard';
+import { useRouter } from 'next/navigation';
 import {
   CheckCircle,
   Clock,
   AlertCircle,
   ListTodo,
-  ArrowUp,
-  ArrowDown,
-} from 'lucide-react'
+} from 'lucide-react';
 
 export default function DashboardPage() {
-  const router = useRouter()
-  const { stats, isLoading } = useDashboardStats()
+  const router = useRouter();
+  const { stats, isLoading } = useDashboardStats();
 
   if (isLoading) {
     return (
@@ -23,7 +21,7 @@ export default function DashboardPage() {
           <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div>
         </div>
       </Layout>
-    )
+    );
   }
 
   return (
@@ -109,9 +107,7 @@ export default function DashboardPage() {
                   <div
                     className="bg-red-500 h-2 rounded-full transition-all duration-500"
                     style={{
-                      width: `${
-                        stats.total > 0 ? (stats.priorityStats.high / stats.total) * 100 : 0
-                      }%`,
+                      width: `${stats.total > 0 ? (stats.priorityStats.high / stats.total) * 100 : 0}%`,
                     }}
                   />
                 </div>
@@ -126,9 +122,7 @@ export default function DashboardPage() {
                   <div
                     className="bg-yellow-500 h-2 rounded-full transition-all duration-500"
                     style={{
-                      width: `${
-                        stats.total > 0 ? (stats.priorityStats.medium / stats.total) * 100 : 0
-                      }%`,
+                      width: `${stats.total > 0 ? (stats.priorityStats.medium / stats.total) * 100 : 0}%`,
                     }}
                   />
                 </div>
@@ -143,9 +137,7 @@ export default function DashboardPage() {
                   <div
                     className="bg-green-500 h-2 rounded-full transition-all duration-500"
                     style={{
-                      width: `${
-                        stats.total > 0 ? (stats.priorityStats.low / stats.total) * 100 : 0
-                      }%`,
+                      width: `${stats.total > 0 ? (stats.priorityStats.low / stats.total) * 100 : 0}%`,
                     }}
                   />
                 </div>
@@ -177,5 +169,5 @@ export default function DashboardPage() {
         </div>
       </div>
     </Layout>
-  )
+  );
 }

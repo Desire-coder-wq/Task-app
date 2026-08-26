@@ -1,43 +1,27 @@
-'use client'
+'use client';
 
-import { Task, TaskStatus } from '@/types/task'
-import { TaskCard } from './TaskCard'
-import { useTaskStore } from '@/store/TaskStore'
-import { useTasks } from '@/hooks/useTasks'
+import { Task, TaskStatus } from '@/types/task';
+import { TaskCard } from './TaskCard';
 
 interface TaskListProps {
-  tasks: Task[]
+  tasks: Task[];
+  onEdit: (task: Task) => void;
+  onDelete: (task: Task) => void;
+  onStatusChange: (task: Task, status: TaskStatus) => void;
 }
 
-export function TaskList({ tasks }: TaskListProps) {
-  const { openModal, setSelectedTask } = useTaskStore()
-  const { updateStatus, deleteTask } = useTasks()
-
-  const handleEdit = (task: Task) => {
-    setSelectedTask(task)
-    openModal('edit')
-  }
-
-  const handleDelete = (task: Task) => {
-    setSelectedTask(task)
-    openModal('delete')
-  }
-
-  const handleStatusChange = (task: Task, status: TaskStatus) => {
-    updateStatus({ id: task.id, status })
-  }
-
+export function TaskList({ tasks, onEdit, onDelete, onStatusChange }: TaskListProps) {
   return (
     <div className="space-y-4">
       {tasks.map((task) => (
         <TaskCard
           key={task.id}
           task={task}
-          onEdit={handleEdit}
-          onDelete={handleDelete}
-          onStatusChange={handleStatusChange}
+          onEdit={onEdit}
+          onDelete={onDelete}
+          onStatusChange={onStatusChange}
         />
       ))}
     </div>
-  )
+  );
 }

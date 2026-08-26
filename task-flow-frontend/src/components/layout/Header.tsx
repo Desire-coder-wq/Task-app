@@ -1,10 +1,11 @@
 'use client';
 
-import { Search, Bell, Moon, Sun, Settings } from 'lucide-react';
+import { Search, Settings } from 'lucide-react';
 import { useState, useEffect } from 'react';
+import { useRouter } from 'next/navigation';
 
 export function Header() {
-  const [isDarkMode, setIsDarkMode] = useState(false);
+  const router = useRouter();
   const [userName, setUserName] = useState('User');
 
   useEffect(() => {
@@ -38,19 +39,10 @@ export function Header() {
 
         <div className="flex items-center gap-2">
           <button
-            onClick={() => setIsDarkMode(!isDarkMode)}
+            onClick={() => router.push('/settings')}
             className="p-2 text-gray-600 hover:bg-gray-100 rounded-lg transition-colors"
           >
-            {isDarkMode ? <Sun size={18} /> : <Moon size={18} />}
-          </button>
-
-          <button className="p-2 text-gray-600 hover:bg-gray-100 rounded-lg transition-colors relative">
-            <Bell size={18} />
-            <span className="absolute top-1.5 right-1.5 w-2 h-2 bg-red-500 rounded-full"></span>
-          </button>
-
-          <button className="p-2 text-gray-600 hover:bg-gray-100 rounded-lg transition-colors">
-            <Settings size={18} />
+            <Settings size={20} />
           </button>
 
           <div className="w-8 h-8 bg-blue-600 rounded-full flex items-center justify-center text-white font-semibold text-sm ml-1">
