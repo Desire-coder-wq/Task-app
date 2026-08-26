@@ -6,7 +6,8 @@ export class MailService {
   constructor(private mailerService: MailerService) {}
 
   async sendInvitationEmail(to: string, name: string, token: string, invitedById: string) {
-    const acceptUrl = `${process.env.FRONTEND_URL || 'http://localhost:3000'}/accept-invitation?token=${token}`;
+    const frontendUrl = process.env.FRONTEND_URL || 'http://localhost:3000';
+    const acceptUrl = `${frontendUrl}/accept-invitation?token=${token}`;
 
     try {
       await this.mailerService.sendMail({
@@ -41,7 +42,6 @@ export class MailService {
         `,
       });
       console.log(`Invitation email sent to ${to}`);
-      return true;
     } catch (error) {
       console.error('Failed to send invitation email:', error);
       throw error;
@@ -76,9 +76,48 @@ export class MailService {
         `,
       });
       console.log(`Welcome email sent to ${to}`);
-      return true;
     } catch (error) {
       console.error('Failed to send welcome email:', error);
+      throw error;
+    }
+  }
+
+  async sendOtpEmail(to: string, name: string, otp: string) {
+    try {
+      await this.mailerService.sendMail({
+        to,
+        subject: 'Password Reset OTP - TaskPilot',
+        html: `
+          <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px; background-color: #f9fafb; border-radius: 8px;">
+            <div style="background-color: #1e293b; padding: 20px; border-radius: 8px 8px 0 0; text-align: center;">
+              <h1 style="color: white; margin: 0;">TaskPilot</h1>
+            </div>
+            <div style="background-color: white; padding: 30px; border-radius: 0 0 8px 8px;">
+              <h2 style="color: #1e293b;">Reset Your Password</h2>
+              <p style="color: #64748b; font-size: 16px; line-height: 1.6;">
+                Hello <strong>${name}</strong>,
+              </p>
+              <p style="color: #64748b; font-size: 16px; line-height: 1.6;">
+                You requested to reset your password. Use the OTP below to reset your password.
+              </p>
+              <div style="text-align: center; margin: 30px 0; padding: 20px; background-color: #f0f4ff; border-radius: 8px;">
+                <p style="font-size: 32px; font-weight: bold; color: #1e293b; letter-spacing: 8px; margin: 0;">
+                  ${otp}
+                </p>
+              </div>
+              <p style="color: #94a3b8; font-size: 14px; text-align: center;">
+                This OTP expires in 10 minutes.
+              </p>
+              <p style="color: #94a3b8; font-size: 12px; text-align: center; margin-top: 20px;">
+                If you didn't request this, you can safely ignore this email.
+              </p>
+            </div>
+          </div>
+        `,
+      });
+      console.log(`OTP email sent to ${to}`);
+    } catch (error) {
+      console.error('Failed to send OTP email:', error);
       throw error;
     }
   }

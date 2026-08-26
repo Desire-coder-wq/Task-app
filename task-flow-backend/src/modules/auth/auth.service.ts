@@ -7,6 +7,7 @@ import { RegisterDto } from './dto/register.dto';
 import { ForgotPasswordDto } from './dto/forgot-password.dto';
 import { VerifyOtpDto } from './dto/verify-otp.dto';
 import { ResetPasswordDto } from './dto/reset-password.dto';
+import { MailService } from '../mail/mail.service';
 
 interface OtpEntry {
   otp: string;
@@ -20,6 +21,7 @@ export class AuthService {
   constructor(
     private prisma: PrismaService,
     private jwtService: JwtService,
+    private mailService: MailService,
   ) {}
 
   async register(registerDto: RegisterDto) {
@@ -105,9 +107,17 @@ export class AuthService {
 
     this.otpStore.set(email, { otp, expiresAt });
 
+    // Send OTP via email
+    try {
+      await this.mailService.sendOtpEmail(email, user.name, otp);
+      console.log(`OTP sent to ${email}: ${otp}`);
+    } catch (error) {
+      console.error('Failed to send OTP email:', error);
+    }
+
     return {
       message: 'OTP sent to your email',
-      // In development, return OTP so frontend can display it
+      // Only return OTP in development for testing
       devOtp: process.env.NODE_ENV === 'development' ? otp : undefined,
     };
   }
