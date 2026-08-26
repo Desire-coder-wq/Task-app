@@ -1,27 +1,26 @@
-'use client'
+'use client';
 
-import { Search, Bell, Moon, Sun, Settings } from 'lucide-react'
-import { useState, useEffect } from 'react'
-import Image from 'next/image'
+import { Search, Bell, Moon, Sun, Settings } from 'lucide-react';
+import { useState, useEffect } from 'react';
 
 export function Header() {
-  const [isDarkMode, setIsDarkMode] = useState(false)
-  const [userName, setUserName] = useState('User')
+  const [isDarkMode, setIsDarkMode] = useState(false);
+  const [userName, setUserName] = useState('User');
 
   useEffect(() => {
-    const stored = localStorage.getItem('user')
+    const stored = localStorage.getItem('user');
     if (stored) {
-      const parsed = JSON.parse(stored)
-      setUserName(parsed.name || 'User')
+      const parsed = JSON.parse(stored);
+      setUserName(parsed.name || 'User');
     }
-  }, [])
+  }, []);
 
   const initials = userName
     .split(' ')
     .map((n: string) => n[0])
     .join('')
     .slice(0, 2)
-    .toUpperCase()
+    .toUpperCase();
 
   return (
     <header className="bg-white border-b border-gray-200 px-4 py-3">
@@ -60,5 +59,5 @@ export function Header() {
         </div>
       </div>
     </header>
-  )
+  );
 }

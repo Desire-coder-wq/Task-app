@@ -1,7 +1,7 @@
 'use client'
 
 import { Layout } from '@/components/layout/Layout'
-import { useTasks } from '@/hooks/useTasks'
+import { useDashboardStats } from '@/hooks/useDashboard'
 import { useRouter } from 'next/navigation'
 import {
   CheckCircle,
@@ -14,30 +14,17 @@ import {
 
 export default function DashboardPage() {
   const router = useRouter()
-  const { tasks } = useTasks()
+  const { stats, isLoading } = useDashboardStats()
 
-  const stats = {
-    total: tasks.length,
-    completed: tasks.filter(t => t.status === 'COMPLETED').length,
-    inProgress: tasks.filter(t => t.status === 'IN_PROGRESS').length,
-    todo: tasks.filter(t => t.status === 'TODO').length,
-    overdue: tasks.filter(t => {
-      const dueDate = new Date(t.dueDate)
-      const today = new Date()
-      return dueDate < today && t.status !== 'COMPLETED'
-    }).length,
+  if (isLoading) {
+    return (
+      <Layout>
+        <div className="flex justify-center py-12">
+          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div>
+        </div>
+      </Layout>
+    )
   }
-
-  const priorityStats = {
-    high: tasks.filter(t => t.priority === 'HIGH').length,
-    medium: tasks.filter(t => t.priority === 'MEDIUM').length,
-    low: tasks.filter(t => t.priority === 'LOW').length,
-  }
-
-  const upcomingDeadlines = tasks
-    .filter(t => t.status !== 'COMPLETED')
-    .sort((a, b) => new Date(a.dueDate).getTime() - new Date(b.dueDate).getTime())
-    .slice(0, 5)
 
   return (
     <Layout>
@@ -109,30 +96,6 @@ export default function DashboardPage() {
 
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
           <div className="lg:col-span-2 bg-white rounded-xl shadow-sm hover:shadow-md transition-shadow p-6">
-            <h2 className="text-lg font-semibold text-gray-900 mb-4">Upcoming Deadlines</h2>
-            <div className="space-y-4">
-              {upcomingDeadlines.length === 0 ? (
-                <p className="text-sm text-gray-500">No upcoming deadlines.</p>
-              ) : (
-                upcomingDeadlines.map(task => (
-                  <div
-                    key={task.id}
-                    className="flex items-start gap-4 p-4 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors"
-                  >
-                    <div className="flex-1 min-w-0">
-                      <h3 className="font-semibold text-gray-900">{task.title}</h3>
-                      <p className="text-sm text-gray-600 mt-1 line-clamp-2">{task.description}</p>
-                      <span className="text-xs text-gray-500 mt-2 block">
-                        Due: {new Date(task.dueDate).toLocaleDateString()}
-                      </span>
-                    </div>
-                  </div>
-                ))
-              )}
-            </div>
-          </div>
-
-          <div className="lg:col-span-1 bg-white rounded-xl shadow-sm hover:shadow-md transition-shadow p-6">
             <h2 className="text-lg font-semibold text-gray-900 mb-4">Task Distribution</h2>
             <p className="text-sm text-gray-500 mb-4">By Priority Level</p>
 
@@ -140,14 +103,14 @@ export default function DashboardPage() {
               <div>
                 <div className="flex items-center justify-between mb-1">
                   <span className="text-sm font-medium text-gray-700">High</span>
-                  <span className="text-sm font-semibold text-gray-900">{priorityStats.high}</span>
+                  <span className="text-sm font-semibold text-gray-900">{stats.priorityStats.high}</span>
                 </div>
                 <div className="w-full bg-gray-200 rounded-full h-2">
                   <div
                     className="bg-red-500 h-2 rounded-full transition-all duration-500"
                     style={{
                       width: `${
-                        tasks.length > 0 ? (priorityStats.high / tasks.length) * 100 : 0
+                        stats.total > 0 ? (stats.priorityStats.high / stats.total) * 100 : 0
                       }%`,
                     }}
                   />
@@ -157,14 +120,14 @@ export default function DashboardPage() {
               <div>
                 <div className="flex items-center justify-between mb-1">
                   <span className="text-sm font-medium text-gray-700">Medium</span>
-                  <span className="text-sm font-semibold text-gray-900">{priorityStats.medium}</span>
+                  <span className="text-sm font-semibold text-gray-900">{stats.priorityStats.medium}</span>
                 </div>
                 <div className="w-full bg-gray-200 rounded-full h-2">
                   <div
                     className="bg-yellow-500 h-2 rounded-full transition-all duration-500"
                     style={{
                       width: `${
-                        tasks.length > 0 ? (priorityStats.medium / tasks.length) * 100 : 0
+                        stats.total > 0 ? (stats.priorityStats.medium / stats.total) * 100 : 0
                       }%`,
                     }}
                   />
@@ -174,18 +137,40 @@ export default function DashboardPage() {
               <div>
                 <div className="flex items-center justify-between mb-1">
                   <span className="text-sm font-medium text-gray-700">Low</span>
-                  <span className="text-sm font-semibold text-gray-900">{priorityStats.low}</span>
+                  <span className="text-sm font-semibold text-gray-900">{stats.priorityStats.low}</span>
                 </div>
                 <div className="w-full bg-gray-200 rounded-full h-2">
                   <div
                     className="bg-green-500 h-2 rounded-full transition-all duration-500"
                     style={{
                       width: `${
-                        tasks.length > 0 ? (priorityStats.low / tasks.length) * 100 : 0
+                        stats.total > 0 ? (stats.priorityStats.low / stats.total) * 100 : 0
                       }%`,
                     }}
                   />
                 </div>
+              </div>
+            </div>
+          </div>
+
+          <div className="lg:col-span-1 bg-white rounded-xl shadow-sm hover:shadow-md transition-shadow p-6">
+            <h2 className="text-lg font-semibold text-gray-900 mb-4">Quick Stats</h2>
+            <div className="grid grid-cols-2 gap-3">
+              <div className="bg-blue-50 rounded-lg p-3 text-center">
+                <p className="text-2xl font-bold text-blue-600">{stats.completed}</p>
+                <p className="text-xs text-gray-600">Completed</p>
+              </div>
+              <div className="bg-yellow-50 rounded-lg p-3 text-center">
+                <p className="text-2xl font-bold text-yellow-600">{stats.inProgress}</p>
+                <p className="text-xs text-gray-600">In Progress</p>
+              </div>
+              <div className="bg-green-50 rounded-lg p-3 text-center">
+                <p className="text-2xl font-bold text-green-600">{stats.todo}</p>
+                <p className="text-xs text-gray-600">To Do</p>
+              </div>
+              <div className="bg-red-50 rounded-lg p-3 text-center">
+                <p className="text-2xl font-bold text-red-600">{stats.overdue}</p>
+                <p className="text-xs text-gray-600">Overdue</p>
               </div>
             </div>
           </div>

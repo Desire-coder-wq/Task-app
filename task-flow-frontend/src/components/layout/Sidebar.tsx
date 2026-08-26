@@ -1,8 +1,8 @@
-'use client'
+'use client';
 
-import Link from 'next/link'
-import { usePathname } from 'next/navigation'
-import Image from 'next/image'
+import Link from 'next/link';
+import { usePathname } from 'next/navigation';
+import Image from 'next/image';
 import {
   LayoutDashboard,
   ListTodo,
@@ -10,19 +10,35 @@ import {
   Settings,
   ChevronLeft,
   ChevronRight,
-} from 'lucide-react'
-import { useState } from 'react'
+} from 'lucide-react';
+import { useState, useEffect } from 'react';
 
 const navigationItems = [
   { href: '/dashboard', label: 'Dashboard', icon: LayoutDashboard },
   { href: '/tasks', label: 'Tasks', icon: ListTodo },
   { href: '/team', label: 'Team', icon: Users },
   { href: '/settings', label: 'Settings', icon: Settings },
-]
+];
 
 export function Sidebar() {
-  const pathname = usePathname()
-  const [isCollapsed, setIsCollapsed] = useState(false)
+  const pathname = usePathname();
+  const [isCollapsed, setIsCollapsed] = useState(false);
+  const [userName, setUserName] = useState('User');
+
+  useEffect(() => {
+    const stored = localStorage.getItem('user');
+    if (stored) {
+      const parsed = JSON.parse(stored);
+      setUserName(parsed.name || 'User');
+    }
+  }, []);
+
+  const initials = userName
+    .split(' ')
+    .map((n: string) => n[0])
+    .join('')
+    .slice(0, 2)
+    .toUpperCase();
 
   return (
     <aside
@@ -33,26 +49,16 @@ export function Sidebar() {
       <div className="flex items-center justify-between p-4 border-b border-gray-800">
         {!isCollapsed && (
           <div className="flex items-center gap-2">
-            <Image
-              src="/images/logo.png"
-              alt="TaskPilot"
-              width={32}
-              height={32}
-              className="rounded-lg"
-              priority
-            />
+            <div className="w-8 h-8 bg-blue-600 rounded-lg flex items-center justify-center font-bold text-white text-sm">
+              TP
+            </div>
             <span className="text-xl font-bold">TaskPilot</span>
           </div>
         )}
         {isCollapsed && (
-          <Image
-            src="/images/logo.png"
-            alt="TaskPilot"
-            width={32}
-            height={32}
-            className="rounded-lg mx-auto"
-            priority
-          />
+          <div className="w-8 h-8 bg-blue-600 rounded-lg flex items-center justify-center font-bold text-white text-sm mx-auto">
+            TP
+          </div>
         )}
         <button
           onClick={() => setIsCollapsed(!isCollapsed)}
@@ -64,8 +70,8 @@ export function Sidebar() {
 
       <nav className="flex-1 p-4 space-y-1">
         {navigationItems.map(item => {
-          const Icon = item.icon
-          const isActive = pathname === item.href || pathname?.startsWith(item.href + '/')
+          const Icon = item.icon;
+          const isActive = pathname === item.href || pathname?.startsWith(item.href + '/');
 
           return (
             <Link
@@ -80,27 +86,27 @@ export function Sidebar() {
               <Icon size={20} />
               {!isCollapsed && <span>{item.label}</span>}
             </Link>
-          )
+          );
         })}
       </nav>
 
       <div className="p-4 border-t border-gray-800">
         {!isCollapsed ? (
           <div className="flex items-center gap-3 px-3 py-2">
-            <div className="w-8 h-8 bg-gray-700 rounded-full flex items-center justify-center">
-              <Users size={16} />
+            <div className="w-8 h-8 bg-blue-600 rounded-full flex items-center justify-center text-white font-semibold text-sm">
+              {initials}
             </div>
             <div>
-              <p className="text-sm font-medium">User</p>
+              <p className="text-sm font-medium">{userName}</p>
               <p className="text-xs text-gray-400">Team Member</p>
             </div>
           </div>
         ) : (
-          <div className="w-8 h-8 bg-gray-700 rounded-full flex items-center justify-center mx-auto">
-            <Users size={16} />
+          <div className="w-8 h-8 bg-blue-600 rounded-full flex items-center justify-center text-white font-semibold text-sm mx-auto">
+            {initials}
           </div>
         )}
       </div>
     </aside>
-  )
+  );
 }

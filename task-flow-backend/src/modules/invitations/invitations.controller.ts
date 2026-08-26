@@ -11,8 +11,8 @@ import {
 import { ApiTags, ApiOperation, ApiResponse, ApiBearerAuth } from '@nestjs/swagger';
 import { AuthGuard } from '@nestjs/passport';
 import { InvitationsService } from './invitations.service';
-import { CreateInvitationDto } from './dto/create-invitations.dto';
-import { AcceptInvitationDto } from './dto/accept-invitations.dto';
+import { CreateInvitationDto } from './dto/create-invitation.dto';
+import { AcceptInvitationDto } from './dto/accept-invitation.dto';
 
 @ApiTags('invitations')
 @Controller('invitations')

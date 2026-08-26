@@ -1,62 +1,64 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import Image from 'next/image'
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
-import { Eye, EyeOff, Mail, Lock, ArrowRight } from 'lucide-react'
+import { Lock, ArrowLeft } from 'lucide-react'
 import toast from 'react-hot-toast'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { z } from 'zod'
-import { authService, type LoginRequest } from '@/services/auth.service'
+import { authApiService } from '@/services/auth.api.service'
 
-const loginSchema = z.object({
+const resetPasswordSchema = z.object({
   email: z.string().email('Please enter a valid email address'),
-  password: z.string().min(1, 'Password is required'),
-  remember: z.boolean().optional(),
+  otp: z.string().min(1, 'OTP is required'),
+  password: z
+    .string()
+    .min(6, 'Password must be at least 6 characters')
+    .regex(/[A-Z]/, 'Password must contain at least one uppercase letter')
+    .regex(/[a-z]/, 'Password must contain at least one lowercase letter')
+    .regex(/[0-9]/, 'Password must contain at least one number'),
 })
 
-type LoginFormData = z.infer<typeof loginSchema>
+type ResetPasswordFormData = z.infer<typeof resetPasswordSchema>
 
-export default function LoginPage() {
+export default function ResetPasswordPage() {
   const router = useRouter()
-  const [showPassword, setShowPassword] = useState(false)
   const [isLoading, setIsLoading] = useState(false)
+  const [showPassword, setShowPassword] = useState(false)
 
   const {
     register,
     handleSubmit,
     formState: { errors },
-  } = useForm<LoginFormData>({
-    resolver: zodResolver(loginSchema),
-    defaultValues: {
-      email: '',
-      password: '',
-      remember: false,
-    },
+  } = useForm<ResetPasswordFormData>({
+    resolver: zodResolver(resetPasswordSchema),
   })
 
-  const onSubmit = async (data: LoginFormData) => {
+  useEffect(() => {
+    const params = new URLSearchParams(window.location.search)
+    const emailParam = params.get('email')
+    if (emailParam) {
+      // Pre-fill email if passed via query param
+    }
+  }, [])
+
+  const onSubmit = async (data: ResetPasswordFormData) => {
     setIsLoading(true)
 
     try {
-      const response = await authService.login({
+      await authApiService.resetPassword({
         email: data.email,
+        otp: data.otp,
         password: data.password,
       })
 
-      localStorage.setItem('token', response.token)
-      localStorage.setItem('user', JSON.stringify(response.user))
-
-      toast.success('Welcome back!')
-      router.push('/dashboard')
+      toast.success('Password reset successfully! Please login with your new password.')
+      router.push('/auth/login')
     } catch (error: any) {
-      if (error.code === 'ECONNREFUSED' || error.message?.includes('Network Error')) {
-        toast.error('Cannot connect to server. Please check if backend is running on http://localhost:3002')
-      } else {
-        toast.error(error.message || 'Invalid credentials')
-      }
+      toast.error(error.message || 'Failed to reset password')
     } finally {
       setIsLoading(false)
     }
@@ -64,38 +66,37 @@ export default function LoginPage() {
 
   return (
     <div className="min-h-screen flex bg-slate-50">
-      {/* Left: form */}
       <div className="flex-1 flex items-center justify-center px-4 py-12">
         <div className="w-full max-w-md">
-          {/* Logo + brand, centered */}
           <div className="flex flex-col items-center mb-8">
             <Image
               src="/images/logo.png"
               alt="TaskPilot"
-              width={64}
-              height={64}
+              width={56}
+              height={56}
               className="mb-3"
               priority
             />
-            <span className="text-3xl font-bold text-gray-900">TaskPilot</span>
+            <span className="text-2xl font-bold text-gray-900">TaskPilot</span>
           </div>
 
-          {/* Card */}
           <div className="bg-slate-100/80 border border-slate-200 rounded-2xl p-8">
             <div className="text-center mb-8">
-              <h1 className="text-3xl font-bold text-gray-900">Welcome Back</h1>
-              <p className="text-gray-500 mt-2">Sign in to your TaskPilot account.</p>
+              <h1 className="text-2xl font-bold text-gray-900">Reset your password</h1>
+              <p className="text-gray-500 mt-2 text-sm">
+                Enter the OTP sent to your email and choose a new password.
+              </p>
             </div>
 
             <form onSubmit={handleSubmit(onSubmit)} className="space-y-5">
               <div>
-                <label htmlFor="login-email" className="block text-xs font-semibold tracking-wide text-gray-700 mb-2">
+                <label htmlFor="email" className="block text-xs font-semibold tracking-wide text-gray-700 mb-2">
                   EMAIL ADDRESS
                 </label>
                 <div className="relative">
                   <Mail className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" size={20} />
                   <input
-                    id="login-email"
+                    id="email"
                     type="email"
                     className="w-full pl-10 pr-4 py-3 bg-white border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                     {...register('email')}
@@ -107,18 +108,29 @@ export default function LoginPage() {
               </div>
 
               <div>
-                <div className="flex items-center justify-between mb-2">
-                  <label htmlFor="login-password" className="block text-xs font-semibold tracking-wide text-gray-700">
-                    PASSWORD
-                  </label>
-                  <Link href="/auth/forgot-password" className="text-sm text-blue-600 hover:text-blue-700">
-                    Forgot password?
-                  </Link>
-                </div>
+                <label htmlFor="otp" className="block text-xs font-semibold tracking-wide text-gray-700 mb-2">
+                  OTP CODE
+                </label>
+                <input
+                  id="otp"
+                  type="text"
+                  placeholder="Enter 6-digit OTP"
+                  className="w-full px-4 py-3 bg-white border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                  {...register('otp')}
+                />
+                {errors.otp && (
+                  <p className="mt-1 text-sm text-red-600">{errors.otp.message}</p>
+                )}
+              </div>
+
+              <div>
+                <label htmlFor="password" className="block text-xs font-semibold tracking-wide text-gray-700 mb-2">
+                  NEW PASSWORD
+                </label>
                 <div className="relative">
                   <Lock className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" size={20} />
                   <input
-                    id="login-password"
+                    id="password"
                     type={showPassword ? 'text' : 'password'}
                     className="w-full pl-10 pr-10 py-3 bg-white border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                     {...register('password')}
@@ -128,40 +140,30 @@ export default function LoginPage() {
                     onClick={() => setShowPassword(!showPassword)}
                     className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600"
                   >
-                    {showPassword ? <EyeOff size={20} /> : <Eye size={20} />}
+                    {showPassword ? 'Hide' : 'Show'}
                   </button>
                 </div>
                 {errors.password && (
                   <p className="mt-1 text-sm text-red-600">{errors.password.message}</p>
                 )}
+                <p className="mt-1 text-xs text-gray-500">
+                  Must be at least 6 characters with uppercase, lowercase, and a number.
+                </p>
               </div>
-
-              <label className="flex items-center">
-                <input
-                  type="checkbox"
-                  className="rounded border-gray-300 text-blue-600 focus:ring-blue-500"
-                  {...register('remember')}
-                />
-                <span className="ml-2 text-sm text-gray-600">Remember me for 30 days</span>
-              </label>
 
               <button
                 type="submit"
                 disabled={isLoading}
-                className="w-full py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors font-medium disabled:opacity-50 flex items-center justify-center gap-2"
+                className="w-full py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors font-medium disabled:opacity-50"
               >
-                {isLoading ? 'Signing in...' : (
-                  <>
-                    Sign In <ArrowRight size={18} />
-                  </>
-                )}
+                {isLoading ? 'Resetting...' : 'Reset Password'}
               </button>
             </form>
 
             <p className="mt-6 text-center text-sm text-gray-600">
-              Don't have an account?{' '}
-              <Link href="/auth/register" className="text-blue-600 hover:text-blue-700 font-medium">
-                Create one now
+              <Link href="/auth/login" className="flex items-center justify-center gap-1 text-blue-600 hover:text-blue-700 font-medium">
+                <ArrowLeft size={16} />
+                Back to login
               </Link>
             </p>
           </div>
@@ -170,17 +172,6 @@ export default function LoginPage() {
             © 2026 TaskPilot Productivity Suite. All rights reserved.
           </p>
         </div>
-      </div>
-
-      {/* Right: image */}
-      <div className="hidden lg:block flex-1 relative">
-        <Image
-          src="/images/screen.png"
-          alt="TaskPilot workspace"
-          fill
-          className="object-cover"
-          priority
-        />
       </div>
     </div>
   )

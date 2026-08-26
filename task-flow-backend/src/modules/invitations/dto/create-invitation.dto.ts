@@ -4,7 +4,7 @@ import { IsEmail, IsString } from 'class-validator';
 export class CreateInvitationDto {
   @ApiProperty({ example: 'newuser@example.com' })
   @IsEmail()
-  emai!:string;
+  email!:string;
 
   @ApiProperty({ example: 'New User' })
   @IsString()

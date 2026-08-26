@@ -4,6 +4,8 @@ import { AuthModule } from './modules/auth/auth.module';
 import { TasksModule } from './modules/tasks/tasks.module';
 import { UsersModule } from './modules/users/users.module';
 import { DashboardModule } from './modules/dashboard/dashboard.module';
+import { InvitationsModule } from './modules/invitations/invitations.module';
+import { MailModule } from './modules/mail/mail.module';
 import { PrismaModule } from '../prisma/prisma.module';
 
 @Module({
@@ -17,6 +19,9 @@ import { PrismaModule } from '../prisma/prisma.module';
     TasksModule,
     UsersModule,
     DashboardModule,
+    InvitationsModule,
+    MailModule,
+
   ],
 })
 export class AppModule {}

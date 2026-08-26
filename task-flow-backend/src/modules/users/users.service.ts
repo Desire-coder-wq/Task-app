@@ -1,6 +1,6 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import * as bcrypt from 'bcrypt';
-import { PrismaService } from '../../../prisma/prisma.service';
+import { PrismaService } from '../../prisma/prisma.service';
 import { CreateUserDto, UpdateUserDto } from './dto';
 
 @Injectable()
@@ -9,12 +9,14 @@ export class UsersService {
 
   async findAll() {
     return this.prisma.user.findMany({
+      where: { isActive: true },
       select: {
         id: true,
         email: true,
         name: true,
         avatar: true,
         role: true,
+        isActive: true,
         createdAt: true,
         updatedAt: true,
       },
@@ -30,6 +32,7 @@ export class UsersService {
         name: true,
         avatar: true,
         role: true,
+        isActive: true,
         createdAt: true,
         updatedAt: true,
       },
@@ -43,7 +46,7 @@ export class UsersService {
   }
 
   async update(id: string, updateUserDto: UpdateUserDto) {
-    const user = await this.findOne(id);
+    await this.findOne(id);
 
     const data: any = { ...updateUserDto };
     if (updateUserDto.password) {
@@ -59,6 +62,7 @@ export class UsersService {
         name: true,
         avatar: true,
         role: true,
+        isActive: true,
         createdAt: true,
         updatedAt: true,
       },
@@ -67,6 +71,9 @@ export class UsersService {
 
   async remove(id: string) {
     await this.findOne(id);
-    await this.prisma.user.delete({ where: { id } });
+    await this.prisma.user.update({
+      where: { id },
+      data: { isActive: false },
+    });
   }
 }

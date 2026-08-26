@@ -1,16 +1,32 @@
-import { useQuery } from '@tanstack/react-query'
-import { usersService } from '@/services/users.service'
-import { User } from '@/types/task'
+import { useQuery } from '@tanstack/react-query';
+import axios from 'axios';
+import { User } from '@/types/task';
+
+const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3002/api';
+
+const api = axios.create({
+  baseURL: API_URL,
+  headers: {
+    'Content-Type': 'application/json',
+  },
+});
+
+api.interceptors.request.use((config) => {
+  const token = localStorage.getItem('token');
+  if (token && config.headers) {
+    config.headers.Authorization = `Bearer ${token}`;
+  }
+  return config;
+});
 
 export function useUsers() {
-  const { data, isLoading, error } = useQuery<User[]>({
+  const { data: users = [], isLoading, error } = useQuery<User[]>({
     queryKey: ['users'],
-    queryFn: () => usersService.getUsers(),
-  })
+    queryFn: async () => {
+      const response = await api.get('/users');
+      return response.data.data;
+    },
+  });
 
-  return {
-    users: data || [],
-    isLoading,
-    error,
-  }
+  return { users, isLoading, error };
 }
