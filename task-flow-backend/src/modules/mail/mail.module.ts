@@ -18,7 +18,7 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
           },
         },
         defaults: {
-          from: configService.get('SMTP_FROM'),
+          from: `"${configService.get('SMTP_FROM_NAME')}" <${configService.get('SMTP_FROM')}>`,
         },
       }),
       inject: [ConfigService],

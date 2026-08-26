@@ -48,9 +48,18 @@ export class InvitationsService {
       },
     });
 
-    await this.mailService.sendInvitationEmail(dto.email, dto.name, token, invitedById);
+    const acceptUrl = `${process.env.FRONTEND_URL || 'http://localhost:3000'}/accept-invitation?token=${token}`;
 
-    return invitation;
+    try {
+      await this.mailService.sendInvitationEmail(dto.email, dto.name, token, invitedById);
+    } catch (err) {
+      console.error('Failed to send invitation email:', err);
+    }
+
+    return {
+      ...invitation,
+      acceptUrl,
+    };
   }
 
   async acceptInvitation(dto: AcceptInvitationDto) {
@@ -97,7 +106,11 @@ export class InvitationsService {
       },
     });
 
-    await this.mailService.sendWelcomeEmail(user.email, user.name);
+    try {
+      await this.mailService.sendWelcomeEmail(user.email, user.name);
+    } catch (err) {
+      console.error('Failed to send welcome email:', err);
+    }
 
     return {
       message: 'Invitation accepted successfully',
@@ -140,12 +153,16 @@ export class InvitationsService {
       },
     });
 
-    await this.mailService.sendInvitationEmail(
-      invitation.email,
-      invitation.email.split('@')[0],
-      newToken,
-      invitation.invitedById,
-    );
+    try {
+      await this.mailService.sendInvitationEmail(
+        invitation.email,
+        invitation.email.split('@')[0],
+        newToken,
+        invitation.invitedById,
+      );
+    } catch (err) {
+      console.error('Failed to resend invitation email:', err);
+    }
 
     return { message: 'Invitation resent successfully' };
   }
