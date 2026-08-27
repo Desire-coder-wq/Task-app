@@ -4,18 +4,60 @@ import { Layout } from '@/components/layout/Layout';
 import { useUsers } from '@/hooks/useUsers';
 import { useInvitations } from '@/hooks/useInvitations';
 import { useTeam } from '@/contexts/TeamContext';
-import { Users, Mail, MoreVertical, UserPlus, Send, X } from 'lucide-react';
-import { useState } from 'react';
+import { Users, Mail, MoreVertical, UserPlus, Send, X, Plus } from 'lucide-react';
+import { useState, useEffect } from 'react';
 import toast from 'react-hot-toast';
 
 export default function TeamPage() {
   const { users, isLoading: usersLoading, error: usersError } = useUsers();
   const { invitations, sendInvitation, isSending } = useInvitations();
-  const { currentTeam } = useTeam();
+  const { currentTeam, teams, isLoading: teamLoading, createTeam, loadTeams } = useTeam();
   const [isInviteModalOpen, setIsInviteModalOpen] = useState(false);
+  const [isCreateTeamModalOpen, setIsCreateTeamModalOpen] = useState(false);
   const [inviteEmail, setInviteEmail] = useState('');
   const [inviteName, setInviteName] = useState('');
   const [inviteRole, setInviteRole] = useState('MEMBER');
+  const [newTeamName, setNewTeamName] = useState('');
+  const [newTeamDescription, setNewTeamDescription] = useState('');
+  const [isCreating, setIsCreating] = useState(false);
+
+  // Force reload teams when page loads
+  useEffect(() => {
+    console.log('TeamPage mounted, reloading teams...');
+    const token = localStorage.getItem('token');
+    if (token) {
+      loadTeams();
+    }
+  }, [loadTeams]);
+
+  // Debug: Log teams data
+  useEffect(() => {
+    console.log('Teams in TeamPage:', teams);
+    console.log('Current team in TeamPage:', currentTeam);
+    console.log('Number of teams:', teams.length);
+  }, [teams, currentTeam]);
+
+  const handleCreateTeam = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!newTeamName.trim()) {
+      toast.error('Please enter a team name');
+      return;
+    }
+    setIsCreating(true);
+    try {
+      await createTeam({ name: newTeamName, description: newTeamDescription });
+      setIsCreateTeamModalOpen(false);
+      setNewTeamName('');
+      setNewTeamDescription('');
+      toast.success('Team created successfully!');
+      // Reload teams after creation
+      await loadTeams();
+    } catch (error) {
+      console.error('Create team error:', error);
+    } finally {
+      setIsCreating(false);
+    }
+  };
 
   const handleSendInvite = (e: React.FormEvent) => {
     e.preventDefault();
@@ -39,7 +81,7 @@ export default function TeamPage() {
     setIsInviteModalOpen(false);
   };
 
-  if (usersLoading) {
+  if (usersLoading || teamLoading) {
     return (
       <Layout>
         <div className="flex justify-center py-12">
@@ -59,6 +101,93 @@ export default function TeamPage() {
     );
   }
 
+  // If no teams exist, show create team screen
+  if (!teams || teams.length === 0) {
+    return (
+      <Layout>
+        <div className="flex flex-col items-center justify-center py-12 bg-white rounded-lg shadow-sm">
+          <div className="inline-flex p-4 bg-blue-100 rounded-full mb-4">
+            <Users className="text-blue-600" size={48} />
+          </div>
+          <h3 className="text-xl font-semibold text-gray-900">Create Your Team</h3>
+          <p className="text-gray-500 mt-2 text-center max-w-md">
+            You haven't created a team yet. Create one to start collaborating with your team members.
+          </p>
+          <button
+            onClick={() => setIsCreateTeamModalOpen(true)}
+            className="mt-6 flex items-center gap-2 px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
+          >
+            <Plus size={20} />
+            Create Team
+          </button>
+        </div>
+
+        {/* Create Team Modal */}
+        {isCreateTeamModalOpen && (
+          <div className="fixed inset-0 bg-gray-800 bg-opacity-60 flex items-center justify-center z-50 p-4 backdrop-blur-sm">
+            <div className="bg-white rounded-xl shadow-xl max-w-md w-full">
+              <div className="flex items-center justify-between p-4 border-b border-gray-200">
+                <h2 className="text-xl font-bold text-gray-900">Create New Team</h2>
+                <button
+                  onClick={() => setIsCreateTeamModalOpen(false)}
+                  className="p-1 text-gray-400 hover:text-gray-600 transition-colors"
+                >
+                  <X size={24} />
+                </button>
+              </div>
+
+              <form onSubmit={handleCreateTeam} className="p-4 space-y-4">
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    Team Name *
+                  </label>
+                  <input
+                    type="text"
+                    placeholder="Enter team name"
+                    value={newTeamName}
+                    onChange={(e) => setNewTeamName(e.target.value)}
+                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                    required
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    Description (optional)
+                  </label>
+                  <textarea
+                    placeholder="What is this team for?"
+                    value={newTeamDescription}
+                    onChange={(e) => setNewTeamDescription(e.target.value)}
+                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent resize-none"
+                    rows={3}
+                  />
+                </div>
+
+                <div className="flex justify-end gap-3 pt-4 border-t border-gray-200">
+                  <button
+                    type="button"
+                    onClick={() => setIsCreateTeamModalOpen(false)}
+                    className="px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors"
+                  >
+                    Cancel
+                  </button>
+                  <button
+                    type="submit"
+                    disabled={isCreating}
+                    className="px-4 py-2 text-sm font-medium text-white bg-blue-600 border border-transparent rounded-lg hover:bg-blue-700 transition-colors disabled:opacity-50"
+                  >
+                    {isCreating ? 'Creating...' : 'Create Team'}
+                  </button>
+                </div>
+              </form>
+            </div>
+          </div>
+        )}
+      </Layout>
+    );
+  }
+
   return (
     <Layout>
       <div className="space-y-6">
@@ -70,14 +199,23 @@ export default function TeamPage() {
               <p className="text-sm text-blue-600 mt-1">Current Team: {currentTeam.name}</p>
             )}
           </div>
-          <button
-            onClick={() => setIsInviteModalOpen(true)}
-            className="flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
-            disabled={!currentTeam}
-          >
-            <UserPlus size={20} />
-            Invite Member
-          </button>
+          <div className="flex items-center gap-3 mt-4 md:mt-0">
+            <button
+              onClick={() => setIsCreateTeamModalOpen(true)}
+              className="flex items-center gap-2 px-4 py-2 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 transition-colors"
+            >
+              <Plus size={18} />
+              New Team
+            </button>
+            <button
+              onClick={() => setIsInviteModalOpen(true)}
+              className="flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
+              disabled={!currentTeam}
+            >
+              <UserPlus size={20} />
+              Invite Member
+            </button>
+          </div>
         </div>
 
         {/* Pending Invitations */}
@@ -90,21 +228,9 @@ export default function TeamPage() {
                 .map((inv) => (
                   <div key={inv.id} className="flex flex-col sm:flex-row sm:items-center sm:justify-between text-sm gap-2">
                     <span className="text-yellow-700">{inv.email}</span>
-                    <div className="flex items-center gap-3">
-                      <span className="text-xs text-yellow-600">
-                        Expires: {new Date(inv.expiresAt).toLocaleDateString()}
-                      </span>
-                      {(inv as any).acceptUrl && (
-                        <a
-                          href={(inv as any).acceptUrl}
-                          target="_blank"
-                          rel="noreferrer"
-                          className="text-xs text-blue-600 hover:text-blue-700 underline"
-                        >
-                          Copy invite link
-                        </a>
-                      )}
-                    </div>
+                    <span className="text-xs text-yellow-600">
+                      Expires: {new Date(inv.expiresAt).toLocaleDateString()}
+                    </span>
                   </div>
                 ))}
             </div>
@@ -159,6 +285,69 @@ export default function TeamPage() {
           </div>
         )}
       </div>
+
+      {/* Create Team Modal */}
+      {isCreateTeamModalOpen && (
+        <div className="fixed inset-0 bg-gray-800 bg-opacity-60 flex items-center justify-center z-50 p-4 backdrop-blur-sm">
+          <div className="bg-white rounded-xl shadow-xl max-w-md w-full">
+            <div className="flex items-center justify-between p-4 border-b border-gray-200">
+              <h2 className="text-xl font-bold text-gray-900">Create New Team</h2>
+              <button
+                onClick={() => setIsCreateTeamModalOpen(false)}
+                className="p-1 text-gray-400 hover:text-gray-600 transition-colors"
+              >
+                <X size={24} />
+              </button>
+            </div>
+
+            <form onSubmit={handleCreateTeam} className="p-4 space-y-4">
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  Team Name *
+                </label>
+                <input
+                  type="text"
+                  placeholder="Enter team name"
+                  value={newTeamName}
+                  onChange={(e) => setNewTeamName(e.target.value)}
+                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                  required
+                />
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  Description (optional)
+                </label>
+                <textarea
+                  placeholder="What is this team for?"
+                  value={newTeamDescription}
+                  onChange={(e) => setNewTeamDescription(e.target.value)}
+                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent resize-none"
+                  rows={3}
+                />
+              </div>
+
+              <div className="flex justify-end gap-3 pt-4 border-t border-gray-200">
+                <button
+                  type="button"
+                  onClick={() => setIsCreateTeamModalOpen(false)}
+                  className="px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors"
+                >
+                  Cancel
+                </button>
+                <button
+                  type="submit"
+                  disabled={isCreating}
+                  className="px-4 py-2 text-sm font-medium text-white bg-blue-600 border border-transparent rounded-lg hover:bg-blue-700 transition-colors disabled:opacity-50"
+                >
+                  {isCreating ? 'Creating...' : 'Create Team'}
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
 
       {/* Invite Modal */}
       {isInviteModalOpen && (

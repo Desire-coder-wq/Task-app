@@ -33,13 +33,47 @@ export interface TeamMember {
 
 export class TeamsService {
   async createTeam(data: { name: string; description?: string }): Promise<Team> {
-    const response = await api.post('/teams', data);
-    return response.data.data;
+    try {
+      const response = await api.post('/teams', data);
+      return response.data.data;
+    } catch (error) {
+      console.error('Error creating team:', error);
+      throw error;
+    }
   }
 
   async getUserTeams(): Promise<Team[]> {
-    const response = await api.get('/teams');
-    return response.data.data;
+    try {
+      const response = await api.get('/teams');
+      console.log('Teams API response:', response.data);
+      
+      // Handle different response structures
+      if (response.data && response.data.data) {
+        if (Array.isArray(response.data.data)) {
+          return response.data.data;
+        }
+        if (response.data.data.items && Array.isArray(response.data.data.items)) {
+          return response.data.data.items;
+        }
+        if (response.data.data.teams && Array.isArray(response.data.data.teams)) {
+          return response.data.data.teams;
+        }
+      }
+      
+      if (Array.isArray(response.data)) {
+        return response.data;
+      }
+      
+      if (response.data && response.data.items && Array.isArray(response.data.items)) {
+        return response.data.items;
+      }
+      
+      console.warn('Unexpected response structure:', response.data);
+      return [];
+    } catch (error) {
+      console.error('Error fetching teams:', error);
+      return [];
+    }
   }
 
   async getTeam(id: string): Promise<Team> {
