@@ -14,16 +14,7 @@ interface TeamContextType {
   createTeam: (data: { name: string; description?: string }) => Promise<Team>;
 }
 
-const TeamContext = createContext<TeamContextType>({
-  currentTeam: null,
-  teams: [],
-  setCurrentTeam: () => {},
-  loadTeams: async () => {},
-  isLoading: false,
-  createTeam: async () => {
-    throw new Error('createTeam not implemented');
-  },
-});
+const TeamContext = createContext<TeamContextType | undefined>(undefined);
 
 export function TeamProvider({ children }: { children: React.ReactNode }) {
   const [teams, setTeams] = useState<Team[]>([]);
@@ -36,7 +27,6 @@ export function TeamProvider({ children }: { children: React.ReactNode }) {
       setIsLoading(true);
       console.log('Loading teams...');
       
-      // Check if user is logged in
       const token = localStorage.getItem('token');
       if (!token) {
         console.log('No token found, skipping team load');
@@ -50,17 +40,13 @@ export function TeamProvider({ children }: { children: React.ReactNode }) {
       const userTeams = await teamsService.getUserTeams();
       console.log('Loaded teams:', userTeams);
       
-      // Ensure userTeams is always an array
       const teamsArray = Array.isArray(userTeams) ? userTeams : [];
       setTeams(teamsArray);
       
       if (teamsArray.length > 0) {
-        // If we have a current team, check if it's still valid
         if (currentTeam) {
           const stillValid = teamsArray.find(t => t.id === currentTeam.id);
-          if (stillValid) {
-            // Keep current team
-          } else {
+          if (!stillValid) {
             setCurrentTeam(teamsArray[0]);
           }
         } else {
@@ -81,29 +67,29 @@ export function TeamProvider({ children }: { children: React.ReactNode }) {
     }
   }, [currentTeam]);
 
-  const createTeam = async (data: { name: string; description?: string }) => {
+  const createTeam = useCallback(async (data: { name: string; description?: string }) => {
     try {
+      console.log('Creating team with data:', data);
       const newTeam = await teamsService.createTeam(data);
       console.log('Created team:', newTeam);
       
-      // Update teams list
       setTeams(prev => [...prev, newTeam]);
       setCurrentTeam(newTeam);
       
       toast.success('Team created successfully');
       return newTeam;
     } catch (error: any) {
+      console.error('Create team error:', error);
       toast.error(error.response?.data?.message || 'Failed to create team');
       throw error;
     }
-  };
+  }, []);
 
-  // Load teams on mount
   useEffect(() => {
     loadTeams();
   }, [loadTeams]);
 
-  // Listen for token changes (login/logout)
+  // Listen for token changes
   useEffect(() => {
     const handleTokenChange = () => {
       const token = localStorage.getItem('token');
@@ -111,7 +97,6 @@ export function TeamProvider({ children }: { children: React.ReactNode }) {
       loadTeams();
     };
 
-    // Check for token changes every 2 seconds
     let lastToken = localStorage.getItem('token');
     const interval = setInterval(() => {
       const currentToken = localStorage.getItem('token');
@@ -121,7 +106,6 @@ export function TeamProvider({ children }: { children: React.ReactNode }) {
       }
     }, 2000);
 
-    // Also listen for storage events (for login in other tabs)
     const handleStorageChange = (e: StorageEvent) => {
       if (e.key === 'token' || e.key === 'user') {
         console.log('Storage changed, reloading teams...');
@@ -134,20 +118,6 @@ export function TeamProvider({ children }: { children: React.ReactNode }) {
     return () => {
       clearInterval(interval);
       window.removeEventListener('storage', handleStorageChange);
-    };
-  }, [loadTeams]);
-
-  // Listen for custom login events
-  useEffect(() => {
-    const handleLoginEvent = () => {
-      console.log('Custom login event detected, reloading teams...');
-      loadTeams();
-    };
-
-    window.addEventListener('user-login', handleLoginEvent);
-    
-    return () => {
-      window.removeEventListener('user-login', handleLoginEvent);
     };
   }, [loadTeams]);
 
@@ -167,7 +137,7 @@ export function TeamProvider({ children }: { children: React.ReactNode }) {
 
 export const useTeam = () => {
   const context = useContext(TeamContext);
-  if (!context) {
+  if (context === undefined) {
     throw new Error('useTeam must be used within a TeamProvider');
   }
   return context;
