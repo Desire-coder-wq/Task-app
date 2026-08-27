@@ -1,4 +1,4 @@
-import { Injectable, BadRequestException, NotFoundException } from '@nestjs/common';
+import { Injectable, BadRequestException, NotFoundException, Logger } from '@nestjs/common';
 import { PrismaService } from '../../../prisma/prisma.service';
 import { CreateInvitationDto } from './dto/create-invitation.dto';
 import { AcceptInvitationDto } from './dto/accept-invitation.dto';
@@ -8,6 +8,8 @@ import { MailService } from '../mail/mail.service';
 
 @Injectable()
 export class InvitationsService {
+  private readonly logger = new Logger(InvitationsService.name);
+
   constructor(
     private prisma: PrismaService,
     private mailService: MailService,
@@ -72,9 +74,13 @@ export class InvitationsService {
         role: dto.role || 'MEMBER',
         acceptUrl: acceptUrl,
       });
-      console.log(`Invitation email sent to ${dto.email}`);
-    } catch (err) {
-      console.error('Failed to send invitation email:', err);
+      this.logger.log(`Invitation email sent to ${dto.email}`);
+    } catch (err: any) {
+      this.logger.error(
+        `Failed to send invitation email to ${dto.email}`,
+        err?.stack || err?.message || err,
+      );
+      // Still return the invitation so user can resend; frontend will show a warning
     }
 
     return {
@@ -225,9 +231,12 @@ export class InvitationsService {
         role: 'MEMBER',
         acceptUrl: acceptUrl,
       });
-      console.log(`Invitation resent to ${invitation.email}`);
-    } catch (err) {
-      console.error('Failed to resend invitation email:', err);
+      this.logger.log(`Invitation resent to ${invitation.email}`);
+    } catch (err: any) {
+      this.logger.error(
+        `Failed to resend invitation email to ${invitation.email}`,
+        err?.stack || err?.message || err,
+      );
     }
 
     return { message: 'Invitation resent successfully' };

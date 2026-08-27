@@ -19,11 +19,13 @@ api.interceptors.request.use((config) => {
   return config;
 });
 
-export function useUsers() {
+export function useUsers(teamId?: string) {
   const { data: users = [], isLoading, error } = useQuery<User[]>({
-    queryKey: ['users'],
+    queryKey: ['users', teamId],
     queryFn: async () => {
-      const response = await api.get('/users');
+      const params = new URLSearchParams();
+      if (teamId) params.append('teamId', teamId);
+      const response = await api.get(`/users?${params.toString()}`);
       return response.data.data;
     },
   });

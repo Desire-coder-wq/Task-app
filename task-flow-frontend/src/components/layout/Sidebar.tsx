@@ -62,9 +62,9 @@ export function Sidebar() {
             <Image
               src="/images/logo.png"
               alt="TaskPilot Logo"
-              width={44}
-              height={44}
-              className="rounded-lg"
+              width={48}
+              height={48}
+              className="rounded-lg w-12 h-12 object-contain shrink-0"
               priority
             />
             <span className="text-xl font-bold text-blue-600">TaskPilot</span>
@@ -76,7 +76,7 @@ export function Sidebar() {
             alt="TaskPilot Logo"
             width={40}
             height={40}
-            className="rounded-lg"
+            className="rounded-lg w-10 h-10 object-contain shrink-0"
             priority
           />
         )}

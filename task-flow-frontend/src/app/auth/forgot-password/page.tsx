@@ -21,7 +21,6 @@ export default function ForgotPasswordPage() {
   const router = useRouter()
   const [isLoading, setIsLoading] = useState(false)
   const [devOtp, setDevOtp] = useState<string | null>(null)
-  const [email, setEmail] = useState('')
 
   const {
     register,
@@ -37,7 +36,6 @@ export default function ForgotPasswordPage() {
 
     try {
       const response = await authApiService.forgotPassword({ email: data.email })
-      setEmail(data.email)
       toast.success(response.message)
       if (response.devOtp) {
         setDevOtp(response.devOtp)

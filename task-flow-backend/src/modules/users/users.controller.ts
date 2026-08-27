@@ -5,6 +5,7 @@ import {
   Delete,
   Body,
   Param,
+  Query,
   UseGuards,
   Request,
 } from '@nestjs/common';
@@ -19,13 +20,13 @@ import { UpdateUserDto } from './dto/update-user.dto';
 export class UsersController {
   constructor(private readonly usersService: UsersService) {}
 
-  @Get()
+   @Get()
   @UseGuards(AuthGuard('jwt'))
   @ApiOperation({ summary: 'Get all users' })
   @ApiResponse({ status: 200, description: 'Users retrieved successfully' })
   @ApiResponse({ status: 401, description: 'Unauthorized' })
-  async findAll() {
-    const users = await this.usersService.findAll();
+  async findAll(@Query('teamId') teamId?: string) {
+    const users = await this.usersService.findAll(teamId);
     return users;
   }
 

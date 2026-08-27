@@ -99,7 +99,7 @@ export default function DashboardPage() {
 
   return (
     <Layout>
-      <div className="bg-indigo-50/40 -m-6 p-6 min-h-full space-y-6">
+      <div className="space-y-6">
         {/* Welcome Section */}
         <div className="flex flex-col md:flex-row md:items-center md:justify-between">
           <div>

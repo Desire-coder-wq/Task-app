@@ -7,8 +7,8 @@ import { CreateUserDto, UpdateUserDto } from './dto';
 export class UsersService {
   constructor(private prisma: PrismaService) {}
 
-  async findAll() {
-    return this.prisma.user.findMany({
+  async findAll(teamId?: string) {
+    const users = await this.prisma.user.findMany({
       where: { isActive: true },
       select: {
         id: true,
@@ -20,10 +20,26 @@ export class UsersService {
         createdAt: true,
         updatedAt: true,
       },
-       orderBy: {
+      orderBy: {
         createdAt: 'desc',
       },
     });
+
+    if (!teamId) {
+      return users;
+    }
+
+    const teamMembers = await this.prisma.teamMember.findMany({
+      where: { teamId },
+      select: { userId: true, role: true },
+    });
+
+    const roleMap = new Map(teamMembers.map((tm) => [tm.userId, tm.role]));
+
+    return users.map((user) => ({
+      ...user,
+      teamRole: roleMap.get(user.id) || null,
+    }));
   }
 
   async findOne(id: string) {

@@ -1,8 +1,10 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, Logger } from '@nestjs/common';
 import { MailerService } from '@nestjs-modules/mailer';
 
 @Injectable()
 export class MailService {
+  private readonly logger = new Logger(MailService.name);
+
   constructor(private mailerService: MailerService) {}
 
   async sendInvitationEmail({
@@ -20,8 +22,9 @@ export class MailService {
     role: string;
     acceptUrl: string;
   }) {
+    this.logger.log(`Sending invitation email to ${to} (invited by ${inviterName})`);
     try {
-      await this.mailerService.sendMail({
+      const info = await this.mailerService.sendMail({
         to,
         subject: `${inviterName} invited you to join TaskPilot as ${role}`,
         html: `
@@ -96,9 +99,9 @@ export class MailService {
           </html>
         `,
       });
-      console.log(` Invitation email sent to ${to}`);
+      this.logger.log(`Invitation email sent successfully to ${to}`);
     } catch (error) {
-      console.error(' Failed to send invitation email:', error);
+      this.logger.error(`Failed to send invitation email to ${to}`, error);
       throw error;
     }
   }
@@ -112,6 +115,7 @@ export class MailService {
     name: string;
     teamName: string;
   }) {
+    this.logger.log(`Sending welcome email to ${to} for team ${teamName}`);
     try {
       await this.mailerService.sendMail({
         to,
@@ -169,14 +173,15 @@ export class MailService {
           </html>
         `,
       });
-      console.log(`✅ Welcome email sent to ${to}`);
+      this.logger.log(`Welcome email sent successfully to ${to}`);
     } catch (error) {
-      console.error('❌ Failed to send welcome email:', error);
+      this.logger.error(`Failed to send welcome email to ${to}`, error);
       throw error;
     }
   }
 
   async sendOtpEmail(to: string, name: string, otp: string) {
+    this.logger.log(`Sending OTP email to ${to}`);
     try {
       await this.mailerService.sendMail({
         to,
@@ -244,9 +249,41 @@ export class MailService {
           </html>
         `,
       });
-      console.log(`OTP email sent to ${to}`);
+      this.logger.log(`OTP email sent successfully to ${to}`);
     } catch (error) {
-      console.error(' Failed to send OTP email:', error);
+      this.logger.error(`Failed to send OTP email to ${to}`, error);
+      throw error;
+    }
+  }
+
+  async sendTestEmail(to: string) {
+    this.logger.log(`Sending test email to ${to}`);
+    try {
+      await this.mailerService.sendMail({
+        to,
+        subject: 'TaskPilot Email Test',
+        html: `
+          <!DOCTYPE html>
+          <html>
+          <head><meta charset="utf-8"><title>Email Test</title></head>
+          <body style="font-family: Arial, sans-serif; padding: 40px; background:#f4f6f9;">
+            <div style="max-width: 500px; margin: 0 auto; background:#fff; padding:30px; border-radius:8px; box-shadow:0 1px 5px rgba(0,0,0,0.1);">
+              <h2 style="color:#0f172a;">Email Configuration Test</h2>
+              <p style="color:#334155; line-height:1.6;">
+                If you received this email, your SMTP configuration is working correctly.
+              </p>
+              <p style="color:#0f172a; font-weight:600;">✅ SMTP connection successful</p>
+              <hr style="border:none; border-top:1px solid #e2e8f0; margin:20px 0;">
+              <p style="color:#94a3b8; font-size:12px;">TaskPilot - Sent at ${new Date().toISOString()}</p>
+            </div>
+          </body>
+          </html>
+        `,
+      });
+      this.logger.log(`Test email sent successfully to ${to}`);
+      return { message: 'Test email sent successfully', success: true };
+    } catch (error) {
+      this.logger.error(`Failed to send test email to ${to}`, error);
       throw error;
     }
   }

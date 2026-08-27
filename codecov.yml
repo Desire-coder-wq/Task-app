@@ -1,0 +1,18 @@
+coverage:
+  status:
+    project:
+      default:
+        target: 70%
+        threshold: 10%
+
+comment:
+  layout: "reach, diff, flags, files"
+  behavior: default
+
+flags:
+  backend:
+    paths:
+      - task-flow-backend/src
+  frontend:
+    paths:
+      - task-flow-frontend/src
