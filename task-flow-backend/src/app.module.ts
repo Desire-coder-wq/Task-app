@@ -23,7 +23,6 @@ import { PrismaModule } from '../prisma/prisma.module';
     InvitationsModule,
     MailModule,
     TeamsModule,
-
   ],
 })
 export class AppModule {}

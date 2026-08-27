@@ -18,7 +18,7 @@ const jwt_strategy_1 = require("../src/modules/auth/strategies/jwt.strategy");
 const mail_service_1 = require("../src/modules/mail/mail.service");
 const jwt_1 = require("@nestjs/jwt");
 const passport_1 = require("@nestjs/passport");
-const config_1 = require("@nestjs/config");
+const config_2 = require("@nestjs/config");
 const prisma_service_1 = require("../prisma/prisma.service");
 const mockPrismaService = {
     $connect: jest.fn(),
@@ -43,15 +43,15 @@ let TestAuthModule = class TestAuthModule {
 TestAuthModule = __decorate([
     (0, common_1.Module)({
         imports: [
-            config_1.ConfigModule.forRoot({ isGlobal: true, envFilePath: '.env' }),
+            config_2.ConfigModule.forRoot({ isGlobal: true, envFilePath: '.env' }),
             passport_1.PassportModule.register({ defaultStrategy: 'jwt' }),
             jwt_1.JwtModule.registerAsync({
-                imports: [config_1.ConfigModule],
+                imports: [config_2.ConfigModule],
                 useFactory: async (configService) => ({
                     secret: configService.get('JWT_SECRET') || 'test-secret',
                     signOptions: { expiresIn: '7d' },
                 }),
-                inject: [config_1.ConfigService],
+                inject: [config_2.ConfigService],
             }),
         ],
         controllers: [auth_controller_1.AuthController],
