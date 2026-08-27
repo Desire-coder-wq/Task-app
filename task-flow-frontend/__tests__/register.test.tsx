@@ -7,6 +7,9 @@ jest.mock('next/navigation', () => ({
   useRouter: () => ({
     push: jest.fn(),
   }),
+  useSearchParams: () => ({
+    get: jest.fn(),
+  }),
 }));
 
 jest.mock('react-hot-toast', () => ({
