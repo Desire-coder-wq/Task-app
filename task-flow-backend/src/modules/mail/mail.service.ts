@@ -96,9 +96,9 @@ export class MailService {
           </html>
         `,
       });
-      console.log(`Invitation email sent to ${to}`);
+      console.log(` Invitation email sent to ${to}`);
     } catch (error) {
-      console.error('Failed to send invitation email:', error);
+      console.error(' Failed to send invitation email:', error);
       throw error;
     }
   }
@@ -147,7 +147,7 @@ export class MailService {
                         </p>
                         
                         <div style="text-align: center; margin: 32px 0;">
-                          <a href="${process.env.FRONTEND_URL}/login" style="display: inline-block; background-color: #2563eb; color: #ffffff; padding: 14px 48px; border-radius: 8px; text-decoration: none; font-weight: 600; font-size: 16px;">
+                          <a href="${process.env.FRONTEND_URL || 'http://localhost:3000'}/login" style="display: inline-block; background-color: #2563eb; color: #ffffff; padding: 14px 48px; border-radius: 8px; text-decoration: none; font-weight: 600; font-size: 16px;">
                             Log In Now
                           </a>
                         </div>
@@ -169,9 +169,9 @@ export class MailService {
           </html>
         `,
       });
-      console.log(`Welcome email sent to ${to}`);
+      console.log(`✅ Welcome email sent to ${to}`);
     } catch (error) {
-      console.error('Failed to send welcome email:', error);
+      console.error('❌ Failed to send welcome email:', error);
       throw error;
     }
   }
@@ -246,7 +246,7 @@ export class MailService {
       });
       console.log(`OTP email sent to ${to}`);
     } catch (error) {
-      console.error('Failed to send OTP email:', error);
+      console.error(' Failed to send OTP email:', error);
       throw error;
     }
   }
