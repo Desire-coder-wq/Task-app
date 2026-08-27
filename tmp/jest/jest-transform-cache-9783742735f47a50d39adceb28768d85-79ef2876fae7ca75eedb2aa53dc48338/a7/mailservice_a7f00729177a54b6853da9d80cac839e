@@ -1,0 +1,250 @@
+cb9d51934d322a09ab1215598f817eef
+"use strict";
+var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
+    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
+    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
+    else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
+    return c > 3 && r && Object.defineProperty(target, key, r), r;
+};
+var __metadata = (this && this.__metadata) || function (k, v) {
+    if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.MailService = void 0;
+const common_1 = require("@nestjs/common");
+const mailer_1 = require("@nestjs-modules/mailer");
+let MailService = class MailService {
+    constructor(mailerService) {
+        this.mailerService = mailerService;
+    }
+    async sendInvitationEmail({ to, name, token, inviterName, role, acceptUrl, }) {
+        try {
+            await this.mailerService.sendMail({
+                to,
+                subject: `${inviterName} invited you to join TaskPilot as ${role}`,
+                html: `
+          <!DOCTYPE html>
+          <html>
+          <head>
+            <meta charset="utf-8">
+            <meta name="viewport" content="width=device-width, initial-scale=1.0">
+          </head>
+          <body style="font-family: 'Segoe UI', Arial, sans-serif; margin: 0; padding: 0; background-color: #f4f6f9;">
+            <table width="100%" cellpadding="0" cellspacing="0" style="background-color: #f4f6f9; padding: 40px 0;">
+              <tr>
+                <td align="center">
+                  <table width="600" cellpadding="0" cellspacing="0" style="background-color: #ffffff; border-radius: 12px; box-shadow: 0 2px 10px rgba(0,0,0,0.05); overflow: hidden; max-width: 100%;">
+                    <!-- Header -->
+                    <tr>
+                      <td style="background: linear-gradient(135deg, #1e293b, #0f172a); padding: 40px 30px; text-align: center;">
+                        <h1 style="color: #ffffff; margin: 0; font-size: 28px; font-weight: 700; letter-spacing: -0.5px;">TaskPilot</h1>
+                        <p style="color: #94a3b8; margin: 8px 0 0; font-size: 16px;">Team Collaboration Made Simple</p>
+                      </td>
+                    </tr>
+                    
+                    <!-- Content -->
+                    <tr>
+                      <td style="padding: 40px 30px;">
+                        <h2 style="color: #0f172a; font-size: 24px; font-weight: 600; margin: 0 0 16px;">You've been invited!</h2>
+                        
+                        <p style="color: #334155; font-size: 16px; line-height: 1.6; margin: 0 0 8px;">
+                          Hello <strong style="color: #0f172a;">${name}</strong>,
+                        </p>
+                        
+                        <p style="color: #334155; font-size: 16px; line-height: 1.6; margin: 0 0 20px;">
+                          <strong style="color: #0f172a;">${inviterName}</strong> has invited you to join <strong style="color: #0f172a;">TaskPilot</strong> as a <strong style="color: #2563eb;">${role}</strong>.
+                        </p>
+                        
+                        <div style="background-color: #f8fafc; border: 1px solid #e2e8f0; border-radius: 8px; padding: 20px; margin: 24px 0;">
+                          <p style="margin: 0 0 4px; color: #64748b; font-size: 14px;">Your role:</p>
+                          <p style="margin: 0; color: #0f172a; font-size: 18px; font-weight: 600;">${role}</p>
+                        </div>
+                        
+                        <div style="text-align: center; margin: 32px 0;">
+                          <a href="${acceptUrl}" style="display: inline-block; background-color: #2563eb; color: #ffffff; padding: 14px 48px; border-radius: 8px; text-decoration: none; font-weight: 600; font-size: 16px;">
+                            Accept Invitation
+                          </a>
+                        </div>
+                        
+                        <p style="color: #94a3b8; font-size: 14px; line-height: 1.5; text-align: center;">
+                          This invitation expires in <strong style="color: #0f172a;">48 hours</strong>.
+                        </p>
+                        
+                        <hr style="border: none; border-top: 1px solid #e2e8f0; margin: 24px 0;">
+                        
+                        <p style="color: #94a3b8; font-size: 12px; text-align: center; margin: 0;">
+                          If you didn't expect this invitation, you can safely ignore this email.
+                        </p>
+                      </td>
+                    </tr>
+                    
+                    <!-- Footer -->
+                    <tr>
+                      <td style="background-color: #f8fafc; padding: 20px 30px; text-align: center; border-top: 1px solid #e2e8f0;">
+                        <p style="color: #94a3b8; font-size: 12px; margin: 0;">
+                          © 2026 TaskPilot. All rights reserved.
+                        </p>
+                      </td>
+                    </tr>
+                  </table>
+                </td>
+              </tr>
+            </table>
+          </body>
+          </html>
+        `,
+            });
+            console.log(` Invitation email sent to ${to}`);
+        }
+        catch (error) {
+            console.error(' Failed to send invitation email:', error);
+            throw error;
+        }
+    }
+    async sendWelcomeEmail({ to, name, teamName, }) {
+        try {
+            await this.mailerService.sendMail({
+                to,
+                subject: `Welcome to ${teamName}!`,
+                html: `
+          <!DOCTYPE html>
+          <html>
+          <head>
+            <meta charset="utf-8">
+            <meta name="viewport" content="width=device-width, initial-scale=1.0">
+          </head>
+          <body style="font-family: 'Segoe UI', Arial, sans-serif; margin: 0; padding: 0; background-color: #f4f6f9;">
+            <table width="100%" cellpadding="0" cellspacing="0" style="background-color: #f4f6f9; padding: 40px 0;">
+              <tr>
+                <td align="center">
+                  <table width="600" cellpadding="0" cellspacing="0" style="background-color: #ffffff; border-radius: 12px; box-shadow: 0 2px 10px rgba(0,0,0,0.05); overflow: hidden; max-width: 100%;">
+                    <tr>
+                      <td style="background: linear-gradient(135deg, #1e293b, #0f172a); padding: 40px 30px; text-align: center;">
+                        <h1 style="color: #ffffff; margin: 0; font-size: 28px; font-weight: 700;">Welcome to TaskPilot!</h1>
+                      </td>
+                    </tr>
+                    
+                    <tr>
+                      <td style="padding: 40px 30px;">
+                        <h2 style="color: #0f172a; font-size: 22px; font-weight: 600; margin: 0 0 16px;">Hello ${name}! 👋</h2>
+                        
+                        <p style="color: #334155; font-size: 16px; line-height: 1.6; margin: 0 0 16px;">
+                          You have successfully joined <strong style="color: #0f172a;">${teamName}</strong> on TaskPilot.
+                        </p>
+                        
+                        <p style="color: #334155; font-size: 16px; line-height: 1.6; margin: 0 0 24px;">
+                          You can now log in and start collaborating with your team on tasks and projects.
+                        </p>
+                        
+                        <div style="text-align: center; margin: 32px 0;">
+                          <a href="${process.env.FRONTEND_URL || 'http://localhost:3000'}/login" style="display: inline-block; background-color: #2563eb; color: #ffffff; padding: 14px 48px; border-radius: 8px; text-decoration: none; font-weight: 600; font-size: 16px;">
+                            Log In Now
+                          </a>
+                        </div>
+                      </td>
+                    </tr>
+                    
+                    <tr>
+                      <td style="background-color: #f8fafc; padding: 20px 30px; text-align: center; border-top: 1px solid #e2e8f0;">
+                        <p style="color: #94a3b8; font-size: 12px; margin: 0;">
+                          © 2026 TaskPilot. All rights reserved.
+                        </p>
+                      </td>
+                    </tr>
+                  </table>
+                </td>
+              </tr>
+            </table>
+          </body>
+          </html>
+        `,
+            });
+            console.log(`✅ Welcome email sent to ${to}`);
+        }
+        catch (error) {
+            console.error('❌ Failed to send welcome email:', error);
+            throw error;
+        }
+    }
+    async sendOtpEmail(to, name, otp) {
+        try {
+            await this.mailerService.sendMail({
+                to,
+                subject: 'Password Reset OTP - TaskPilot',
+                html: `
+          <!DOCTYPE html>
+          <html>
+          <head>
+            <meta charset="utf-8">
+            <meta name="viewport" content="width=device-width, initial-scale=1.0">
+          </head>
+          <body style="font-family: 'Segoe UI', Arial, sans-serif; margin: 0; padding: 0; background-color: #f4f6f9;">
+            <table width="100%" cellpadding="0" cellspacing="0" style="background-color: #f4f6f9; padding: 40px 0;">
+              <tr>
+                <td align="center">
+                  <table width="600" cellpadding="0" cellspacing="0" style="background-color: #ffffff; border-radius: 12px; box-shadow: 0 2px 10px rgba(0,0,0,0.05); overflow: hidden; max-width: 100%;">
+                    <tr>
+                      <td style="background: linear-gradient(135deg, #1e293b, #0f172a); padding: 40px 30px; text-align: center;">
+                        <h1 style="color: #ffffff; margin: 0; font-size: 28px; font-weight: 700;">TaskPilot</h1>
+                      </td>
+                    </tr>
+                    
+                    <tr>
+                      <td style="padding: 40px 30px;">
+                        <h2 style="color: #0f172a; font-size: 24px; font-weight: 600; margin: 0 0 16px;">Reset Your Password</h2>
+                        
+                        <p style="color: #334155; font-size: 16px; line-height: 1.6; margin: 0 0 8px;">
+                          Hello <strong style="color: #0f172a;">${name}</strong>,
+                        </p>
+                        
+                        <p style="color: #334155; font-size: 16px; line-height: 1.6; margin: 0 0 20px;">
+                          You requested to reset your password. Use the OTP below to reset your password.
+                        </p>
+                        
+                        <div style="text-align: center; margin: 30px 0; padding: 20px; background-color: #f0f4ff; border-radius: 8px;">
+                          <p style="font-size: 32px; font-weight: bold; color: #1e293b; letter-spacing: 8px; margin: 0;">
+                            ${otp}
+                          </p>
+                        </div>
+                        
+                        <p style="color: #94a3b8; font-size: 14px; text-align: center;">
+                          This OTP expires in <strong style="color: #0f172a;">10 minutes</strong>.
+                        </p>
+                        
+                        <hr style="border: none; border-top: 1px solid #e2e8f0; margin: 24px 0;">
+                        
+                        <p style="color: #94a3b8; font-size: 12px; text-align: center; margin: 0;">
+                          If you didn't request this, you can safely ignore this email.
+                        </p>
+                      </td>
+                    </tr>
+                    
+                    <tr>
+                      <td style="background-color: #f8fafc; padding: 20px 30px; text-align: center; border-top: 1px solid #e2e8f0;">
+                        <p style="color: #94a3b8; font-size: 12px; margin: 0;">
+                          © 2026 TaskPilot. All rights reserved.
+                        </p>
+                      </td>
+                    </tr>
+                  </table>
+                </td>
+              </tr>
+            </table>
+          </body>
+          </html>
+        `,
+            });
+            console.log(`OTP email sent to ${to}`);
+        }
+        catch (error) {
+            console.error(' Failed to send OTP email:', error);
+            throw error;
+        }
+    }
+};
+exports.MailService = MailService;
+exports.MailService = MailService = __decorate([
+    (0, common_1.Injectable)(),
+    __metadata("design:paramtypes", [mailer_1.MailerService])
+], MailService);
+//# sourceMappingURL=data:application/json;charset=utf-8;base64,eyJmaWxlIjoiRDpcXFRhc2tQaWxvdFxcdGFzay1mbG93LWJhY2tlbmRcXHNyY1xcbW9kdWxlc1xcbWFpbFxcbWFpbC5zZXJ2aWNlLnRzIiwibWFwcGluZ3MiOiI7Ozs7Ozs7Ozs7OztBQUFBLDJDQUE0QztBQUM1QyxtREFBdUQ7QUFHaEQsSUFBTSxXQUFXLEdBQWpCLE1BQU0sV0FBVztJQUN0QixZQUFvQixhQUE0QjtRQUE1QixrQkFBYSxHQUFiLGFBQWEsQ0FBZTtJQUFHLENBQUM7SUFFcEQsS0FBSyxDQUFDLG1CQUFtQixDQUFDLEVBQ3hCLEVBQUUsRUFDRixJQUFJLEVBQ0osS0FBSyxFQUNMLFdBQVcsRUFDWCxJQUFJLEVBQ0osU0FBUyxHQVFWO1FBQ0MsSUFBSSxDQUFDO1lBQ0gsTUFBTSxJQUFJLENBQUMsYUFBYSxDQUFDLFFBQVEsQ0FBQztnQkFDaEMsRUFBRTtnQkFDRixPQUFPLEVBQUUsR0FBRyxXQUFXLHFDQUFxQyxJQUFJLEVBQUU7Z0JBQ2xFLElBQUksRUFBRTs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7a0VBMEJvRCxJQUFJOzs7OzREQUlWLFdBQVcsNkhBQTZILElBQUk7Ozs7O3FHQUtuRyxJQUFJOzs7O3FDQUlwRSxTQUFTOzs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7O1NBK0JyQzthQUNGLENBQUMsQ0FBQztZQUNILE9BQU8sQ0FBQyxHQUFHLENBQUMsNkJBQTZCLEVBQUUsRUFBRSxDQUFDLENBQUM7UUFDakQsQ0FBQztRQUFDLE9BQU8sS0FBSyxFQUFFLENBQUM7WUFDZixPQUFPLENBQUMsS0FBSyxDQUFDLG1DQUFtQyxFQUFFLEtBQUssQ0FBQyxDQUFDO1lBQzFELE1BQU0sS0FBSyxDQUFDO1FBQ2QsQ0FBQztJQUNILENBQUM7SUFFRCxLQUFLLENBQUMsZ0JBQWdCLENBQUMsRUFDckIsRUFBRSxFQUNGLElBQUksRUFDSixRQUFRLEdBS1Q7UUFDQyxJQUFJLENBQUM7WUFDSCxNQUFNLElBQUksQ0FBQyxhQUFhLENBQUMsUUFBUSxDQUFDO2dCQUNoQyxFQUFFO2dCQUNGLE9BQU8sRUFBRSxjQUFjLFFBQVEsR0FBRztnQkFDbEMsSUFBSSxFQUFFOzs7Ozs7Ozs7Ozs7Ozs7Ozs7OztpSEFvQm1HLElBQUk7Ozt5RkFHNUIsUUFBUTs7Ozs7Ozs7cUNBUTVELE9BQU8sQ0FBQyxHQUFHLENBQUMsWUFBWSxJQUFJLHVCQUF1Qjs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7U0FvQi9FO2FBQ0YsQ0FBQyxDQUFDO1lBQ0gsT0FBTyxDQUFDLEdBQUcsQ0FBQywyQkFBMkIsRUFBRSxFQUFFLENBQUMsQ0FBQztRQUMvQyxDQUFDO1FBQUMsT0FBTyxLQUFLLEVBQUUsQ0FBQztZQUNmLE9BQU8sQ0FBQyxLQUFLLENBQUMsaUNBQWlDLEVBQUUsS0FBSyxDQUFDLENBQUM7WUFDeEQsTUFBTSxLQUFLLENBQUM7UUFDZCxDQUFDO0lBQ0gsQ0FBQztJQUVELEtBQUssQ0FBQyxZQUFZLENBQUMsRUFBVSxFQUFFLElBQVksRUFBRSxHQUFXO1FBQ3RELElBQUksQ0FBQztZQUNILE1BQU0sSUFBSSxDQUFDLGFBQWEsQ0FBQyxRQUFRLENBQUM7Z0JBQ2hDLEVBQUU7Z0JBQ0YsT0FBTyxFQUFFLGdDQUFnQztnQkFDekMsSUFBSSxFQUFFOzs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7OztrRUF1Qm9ELElBQUk7Ozs7Ozs7Ozs4QkFTeEMsR0FBRzs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7U0E2QnhCO2FBQ0YsQ0FBQyxDQUFDO1lBQ0gsT0FBTyxDQUFDLEdBQUcsQ0FBQyxxQkFBcUIsRUFBRSxFQUFFLENBQUMsQ0FBQztRQUN6QyxDQUFDO1FBQUMsT0FBTyxLQUFLLEVBQUUsQ0FBQztZQUNmLE9BQU8sQ0FBQyxLQUFLLENBQUMsNEJBQTRCLEVBQUUsS0FBSyxDQUFDLENBQUM7WUFDbkQsTUFBTSxLQUFLLENBQUM7UUFDZCxDQUFDO0lBQ0gsQ0FBQztDQUNGLENBQUE7QUF4UFksa0NBQVc7c0JBQVgsV0FBVztJQUR2QixJQUFBLG1CQUFVLEdBQUU7cUNBRXdCLHNCQUFhO0dBRHJDLFdBQVcsQ0F3UHZCIiwibmFtZXMiOltdLCJzb3VyY2VzIjpbIkQ6XFxUYXNrUGlsb3RcXHRhc2stZmxvdy1iYWNrZW5kXFxzcmNcXG1vZHVsZXNcXG1haWxcXG1haWwuc2VydmljZS50cyJdLCJzb3VyY2VzQ29udGVudCI6WyJpbXBvcnQgeyBJbmplY3RhYmxlIH0gZnJvbSAnQG5lc3Rqcy9jb21tb24nO1xyXG5pbXBvcnQgeyBNYWlsZXJTZXJ2aWNlIH0gZnJvbSAnQG5lc3Rqcy1tb2R1bGVzL21haWxlcic7XHJcblxyXG5ASW5qZWN0YWJsZSgpXHJcbmV4cG9ydCBjbGFzcyBNYWlsU2VydmljZSB7XHJcbiAgY29uc3RydWN0b3IocHJpdmF0ZSBtYWlsZXJTZXJ2aWNlOiBNYWlsZXJTZXJ2aWNlKSB7fVxyXG5cclxuICBhc3luYyBzZW5kSW52aXRhdGlvbkVtYWlsKHtcclxuICAgIHRvLFxyXG4gICAgbmFtZSxcclxuICAgIHRva2VuLFxyXG4gICAgaW52aXRlck5hbWUsXHJcbiAgICByb2xlLFxyXG4gICAgYWNjZXB0VXJsLFxyXG4gIH06IHtcclxuICAgIHRvOiBzdHJpbmc7XHJcbiAgICBuYW1lOiBzdHJpbmc7XHJcbiAgICB0b2tlbjogc3RyaW5nO1xyXG4gICAgaW52aXRlck5hbWU6IHN0cmluZztcclxuICAgIHJvbGU6IHN0cmluZztcclxuICAgIGFjY2VwdFVybDogc3RyaW5nO1xyXG4gIH0pIHtcclxuICAgIHRyeSB7XHJcbiAgICAgIGF3YWl0IHRoaXMubWFpbGVyU2VydmljZS5zZW5kTWFpbCh7XHJcbiAgICAgICAgdG8sXHJcbiAgICAgICAgc3ViamVjdDogYCR7aW52aXRlck5hbWV9IGludml0ZWQgeW91IHRvIGpvaW4gVGFza1BpbG90IGFzICR7cm9sZX1gLFxyXG4gICAgICAgIGh0bWw6IGBcclxuICAgICAgICAgIDwhRE9DVFlQRSBodG1sPlxyXG4gICAgICAgICAgPGh0bWw+XHJcbiAgICAgICAgICA8aGVhZD5cclxuICAgICAgICAgICAgPG1ldGEgY2hhcnNldD1cInV0Zi04XCI+XHJcbiAgICAgICAgICAgIDxtZXRhIG5hbWU9XCJ2aWV3cG9ydFwiIGNvbnRlbnQ9XCJ3aWR0aD1kZXZpY2Utd2lkdGgsIGluaXRpYWwtc2NhbGU9MS4wXCI+XHJcbiAgICAgICAgICA8L2hlYWQ+XHJcbiAgICAgICAgICA8Ym9keSBzdHlsZT1cImZvbnQtZmFtaWx5OiAnU2Vnb2UgVUknLCBBcmlhbCwgc2Fucy1zZXJpZjsgbWFyZ2luOiAwOyBwYWRkaW5nOiAwOyBiYWNrZ3JvdW5kLWNvbG9yOiAjZjRmNmY5O1wiPlxyXG4gICAgICAgICAgICA8dGFibGUgd2lkdGg9XCIxMDAlXCIgY2VsbHBhZGRpbmc9XCIwXCIgY2VsbHNwYWNpbmc9XCIwXCIgc3R5bGU9XCJiYWNrZ3JvdW5kLWNvbG9yOiAjZjRmNmY5OyBwYWRkaW5nOiA0MHB4IDA7XCI+XHJcbiAgICAgICAgICAgICAgPHRyPlxyXG4gICAgICAgICAgICAgICAgPHRkIGFsaWduPVwiY2VudGVyXCI+XHJcbiAgICAgICAgICAgICAgICAgIDx0YWJsZSB3aWR0aD1cIjYwMFwiIGNlbGxwYWRkaW5nPVwiMFwiIGNlbGxzcGFjaW5nPVwiMFwiIHN0eWxlPVwiYmFja2dyb3VuZC1jb2xvcjogI2ZmZmZmZjsgYm9yZGVyLXJhZGl1czogMTJweDsgYm94LXNoYWRvdzogMCAycHggMTBweCByZ2JhKDAsMCwwLDAuMDUpOyBvdmVyZmxvdzogaGlkZGVuOyBtYXgtd2lkdGg6IDEwMCU7XCI+XHJcbiAgICAgICAgICAgICAgICAgICAgPCEtLSBIZWFkZXIgLS0+XHJcbiAgICAgICAgICAgICAgICAgICAgPHRyPlxyXG4gICAgICAgICAgICAgICAgICAgICAgPHRkIHN0eWxlPVwiYmFja2dyb3VuZDogbGluZWFyLWdyYWRpZW50KDEzNWRlZywgIzFlMjkzYiwgIzBmMTcyYSk7IHBhZGRpbmc6IDQwcHggMzBweDsgdGV4dC1hbGlnbjogY2VudGVyO1wiPlxyXG4gICAgICAgICAgICAgICAgICAgICAgICA8aDEgc3R5bGU9XCJjb2xvcjogI2ZmZmZmZjsgbWFyZ2luOiAwOyBmb250LXNpemU6IDI4cHg7IGZvbnQtd2VpZ2h0OiA3MDA7IGxldHRlci1zcGFjaW5nOiAtMC41cHg7XCI+VGFza1BpbG90PC9oMT5cclxuICAgICAgICAgICAgICAgICAgICAgICAgPHAgc3R5bGU9XCJjb2xvcjogIzk0YTNiODsgbWFyZ2luOiA4cHggMCAwOyBmb250LXNpemU6IDE2cHg7XCI+VGVhbSBDb2xsYWJvcmF0aW9uIE1hZGUgU2ltcGxlPC9wPlxyXG4gICAgICAgICAgICAgICAgICAgICAgPC90ZD5cclxuICAgICAgICAgICAgICAgICAgICA8L3RyPlxyXG4gICAgICAgICAgICAgICAgICAgIFxyXG4gICAgICAgICAgICAgICAgICAgIDwhLS0gQ29udGVudCAtLT5cclxuICAgICAgICAgICAgICAgICAgICA8dHI+XHJcbiAgICAgICAgICAgICAgICAgICAgICA8dGQgc3R5bGU9XCJwYWRkaW5nOiA0MHB4IDMwcHg7XCI+XHJcbiAgICAgICAgICAgICAgICAgICAgICAgIDxoMiBzdHlsZT1cImNvbG9yOiAjMGYxNzJhOyBmb250LXNpemU6IDI0cHg7IGZvbnQtd2VpZ2h0OiA2MDA7IG1hcmdpbjogMCAwIDE2cHg7XCI+WW91J3ZlIGJlZW4gaW52aXRlZCE8L2gyPlxyXG4gICAgICAgICAgICAgICAgICAgICAgICBcclxuICAgICAgICAgICAgICAgICAgICAgICAgPHAgc3R5bGU9XCJjb2xvcjogIzMzNDE1NTsgZm9udC1zaXplOiAxNnB4OyBsaW5lLWhlaWdodDogMS42OyBtYXJnaW46IDAgMCA4cHg7XCI+XHJcbiAgICAgICAgICAgICAgICAgICAgICAgICAgSGVsbG8gPHN0cm9uZyBzdHlsZT1cImNvbG9yOiAjMGYxNzJhO1wiPiR7bmFtZX08L3N0cm9uZz4sXHJcbiAgICAgICAgICAgICAgICAgICAgICAgIDwvcD5cclxuICAgICAgICAgICAgICAgICAgICAgICAgXHJcbiAgICAgICAgICAgICAgICAgICAgICAgIDxwIHN0eWxlPVwiY29sb3I6ICMzMzQxNTU7IGZvbnQtc2l6ZTogMTZweDsgbGluZS1oZWlnaHQ6IDEuNjsgbWFyZ2luOiAwIDAgMjBweDtcIj5cclxuICAgICAgICAgICAgICAgICAgICAgICAgICA8c3Ryb25nIHN0eWxlPVwiY29sb3I6ICMwZjE3MmE7XCI+JHtpbnZpdGVyTmFtZX08L3N0cm9uZz4gaGFzIGludml0ZWQgeW91IHRvIGpvaW4gPHN0cm9uZyBzdHlsZT1cImNvbG9yOiAjMGYxNzJhO1wiPlRhc2tQaWxvdDwvc3Ryb25nPiBhcyBhIDxzdHJvbmcgc3R5bGU9XCJjb2xvcjogIzI1NjNlYjtcIj4ke3JvbGV9PC9zdHJvbmc+LlxyXG4gICAgICAgICAgICAgICAgICAgICAgICA8L3A+XHJcbiAgICAgICAgICAgICAgICAgICAgICAgIFxyXG4gICAgICAgICAgICAgICAgICAgICAgICA8ZGl2IHN0eWxlPVwiYmFja2dyb3VuZC1jb2xvcjogI2Y4ZmFmYzsgYm9yZGVyOiAxcHggc29saWQgI2UyZThmMDsgYm9yZGVyLXJhZGl1czogOHB4OyBwYWRkaW5nOiAyMHB4OyBtYXJnaW46IDI0cHggMDtcIj5cclxuICAgICAgICAgICAgICAgICAgICAgICAgICA8cCBzdHlsZT1cIm1hcmdpbjogMCAwIDRweDsgY29sb3I6ICM2NDc0OGI7IGZvbnQtc2l6ZTogMTRweDtcIj5Zb3VyIHJvbGU6PC9wPlxyXG4gICAgICAgICAgICAgICAgICAgICAgICAgIDxwIHN0eWxlPVwibWFyZ2luOiAwOyBjb2xvcjogIzBmMTcyYTsgZm9udC1zaXplOiAxOHB4OyBmb250LXdlaWdodDogNjAwO1wiPiR7cm9sZX08L3A+XHJcbiAgICAgICAgICAgICAgICAgICAgICAgIDwvZGl2PlxyXG4gICAgICAgICAgICAgICAgICAgICAgICBcclxuICAgICAgICAgICAgICAgICAgICAgICAgPGRpdiBzdHlsZT1cInRleHQtYWxpZ246IGNlbnRlcjsgbWFyZ2luOiAzMnB4IDA7XCI+XHJcbiAgICAgICAgICAgICAgICAgICAgICAgICAgPGEgaHJlZj1cIiR7YWNjZXB0VXJsfVwiIHN0eWxlPVwiZGlzcGxheTogaW5saW5lLWJsb2NrOyBiYWNrZ3JvdW5kLWNvbG9yOiAjMjU2M2ViOyBjb2xvcjogI2ZmZmZmZjsgcGFkZGluZzogMTRweCA0OHB4OyBib3JkZXItcmFkaXVzOiA4cHg7IHRleHQtZGVjb3JhdGlvbjogbm9uZTsgZm9udC13ZWlnaHQ6IDYwMDsgZm9udC1zaXplOiAxNnB4O1wiPlxyXG4gICAgICAgICAgICAgICAgICAgICAgICAgICAgQWNjZXB0IEludml0YXRpb25cclxuICAgICAgICAgICAgICAgICAgICAgICAgICA8L2E+XHJcbiAgICAgICAgICAgICAgICAgICAgICAgIDwvZGl2PlxyXG4gICAgICAgICAgICAgICAgICAgICAgICBcclxuICAgICAgICAgICAgICAgICAgICAgICAgPHAgc3R5bGU9XCJjb2xvcjogIzk0YTNiODsgZm9udC1zaXplOiAxNHB4OyBsaW5lLWhlaWdodDogMS41OyB0ZXh0LWFsaWduOiBjZW50ZXI7XCI+XHJcbiAgICAgICAgICAgICAgICAgICAgICAgICAgVGhpcyBpbnZpdGF0aW9uIGV4cGlyZXMgaW4gPHN0cm9uZyBzdHlsZT1cImNvbG9yOiAjMGYxNzJhO1wiPjQ4IGhvdXJzPC9zdHJvbmc+LlxyXG4gICAgICAgICAgICAgICAgICAgICAgICA8L3A+XHJcbiAgICAgICAgICAgICAgICAgICAgICAgIFxyXG4gICAgICAgICAgICAgICAgICAgICAgICA8aHIgc3R5bGU9XCJib3JkZXI6IG5vbmU7IGJvcmRlci10b3A6IDFweCBzb2xpZCAjZTJlOGYwOyBtYXJnaW46IDI0cHggMDtcIj5cclxuICAgICAgICAgICAgICAgICAgICAgICAgXHJcbiAgICAgICAgICAgICAgICAgICAgICAgIDxwIHN0eWxlPVwiY29sb3I6ICM5NGEzYjg7IGZvbnQtc2l6ZTogMTJweDsgdGV4dC1hbGlnbjogY2VudGVyOyBtYXJnaW46IDA7XCI+XHJcbiAgICAgICAgICAgICAgICAgICAgICAgICAgSWYgeW91IGRpZG4ndCBleHBlY3QgdGhpcyBpbnZpdGF0aW9uLCB5b3UgY2FuIHNhZmVseSBpZ25vcmUgdGhpcyBlbWFpbC5cclxuICAgICAgICAgICAgICAgICAgICAgICAgPC9wPlxyXG4gICAgICAgICAgICAgICAgICAgICAgPC90ZD5cclxuICAgICAgICAgICAgICAgICAgICA8L3RyPlxyXG4gICAgICAgICAgICAgICAgICAgIFxyXG4gICAgICAgICAgICAgICAgICAgIDwhLS0gRm9vdGVyIC0tPlxyXG4gICAgICAgICAgICAgICAgICAgIDx0cj5cclxuICAgICAgICAgICAgICAgICAgICAgIDx0ZCBzdHlsZT1cImJhY2tncm91bmQtY29sb3I6ICNmOGZhZmM7IHBhZGRpbmc6IDIwcHggMzBweDsgdGV4dC1hbGlnbjogY2VudGVyOyBib3JkZXItdG9wOiAxcHggc29saWQgI2UyZThmMDtcIj5cclxuICAgICAgICAgICAgICAgICAgICAgICAgPHAgc3R5bGU9XCJjb2xvcjogIzk0YTNiODsgZm9udC1zaXplOiAxMnB4OyBtYXJnaW46IDA7XCI+XHJcbiAgICAgICAgICAgICAgICAgICAgICAgICAgwqkgMjAyNiBUYXNrUGlsb3QuIEFsbCByaWdodHMgcmVzZXJ2ZWQuXHJcbiAgICAgICAgICAgICAgICAgICAgICAgIDwvcD5cclxuICAgICAgICAgICAgICAgICAgICAgIDwvdGQ+XHJcbiAgICAgICAgICAgICAgICAgICAgPC90cj5cclxuICAgICAgICAgICAgICAgICAgPC90YWJsZT5cclxuICAgICAgICAgICAgICAgIDwvdGQ+XHJcbiAgICAgICAgICAgICAgPC90cj5cclxuICAgICAgICAgICAgPC90YWJsZT5cclxuICAgICAgICAgIDwvYm9keT5cclxuICAgICAgICAgIDwvaHRtbD5cclxuICAgICAgICBgLFxyXG4gICAgICB9KTtcclxuICAgICAgY29uc29sZS5sb2coYCBJbnZpdGF0aW9uIGVtYWlsIHNlbnQgdG8gJHt0b31gKTtcclxuICAgIH0gY2F0Y2ggKGVycm9yKSB7XHJcbiAgICAgIGNvbnNvbGUuZXJyb3IoJyBGYWlsZWQgdG8gc2VuZCBpbnZpdGF0aW9uIGVtYWlsOicsIGVycm9yKTtcclxuICAgICAgdGhyb3cgZXJyb3I7XHJcbiAgICB9XHJcbiAgfVxyXG5cclxuICBhc3luYyBzZW5kV2VsY29tZUVtYWlsKHtcclxuICAgIHRvLFxyXG4gICAgbmFtZSxcclxuICAgIHRlYW1OYW1lLFxyXG4gIH06IHtcclxuICAgIHRvOiBzdHJpbmc7XHJcbiAgICBuYW1lOiBzdHJpbmc7XHJcbiAgICB0ZWFtTmFtZTogc3RyaW5nO1xyXG4gIH0pIHtcclxuICAgIHRyeSB7XHJcbiAgICAgIGF3YWl0IHRoaXMubWFpbGVyU2VydmljZS5zZW5kTWFpbCh7XHJcbiAgICAgICAgdG8sXHJcbiAgICAgICAgc3ViamVjdDogYFdlbGNvbWUgdG8gJHt0ZWFtTmFtZX0hYCxcclxuICAgICAgICBodG1sOiBgXHJcbiAgICAgICAgICA8IURPQ1RZUEUgaHRtbD5cclxuICAgICAgICAgIDxodG1sPlxyXG4gICAgICAgICAgPGhlYWQ+XHJcbiAgICAgICAgICAgIDxtZXRhIGNoYXJzZXQ9XCJ1dGYtOFwiPlxyXG4gICAgICAgICAgICA8bWV0YSBuYW1lPVwidmlld3BvcnRcIiBjb250ZW50PVwid2lkdGg9ZGV2aWNlLXdpZHRoLCBpbml0aWFsLXNjYWxlPTEuMFwiPlxyXG4gICAgICAgICAgPC9oZWFkPlxyXG4gICAgICAgICAgPGJvZHkgc3R5bGU9XCJmb250LWZhbWlseTogJ1NlZ29lIFVJJywgQXJpYWwsIHNhbnMtc2VyaWY7IG1hcmdpbjogMDsgcGFkZGluZzogMDsgYmFja2dyb3VuZC1jb2xvcjogI2Y0ZjZmOTtcIj5cclxuICAgICAgICAgICAgPHRhYmxlIHdpZHRoPVwiMTAwJVwiIGNlbGxwYWRkaW5nPVwiMFwiIGNlbGxzcGFjaW5nPVwiMFwiIHN0eWxlPVwiYmFja2dyb3VuZC1jb2xvcjogI2Y0ZjZmOTsgcGFkZGluZzogNDBweCAwO1wiPlxyXG4gICAgICAgICAgICAgIDx0cj5cclxuICAgICAgICAgICAgICAgIDx0ZCBhbGlnbj1cImNlbnRlclwiPlxyXG4gICAgICAgICAgICAgICAgICA8dGFibGUgd2lkdGg9XCI2MDBcIiBjZWxscGFkZGluZz1cIjBcIiBjZWxsc3BhY2luZz1cIjBcIiBzdHlsZT1cImJhY2tncm91bmQtY29sb3I6ICNmZmZmZmY7IGJvcmRlci1yYWRpdXM6IDEycHg7IGJveC1zaGFkb3c6IDAgMnB4IDEwcHggcmdiYSgwLDAsMCwwLjA1KTsgb3ZlcmZsb3c6IGhpZGRlbjsgbWF4LXdpZHRoOiAxMDAlO1wiPlxyXG4gICAgICAgICAgICAgICAgICAgIDx0cj5cclxuICAgICAgICAgICAgICAgICAgICAgIDx0ZCBzdHlsZT1cImJhY2tncm91bmQ6IGxpbmVhci1ncmFkaWVudCgxMzVkZWcsICMxZTI5M2IsICMwZjE3MmEpOyBwYWRkaW5nOiA0MHB4IDMwcHg7IHRleHQtYWxpZ246IGNlbnRlcjtcIj5cclxuICAgICAgICAgICAgICAgICAgICAgICAgPGgxIHN0eWxlPVwiY29sb3I6ICNmZmZmZmY7IG1hcmdpbjogMDsgZm9udC1zaXplOiAyOHB4OyBmb250LXdlaWdodDogNzAwO1wiPldlbGNvbWUgdG8gVGFza1BpbG90ITwvaDE+XHJcbiAgICAgICAgICAgICAgICAgICAgICA8L3RkPlxyXG4gICAgICAgICAgICAgICAgICAgIDwvdHI+XHJcbiAgICAgICAgICAgICAgICAgICAgXHJcbiAgICAgICAgICAgICAgICAgICAgPHRyPlxyXG4gICAgICAgICAgICAgICAgICAgICAgPHRkIHN0eWxlPVwicGFkZGluZzogNDBweCAzMHB4O1wiPlxyXG4gICAgICAgICAgICAgICAgICAgICAgICA8aDIgc3R5bGU9XCJjb2xvcjogIzBmMTcyYTsgZm9udC1zaXplOiAyMnB4OyBmb250LXdlaWdodDogNjAwOyBtYXJnaW46IDAgMCAxNnB4O1wiPkhlbGxvICR7bmFtZX0hIPCfkYs8L2gyPlxyXG4gICAgICAgICAgICAgICAgICAgICAgICBcclxuICAgICAgICAgICAgICAgICAgICAgICAgPHAgc3R5bGU9XCJjb2xvcjogIzMzNDE1NTsgZm9udC1zaXplOiAxNnB4OyBsaW5lLWhlaWdodDogMS42OyBtYXJnaW46IDAgMCAxNnB4O1wiPlxyXG4gICAgICAgICAgICAgICAgICAgICAgICAgIFlvdSBoYXZlIHN1Y2Nlc3NmdWxseSBqb2luZWQgPHN0cm9uZyBzdHlsZT1cImNvbG9yOiAjMGYxNzJhO1wiPiR7dGVhbU5hbWV9PC9zdHJvbmc+IG9uIFRhc2tQaWxvdC5cclxuICAgICAgICAgICAgICAgICAgICAgICAgPC9wPlxyXG4gICAgICAgICAgICAgICAgICAgICAgICBcclxuICAgICAgICAgICAgICAgICAgICAgICAgPHAgc3R5bGU9XCJjb2xvcjogIzMzNDE1NTsgZm9udC1zaXplOiAxNnB4OyBsaW5lLWhlaWdodDogMS42OyBtYXJnaW46IDAgMCAyNHB4O1wiPlxyXG4gICAgICAgICAgICAgICAgICAgICAgICAgIFlvdSBjYW4gbm93IGxvZyBpbiBhbmQgc3RhcnQgY29sbGFib3JhdGluZyB3aXRoIHlvdXIgdGVhbSBvbiB0YXNrcyBhbmQgcHJvamVjdHMuXHJcbiAgICAgICAgICAgICAgICAgICAgICAgIDwvcD5cclxuICAgICAgICAgICAgICAgICAgICAgICAgXHJcbiAgICAgICAgICAgICAgICAgICAgICAgIDxkaXYgc3R5bGU9XCJ0ZXh0LWFsaWduOiBjZW50ZXI7IG1hcmdpbjogMzJweCAwO1wiPlxyXG4gICAgICAgICAgICAgICAgICAgICAgICAgIDxhIGhyZWY9XCIke3Byb2Nlc3MuZW52LkZST05URU5EX1VSTCB8fCAnaHR0cDovL2xvY2FsaG9zdDozMDAwJ30vbG9naW5cIiBzdHlsZT1cImRpc3BsYXk6IGlubGluZS1ibG9jazsgYmFja2dyb3VuZC1jb2xvcjogIzI1NjNlYjsgY29sb3I6ICNmZmZmZmY7IHBhZGRpbmc6IDE0cHggNDhweDsgYm9yZGVyLXJhZGl1czogOHB4OyB0ZXh0LWRlY29yYXRpb246IG5vbmU7IGZvbnQtd2VpZ2h0OiA2MDA7IGZvbnQtc2l6ZTogMTZweDtcIj5cclxuICAgICAgICAgICAgICAgICAgICAgICAgICAgIExvZyBJbiBOb3dcclxuICAgICAgICAgICAgICAgICAgICAgICAgICA8L2E+XHJcbiAgICAgICAgICAgICAgICAgICAgICAgIDwvZGl2PlxyXG4gICAgICAgICAgICAgICAgICAgICAgPC90ZD5cclxuICAgICAgICAgICAgICAgICAgICA8L3RyPlxyXG4gICAgICAgICAgICAgICAgICAgIFxyXG4gICAgICAgICAgICAgICAgICAgIDx0cj5cclxuICAgICAgICAgICAgICAgICAgICAgIDx0ZCBzdHlsZT1cImJhY2tncm91bmQtY29sb3I6ICNmOGZhZmM7IHBhZGRpbmc6IDIwcHggMzBweDsgdGV4dC1hbGlnbjogY2VudGVyOyBib3JkZXItdG9wOiAxcHggc29saWQgI2UyZThmMDtcIj5cclxuICAgICAgICAgICAgICAgICAgICAgICAgPHAgc3R5bGU9XCJjb2xvcjogIzk0YTNiODsgZm9udC1zaXplOiAxMnB4OyBtYXJnaW46IDA7XCI+XHJcbiAgICAgICAgICAgICAgICAgICAgICAgICAgwqkgMjAyNiBUYXNrUGlsb3QuIEFsbCByaWdodHMgcmVzZXJ2ZWQuXHJcbiAgICAgICAgICAgICAgICAgICAgICAgIDwvcD5cclxuICAgICAgICAgICAgICAgICAgICAgIDwvdGQ+XHJcbiAgICAgICAgICAgICAgICAgICAgPC90cj5cclxuICAgICAgICAgICAgICAgICAgPC90YWJsZT5cclxuICAgICAgICAgICAgICAgIDwvdGQ+XHJcbiAgICAgICAgICAgICAgPC90cj5cclxuICAgICAgICAgICAgPC90YWJsZT5cclxuICAgICAgICAgIDwvYm9keT5cclxuICAgICAgICAgIDwvaHRtbD5cclxuICAgICAgICBgLFxyXG4gICAgICB9KTtcclxuICAgICAgY29uc29sZS5sb2coYOKchSBXZWxjb21lIGVtYWlsIHNlbnQgdG8gJHt0b31gKTtcclxuICAgIH0gY2F0Y2ggKGVycm9yKSB7XHJcbiAgICAgIGNvbnNvbGUuZXJyb3IoJ+KdjCBGYWlsZWQgdG8gc2VuZCB3ZWxjb21lIGVtYWlsOicsIGVycm9yKTtcclxuICAgICAgdGhyb3cgZXJyb3I7XHJcbiAgICB9XHJcbiAgfVxyXG5cclxuICBhc3luYyBzZW5kT3RwRW1haWwodG86IHN0cmluZywgbmFtZTogc3RyaW5nLCBvdHA6IHN0cmluZykge1xyXG4gICAgdHJ5IHtcclxuICAgICAgYXdhaXQgdGhpcy5tYWlsZXJTZXJ2aWNlLnNlbmRNYWlsKHtcclxuICAgICAgICB0byxcclxuICAgICAgICBzdWJqZWN0OiAnUGFzc3dvcmQgUmVzZXQgT1RQIC0gVGFza1BpbG90JyxcclxuICAgICAgICBodG1sOiBgXHJcbiAgICAgICAgICA8IURPQ1RZUEUgaHRtbD5cclxuICAgICAgICAgIDxodG1sPlxyXG4gICAgICAgICAgPGhlYWQ+XHJcbiAgICAgICAgICAgIDxtZXRhIGNoYXJzZXQ9XCJ1dGYtOFwiPlxyXG4gICAgICAgICAgICA8bWV0YSBuYW1lPVwidmlld3BvcnRcIiBjb250ZW50PVwid2lkdGg9ZGV2aWNlLXdpZHRoLCBpbml0aWFsLXNjYWxlPTEuMFwiPlxyXG4gICAgICAgICAgPC9oZWFkPlxyXG4gICAgICAgICAgPGJvZHkgc3R5bGU9XCJmb250LWZhbWlseTogJ1NlZ29lIFVJJywgQXJpYWwsIHNhbnMtc2VyaWY7IG1hcmdpbjogMDsgcGFkZGluZzogMDsgYmFja2dyb3VuZC1jb2xvcjogI2Y0ZjZmOTtcIj5cclxuICAgICAgICAgICAgPHRhYmxlIHdpZHRoPVwiMTAwJVwiIGNlbGxwYWRkaW5nPVwiMFwiIGNlbGxzcGFjaW5nPVwiMFwiIHN0eWxlPVwiYmFja2dyb3VuZC1jb2xvcjogI2Y0ZjZmOTsgcGFkZGluZzogNDBweCAwO1wiPlxyXG4gICAgICAgICAgICAgIDx0cj5cclxuICAgICAgICAgICAgICAgIDx0ZCBhbGlnbj1cImNlbnRlclwiPlxyXG4gICAgICAgICAgICAgICAgICA8dGFibGUgd2lkdGg9XCI2MDBcIiBjZWxscGFkZGluZz1cIjBcIiBjZWxsc3BhY2luZz1cIjBcIiBzdHlsZT1cImJhY2tncm91bmQtY29sb3I6ICNmZmZmZmY7IGJvcmRlci1yYWRpdXM6IDEycHg7IGJveC1zaGFkb3c6IDAgMnB4IDEwcHggcmdiYSgwLDAsMCwwLjA1KTsgb3ZlcmZsb3c6IGhpZGRlbjsgbWF4LXdpZHRoOiAxMDAlO1wiPlxyXG4gICAgICAgICAgICAgICAgICAgIDx0cj5cclxuICAgICAgICAgICAgICAgICAgICAgIDx0ZCBzdHlsZT1cImJhY2tncm91bmQ6IGxpbmVhci1ncmFkaWVudCgxMzVkZWcsICMxZTI5M2IsICMwZjE3MmEpOyBwYWRkaW5nOiA0MHB4IDMwcHg7IHRleHQtYWxpZ246IGNlbnRlcjtcIj5cclxuICAgICAgICAgICAgICAgICAgICAgICAgPGgxIHN0eWxlPVwiY29sb3I6ICNmZmZmZmY7IG1hcmdpbjogMDsgZm9udC1zaXplOiAyOHB4OyBmb250LXdlaWdodDogNzAwO1wiPlRhc2tQaWxvdDwvaDE+XHJcbiAgICAgICAgICAgICAgICAgICAgICA8L3RkPlxyXG4gICAgICAgICAgICAgICAgICAgIDwvdHI+XHJcbiAgICAgICAgICAgICAgICAgICAgXHJcbiAgICAgICAgICAgICAgICAgICAgPHRyPlxyXG4gICAgICAgICAgICAgICAgICAgICAgPHRkIHN0eWxlPVwicGFkZGluZzogNDBweCAzMHB4O1wiPlxyXG4gICAgICAgICAgICAgICAgICAgICAgICA8aDIgc3R5bGU9XCJjb2xvcjogIzBmMTcyYTsgZm9udC1zaXplOiAyNHB4OyBmb250LXdlaWdodDogNjAwOyBtYXJnaW46IDAgMCAxNnB4O1wiPlJlc2V0IFlvdXIgUGFzc3dvcmQ8L2gyPlxyXG4gICAgICAgICAgICAgICAgICAgICAgICBcclxuICAgICAgICAgICAgICAgICAgICAgICAgPHAgc3R5bGU9XCJjb2xvcjogIzMzNDE1NTsgZm9udC1zaXplOiAxNnB4OyBsaW5lLWhlaWdodDogMS42OyBtYXJnaW46IDAgMCA4cHg7XCI+XHJcbiAgICAgICAgICAgICAgICAgICAgICAgICAgSGVsbG8gPHN0cm9uZyBzdHlsZT1cImNvbG9yOiAjMGYxNzJhO1wiPiR7bmFtZX08L3N0cm9uZz4sXHJcbiAgICAgICAgICAgICAgICAgICAgICAgIDwvcD5cclxuICAgICAgICAgICAgICAgICAgICAgICAgXHJcbiAgICAgICAgICAgICAgICAgICAgICAgIDxwIHN0eWxlPVwiY29sb3I6ICMzMzQxNTU7IGZvbnQtc2l6ZTogMTZweDsgbGluZS1oZWlnaHQ6IDEuNjsgbWFyZ2luOiAwIDAgMjBweDtcIj5cclxuICAgICAgICAgICAgICAgICAgICAgICAgICBZb3UgcmVxdWVzdGVkIHRvIHJlc2V0IHlvdXIgcGFzc3dvcmQuIFVzZSB0aGUgT1RQIGJlbG93IHRvIHJlc2V0IHlvdXIgcGFzc3dvcmQuXHJcbiAgICAgICAgICAgICAgICAgICAgICAgIDwvcD5cclxuICAgICAgICAgICAgICAgICAgICAgICAgXHJcbiAgICAgICAgICAgICAgICAgICAgICAgIDxkaXYgc3R5bGU9XCJ0ZXh0LWFsaWduOiBjZW50ZXI7IG1hcmdpbjogMzBweCAwOyBwYWRkaW5nOiAyMHB4OyBiYWNrZ3JvdW5kLWNvbG9yOiAjZjBmNGZmOyBib3JkZXItcmFkaXVzOiA4cHg7XCI+XHJcbiAgICAgICAgICAgICAgICAgICAgICAgICAgPHAgc3R5bGU9XCJmb250LXNpemU6IDMycHg7IGZvbnQtd2VpZ2h0OiBib2xkOyBjb2xvcjogIzFlMjkzYjsgbGV0dGVyLXNwYWNpbmc6IDhweDsgbWFyZ2luOiAwO1wiPlxyXG4gICAgICAgICAgICAgICAgICAgICAgICAgICAgJHtvdHB9XHJcbiAgICAgICAgICAgICAgICAgICAgICAgICAgPC9wPlxyXG4gICAgICAgICAgICAgICAgICAgICAgICA8L2Rpdj5cclxuICAgICAgICAgICAgICAgICAgICAgICAgXHJcbiAgICAgICAgICAgICAgICAgICAgICAgIDxwIHN0eWxlPVwiY29sb3I6ICM5NGEzYjg7IGZvbnQtc2l6ZTogMTRweDsgdGV4dC1hbGlnbjogY2VudGVyO1wiPlxyXG4gICAgICAgICAgICAgICAgICAgICAgICAgIFRoaXMgT1RQIGV4cGlyZXMgaW4gPHN0cm9uZyBzdHlsZT1cImNvbG9yOiAjMGYxNzJhO1wiPjEwIG1pbnV0ZXM8L3N0cm9uZz4uXHJcbiAgICAgICAgICAgICAgICAgICAgICAgIDwvcD5cclxuICAgICAgICAgICAgICAgICAgICAgICAgXHJcbiAgICAgICAgICAgICAgICAgICAgICAgIDxociBzdHlsZT1cImJvcmRlcjogbm9uZTsgYm9yZGVyLXRvcDogMXB4IHNvbGlkICNlMmU4ZjA7IG1hcmdpbjogMjRweCAwO1wiPlxyXG4gICAgICAgICAgICAgICAgICAgICAgICBcclxuICAgICAgICAgICAgICAgICAgICAgICAgPHAgc3R5bGU9XCJjb2xvcjogIzk0YTNiODsgZm9udC1zaXplOiAxMnB4OyB0ZXh0LWFsaWduOiBjZW50ZXI7IG1hcmdpbjogMDtcIj5cclxuICAgICAgICAgICAgICAgICAgICAgICAgICBJZiB5b3UgZGlkbid0IHJlcXVlc3QgdGhpcywgeW91IGNhbiBzYWZlbHkgaWdub3JlIHRoaXMgZW1haWwuXHJcbiAgICAgICAgICAgICAgICAgICAgICAgIDwvcD5cclxuICAgICAgICAgICAgICAgICAgICAgIDwvdGQ+XHJcbiAgICAgICAgICAgICAgICAgICAgPC90cj5cclxuICAgICAgICAgICAgICAgICAgICBcclxuICAgICAgICAgICAgICAgICAgICA8dHI+XHJcbiAgICAgICAgICAgICAgICAgICAgICA8dGQgc3R5bGU9XCJiYWNrZ3JvdW5kLWNvbG9yOiAjZjhmYWZjOyBwYWRkaW5nOiAyMHB4IDMwcHg7IHRleHQtYWxpZ246IGNlbnRlcjsgYm9yZGVyLXRvcDogMXB4IHNvbGlkICNlMmU4ZjA7XCI+XHJcbiAgICAgICAgICAgICAgICAgICAgICAgIDxwIHN0eWxlPVwiY29sb3I6ICM5NGEzYjg7IGZvbnQtc2l6ZTogMTJweDsgbWFyZ2luOiAwO1wiPlxyXG4gICAgICAgICAgICAgICAgICAgICAgICAgIMKpIDIwMjYgVGFza1BpbG90LiBBbGwgcmlnaHRzIHJlc2VydmVkLlxyXG4gICAgICAgICAgICAgICAgICAgICAgICA8L3A+XHJcbiAgICAgICAgICAgICAgICAgICAgICA8L3RkPlxyXG4gICAgICAgICAgICAgICAgICAgIDwvdHI+XHJcbiAgICAgICAgICAgICAgICAgIDwvdGFibGU+XHJcbiAgICAgICAgICAgICAgICA8L3RkPlxyXG4gICAgICAgICAgICAgIDwvdHI+XHJcbiAgICAgICAgICAgIDwvdGFibGU+XHJcbiAgICAgICAgICA8L2JvZHk+XHJcbiAgICAgICAgICA8L2h0bWw+XHJcbiAgICAgICAgYCxcclxuICAgICAgfSk7XHJcbiAgICAgIGNvbnNvbGUubG9nKGBPVFAgZW1haWwgc2VudCB0byAke3RvfWApO1xyXG4gICAgfSBjYXRjaCAoZXJyb3IpIHtcclxuICAgICAgY29uc29sZS5lcnJvcignIEZhaWxlZCB0byBzZW5kIE9UUCBlbWFpbDonLCBlcnJvcik7XHJcbiAgICAgIHRocm93IGVycm9yO1xyXG4gICAgfVxyXG4gIH1cclxufSJdLCJ2ZXJzaW9uIjozfQ==

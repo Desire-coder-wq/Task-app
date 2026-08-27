@@ -5,6 +5,7 @@ import { Module } from '@nestjs/common';
 import { AuthService } from '../src/modules/auth/auth.service';
 import { AuthController } from '../src/modules/auth/auth.controller';
 import { JwtStrategy } from '../src/modules/auth/strategies/jwt.strategy';
+import { MailService } from '../src/modules/mail/mail.service';
 import { JwtModule, JwtService } from '@nestjs/jwt';
 import { PassportModule } from '@nestjs/passport';
 import { ConfigModule, ConfigService } from '@nestjs/config';
@@ -22,6 +23,10 @@ const mockPrismaService = {
 
 const mockJwtService = {
   sign: jest.fn(() => 'test-token'),
+};
+
+const mockMailService = {
+  sendOtpEmail: jest.fn(),
 };
 
 jest.mock('bcrypt', () => ({
@@ -49,6 +54,10 @@ jest.mock('bcrypt', () => ({
     {
       provide: PrismaService,
       useValue: mockPrismaService,
+    },
+    {
+      provide: MailService,
+      useValue: mockMailService,
     },
     {
       provide: 'JWT_SECRET',
