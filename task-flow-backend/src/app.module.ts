@@ -7,7 +7,7 @@ import { DashboardModule } from './modules/dashboard/dashboard.module';
 import { InvitationsModule } from './modules/invitations/invitations.module';
 import { MailModule } from './modules/mail/mail.module';
 import { TeamsModule } from './modules/teams/teams.module';
-import { PrismaModule } from '../prisma/prisma.module';
+import { PrismaModule } from './prisma/prisma.module';
 
 @Module({
   imports: [
