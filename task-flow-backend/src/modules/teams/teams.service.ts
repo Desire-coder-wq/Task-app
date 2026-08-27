@@ -8,13 +8,11 @@ export class TeamsService {
   constructor(private prisma: PrismaService) {}
 
   async createTeam(userId: string, data: CreateTeamDto) {
-    // Generate slug from name
     const slug = data.name
       .toLowerCase()
       .replace(/[^a-z0-9]+/g, '-')
       .replace(/^-+|-+$/g, '');
 
-    // Check if slug is already taken
     const existingTeam = await this.prisma.team.findUnique({
       where: { slug },
     });
@@ -73,7 +71,6 @@ export class TeamsService {
   }
 
   async getTeam(teamId: string, userId: string) {
-    // Check if user has access
     const member = await this.prisma.teamMember.findUnique({
       where: {
         teamId_userId: {
@@ -87,7 +84,7 @@ export class TeamsService {
       throw new ForbiddenException('You do not have access to this team');
     }
 
-    return this.prisma.team.findUnique({
+    const team = await this.prisma.team.findUnique({
       where: { id: teamId },
       include: {
         members: {
@@ -131,10 +128,15 @@ export class TeamsService {
         },
       },
     });
+
+    if (!team) {
+      throw new NotFoundException('Team not found');
+    }
+
+    return team;
   }
 
   async getTeamMembers(teamId: string, userId: string) {
-    // Check access
     const member = await this.prisma.teamMember.findUnique({
       where: {
         teamId_userId: {
@@ -167,7 +169,6 @@ export class TeamsService {
   }
 
   async updateTeam(teamId: string, userId: string, data: UpdateTeamDto) {
-    // Check if user is owner or admin
     const member = await this.prisma.teamMember.findUnique({
       where: {
         teamId_userId: {
@@ -181,7 +182,6 @@ export class TeamsService {
       throw new ForbiddenException('You do not have permission to update this team');
     }
 
-    // If name is being updated, update slug too
     let slug: string | undefined;
     if (data.name) {
       slug = data.name
@@ -189,7 +189,6 @@ export class TeamsService {
         .replace(/[^a-z0-9]+/g, '-')
         .replace(/^-+|-+$/g, '');
 
-      // Check if new slug is taken by another team
       const existingTeam = await this.prisma.team.findFirst({
         where: {
           slug,
@@ -212,7 +211,6 @@ export class TeamsService {
   }
 
   async deleteTeam(teamId: string, userId: string) {
-    // Only owner can delete
     const member = await this.prisma.teamMember.findUnique({
       where: {
         teamId_userId: {
@@ -226,15 +224,10 @@ export class TeamsService {
       throw new ForbiddenException('Only the team owner can delete this team');
     }
 
-    // Delete all related data (cascading)
     await this.prisma.$transaction([
-      // Delete all team members
       this.prisma.teamMember.deleteMany({ where: { teamId } }),
-      // Delete all tasks
       this.prisma.task.deleteMany({ where: { teamId } }),
-      // Delete all invitations
       this.prisma.invitation.deleteMany({ where: { teamId } }),
-      // Delete the team
       this.prisma.team.delete({ where: { id: teamId } }),
     ]);
 

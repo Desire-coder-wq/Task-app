@@ -13,66 +13,46 @@ model User {
   password      String
   name          String
   avatar        String?
+  role          String   @default("USER")
   isActive      Boolean  @default(true)
   createdAt     DateTime @default(now())
   updatedAt     DateTime @updatedAt
 
-  // Relations
-  ownedTeams    Team[]     @relation("TeamOwner")
-  memberships   TeamMember[] @relation("UserMemberships")
-  sentInvites   Invitation[] @relation("SentInvites")
-  receivedInvites Invitation[] @relation("ReceivedInvites")
-  assignedTasks Task[]     @relation("AssignedTasks")
-  createdTasks  Task[]     @relation("CreatedTasks")
+  assignedTasks   Task[]       @relation("AssignedTasks")
+  createdTasks    Task[]       @relation("CreatedTasks")
+  sentInvites     Invitation[] @relation("SentInvites")
+  receivedInvite  Invitation?  @relation("ReceivedInvite")
+
+  createdTeams    Team[]       @relation("TeamsCreated")
+  teamMemberships TeamMember[]
 }
 
 model Team {
   id          String   @id @default(cuid())
   name        String
-  description String?
   slug        String   @unique
+  description String?
   createdById String
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
 
-  // Relations
-  createdBy   User       @relation("TeamOwner", fields: [createdById], references: [id])
-  members     TeamMember[] @relation("TeamMembers")
+  createdBy   User         @relation("TeamsCreated", fields: [createdById], references: [id])
+  members     TeamMember[]
   tasks       Task[]
   invitations Invitation[]
 }
 
 model TeamMember {
-  id        String   @id @default(cuid())
-  teamId    String
-  userId    String
-  role      String   @default("MEMBER")
-  joinedAt  DateTime @default(now())
+  id       String   @id @default(cuid())
+  teamId   String
+  userId   String
+  role     String   @default("MEMBER") // OWNER, ADMIN, MEMBER
+  joinedAt DateTime @default(now())
 
-  // Relations
-  team      Team     @relation("TeamMembers", fields: [teamId], references: [id])
-  user      User     @relation("UserMemberships", fields: [userId], references: [id])
+  team Team @relation(fields: [teamId], references: [id], onDelete: Cascade)
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@unique([teamId, userId])
-}
-
-model Invitation {
-  id             String   @id @default(cuid())
-  email          String
-  token          String   @unique
-  role           String   @default("MEMBER")
-  teamId         String
-  status         String   @default("PENDING")
-  expiresAt      DateTime
-  createdAt      DateTime @default(now())
-  updatedAt      DateTime @updatedAt
-
-  // Relations
-  invitedById    String
-  invitedBy      User     @relation("SentInvites", fields: [invitedById], references: [id])
-  team           Team     @relation(fields: [teamId], references: [id])
-  invitedUserId  String?  @unique  // ← Added @unique here
-  invitedUser    User?    @relation("ReceivedInvites", fields: [invitedUserId], references: [id])
 }
 
 model Task {
@@ -84,12 +64,30 @@ model Task {
   dueDate         DateTime
   assignedUserId  String
   createdById     String
-  teamId          String
+  teamId          String?
   createdAt       DateTime @default(now())
   updatedAt       DateTime @updatedAt
 
-  // Relations
-  assignedUser   User     @relation("AssignedTasks", fields: [assignedUserId], references: [id])
-  createdBy      User     @relation("CreatedTasks", fields: [createdById], references: [id])
-  team           Team     @relation(fields: [teamId], references: [id])
+  assignedUser   User  @relation("AssignedTasks", fields: [assignedUserId], references: [id])
+  createdBy      User  @relation("CreatedTasks", fields: [createdById], references: [id])
+  team           Team? @relation(fields: [teamId], references: [id])
+}
+
+model Invitation {
+  id             String   @id @default(cuid())
+  email          String
+  token          String   @unique
+  status         String   @default("PENDING") // PENDING, ACCEPTED, EXPIRED
+  expiresAt      DateTime
+  teamId         String?
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+
+  invitedById    String
+  invitedBy      User     @relation("SentInvites", fields: [invitedById], references: [id])
+
+  invitedUserId  String?  @unique
+  invitedUser    User?    @relation("ReceivedInvite", fields: [invitedUserId], references: [id])
+
+  team           Team?    @relation(fields: [teamId], references: [id])
 }
