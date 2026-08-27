@@ -9,7 +9,13 @@ async function bootstrap() {
   const app = await NestFactory.create(AppModule);
 
   app.enableCors({
-    origin: ['http://localhost:3000', 'http://localhost:3001', 'http://localhost:3002', 'http://localhost:3003'],
+    origin: ['http://localhost:3000',
+        'http://localhost:3001',
+        'http://localhost:3002', 
+        'http://localhost:3003', 
+        'https://taskflow-frontend.onrender.com',
+         process.env.FRONTEND_URL,
+        ],
     credentials: true,
   });
 
@@ -56,5 +62,6 @@ async function bootstrap() {
   await app.listen(port);
   console.log(` Application is running on: http://localhost:${port}`);
   console.log(` Swagger documentation: http://localhost:${port}/api/docs`);
+    console.log(` CORS enabled for: ${process.env.FRONTEND_URL || 'localhost'}`);
 }
 bootstrap();
