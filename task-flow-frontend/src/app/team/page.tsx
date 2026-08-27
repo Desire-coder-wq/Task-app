@@ -3,6 +3,7 @@
 import { Layout } from '@/components/layout/Layout';
 import { useUsers } from '@/hooks/useUsers';
 import { useInvitations } from '@/hooks/useInvitations';
+import { useTeam } from '@/contexts/TeamContext';
 import { Users, Mail, MoreVertical, UserPlus, Send, X } from 'lucide-react';
 import { useState } from 'react';
 import toast from 'react-hot-toast';
@@ -10,9 +11,11 @@ import toast from 'react-hot-toast';
 export default function TeamPage() {
   const { users, isLoading: usersLoading, error: usersError } = useUsers();
   const { invitations, sendInvitation, isSending } = useInvitations();
+  const { currentTeam } = useTeam();
   const [isInviteModalOpen, setIsInviteModalOpen] = useState(false);
   const [inviteEmail, setInviteEmail] = useState('');
   const [inviteName, setInviteName] = useState('');
+  const [inviteRole, setInviteRole] = useState('MEMBER');
 
   const handleSendInvite = (e: React.FormEvent) => {
     e.preventDefault();
@@ -20,9 +23,19 @@ export default function TeamPage() {
       toast.error('Please fill in all fields');
       return;
     }
-    sendInvitation({ email: inviteEmail, name: inviteName });
+    if (!currentTeam) {
+      toast.error('Please select a team first');
+      return;
+    }
+    sendInvitation({ 
+      email: inviteEmail, 
+      name: inviteName,
+      role: inviteRole,
+      teamId: currentTeam.id
+    });
     setInviteEmail('');
     setInviteName('');
+    setInviteRole('MEMBER');
     setIsInviteModalOpen(false);
   };
 
@@ -53,10 +66,14 @@ export default function TeamPage() {
           <div>
             <h1 className="text-2xl font-bold text-gray-900">Team Directory</h1>
             <p className="text-gray-500">Manage team members and view workload</p>
+            {currentTeam && (
+              <p className="text-sm text-blue-600 mt-1">Current Team: {currentTeam.name}</p>
+            )}
           </div>
           <button
             onClick={() => setIsInviteModalOpen(true)}
             className="flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
+            disabled={!currentTeam}
           >
             <UserPlus size={20} />
             Invite Member
@@ -145,7 +162,7 @@ export default function TeamPage() {
 
       {/* Invite Modal */}
       {isInviteModalOpen && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
+        <div className="fixed inset-0 bg-gray-800 bg-opacity-60 flex items-center justify-center z-50 p-4 backdrop-blur-sm">
           <div className="bg-white rounded-xl shadow-xl max-w-md w-full">
             <div className="flex items-center justify-between p-4 border-b border-gray-200">
               <h2 className="text-xl font-bold text-gray-900">Invite Team Member</h2>
@@ -184,6 +201,22 @@ export default function TeamPage() {
                   className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                   required
                 />
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  Role
+                </label>
+                <input
+                  type="text"
+                  placeholder="e.g., ADMIN, MANAGER, DEVELOPER"
+                  value={inviteRole}
+                  onChange={(e) => setInviteRole(e.target.value.toUpperCase())}
+                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                />
+                <p className="text-xs text-gray-500 mt-1">
+                  Custom role. Examples: ADMIN, MANAGER, DEVELOPER, DESIGNER
+                </p>
               </div>
 
               <div className="flex justify-end gap-3 pt-4 border-t border-gray-200">

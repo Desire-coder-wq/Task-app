@@ -29,9 +29,17 @@ export interface Invitation {
 }
 
 export class InvitationService {
-  async sendInvitation(email: string, name: string): Promise<Invitation> {
-    const response = await api.post('/invitations', { email, name });
-    return response.data.data;
+
+  async sendInvitation(email: string, name: string, role?: string, teamId?: string): Promise<Invitation> {
+    const response = await api.post('/invitations', { 
+      email, 
+      name, 
+      role: role || 'MEMBER',
+      teamId 
+    });
+    const data = response.data.data;
+    data.acceptUrl = `${window.location.origin}/accept-invitation?token=${data.token}`;
+    return data;
   }
 
   async getInvitations(): Promise<Invitation[]> {
@@ -47,8 +55,8 @@ export class InvitationService {
     await api.delete(`/invitations/${id}`);
   }
 
-  async acceptInvitation(token: string, password: string): Promise<any> {
-    const response = await api.post('/invitations/accept', { token, password });
+  async acceptInvitation(token: string, password: string, name?: string): Promise<any> {
+    const response = await api.post('/invitations/accept', { token, password, name });
     return response.data.data;
   }
 }

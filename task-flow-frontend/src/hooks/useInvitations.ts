@@ -11,8 +11,8 @@ export function useInvitations() {
   });
 
   const sendInvitationMutation = useMutation({
-    mutationFn: ({ email, name }: { email: string; name: string }) =>
-      invitationService.sendInvitation(email, name),
+    mutationFn: ({ email, name, role, teamId }: { email: string; name: string; role?: string; teamId?: string }) =>
+      invitationService.sendInvitation(email, name, role, teamId),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['invitations'] });
       toast.success('Invitation sent successfully');
