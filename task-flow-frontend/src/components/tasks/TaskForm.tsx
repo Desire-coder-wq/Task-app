@@ -4,9 +4,8 @@ import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
 import { Task, CreateTaskDto } from '@/types/task';
-import { useQuery } from '@tanstack/react-query';
+import { useEffect, useState } from 'react';
 import { usersService } from '@/services/users.service';
-import { useEffect } from 'react';
 
 const taskSchema = z.object({
   title: z.string().min(1, 'Title is required').max(100, 'Title is too long'),
@@ -27,24 +26,34 @@ interface TaskFormProps {
 }
 
 export function TaskForm({ initialData, onSubmit, onCancel, isSubmitting }: TaskFormProps) {
-  const { data: users = [], isLoading: usersLoading } = useQuery({
-    queryKey: ['users'],
-    queryFn: () => usersService.getUsers(),
-  });
+  const [users, setUsers] = useState<any[]>([]);
+  const [isUsersLoading, setIsUsersLoading] = useState(false);
+
+  useEffect(() => {
+    const fetchUsers = async () => {
+      setIsUsersLoading(true);
+      try {
+        const userList = await usersService.getUsers();
+        console.log('Fetched users:', userList);
+        setUsers(Array.isArray(userList) ? userList : []);
+      } catch (error) {
+        console.error('Error fetching users:', error);
+        setUsers([]);
+      } finally {
+        setIsUsersLoading(false);
+      }
+    };
+
+    fetchUsers();
+  }, []);
 
   const { register, handleSubmit, formState: { errors }, reset } = useForm<TaskFormData>({
     resolver: zodResolver(taskSchema),
-    defaultValues: initialData ? {
-      title: initialData.title,
-      description: initialData.description,
-      status: initialData.status,
-      priority: initialData.priority,
-      dueDate: new Date(initialData.dueDate).toISOString().split('T')[0],
-      assignedUserId: initialData.assignedUserId,
-    } : {
+    defaultValues: {
       status: 'TODO',
       priority: 'MEDIUM',
       dueDate: new Date().toISOString().split('T')[0],
+      assignedUserId: '',
     },
   });
 
@@ -56,7 +65,7 @@ export function TaskForm({ initialData, onSubmit, onCancel, isSubmitting }: Task
         status: initialData.status,
         priority: initialData.priority,
         dueDate: new Date(initialData.dueDate).toISOString().split('T')[0],
-        assignedUserId: initialData.assignedUserId,
+        assignedUserId: initialData.assignedUserId || '',
       });
     }
   }, [initialData, reset]);
@@ -148,14 +157,22 @@ export function TaskForm({ initialData, onSubmit, onCancel, isSubmitting }: Task
           id="assignedUserId"
           {...register('assignedUserId')}
           className="mt-1 block w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-          disabled={usersLoading}
+          disabled={isUsersLoading}
         >
-          <option value="">Select a user</option>
-          {users.map(user => (
-            <option key={user.id} value={user.id}>
-              {user.name}
-            </option>
-          ))}
+          <option value="">
+            {isUsersLoading ? 'Loading users...' : 'Select a user'}
+          </option>
+          {users && users.length > 0 ? (
+            users.map((user) => (
+              <option key={user.id} value={user.id}>
+                {user.name} ({user.email})
+              </option>
+            ))
+          ) : (
+            !isUsersLoading && (
+              <option value="" disabled>No users available</option>
+            )
+          )}
         </select>
         {errors.assignedUserId && (
           <p className="mt-1 text-sm text-red-600">{errors.assignedUserId.message}</p>
