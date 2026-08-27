@@ -14,6 +14,7 @@ export class InvitationsService {
   ) {}
 
   async createInvitation(invitedById: string, dto: CreateInvitationDto) {
+    // Check if user already exists
     const existingUser = await this.prisma.user.findUnique({
       where: { email: dto.email },
     });
@@ -22,6 +23,7 @@ export class InvitationsService {
       throw new BadRequestException('User with this email already exists');
     }
 
+    // Check for pending invitation
     const existingInvitation = await this.prisma.invitation.findFirst({
       where: {
         email: dto.email,
@@ -34,10 +36,18 @@ export class InvitationsService {
       throw new BadRequestException('An invitation has already been sent to this email');
     }
 
+    // Generate token
     const token = crypto.randomBytes(32).toString('hex');
     const expiresAt = new Date();
     expiresAt.setHours(expiresAt.getHours() + 48);
 
+    // Get inviter details for email
+    const inviter = await this.prisma.user.findUnique({
+      where: { id: invitedById },
+      select: { name: true, email: true },
+    });
+
+    // Create invitation - include teamId if provided
     const invitation = await this.prisma.invitation.create({
       data: {
         email: dto.email,
@@ -45,13 +55,24 @@ export class InvitationsService {
         expiresAt,
         invitedById,
         status: 'PENDING',
+        teamId: dto.teamId || null,
       },
     });
 
-    const acceptUrl = `${process.env.FRONTEND_URL || 'http://localhost:3000'}/accept-invitation?token=${token}`;
+    const frontendUrl = process.env.FRONTEND_URL || 'http://localhost:3000';
+    const acceptUrl = `${frontendUrl}/accept-invitation?token=${token}`;
 
+    // Send email
     try {
-      await this.mailService.sendInvitationEmail(dto.email, dto.name, token, invitedById);
+      await this.mailService.sendInvitationEmail({
+        to: dto.email,
+        name: dto.name,
+        token: token,
+        inviterName: inviter?.name || 'Someone',
+        role: dto.role || 'MEMBER',
+        acceptUrl: acceptUrl,
+      });
+      console.log(`Invitation email sent to ${dto.email}`);
     } catch (err) {
       console.error('Failed to send invitation email:', err);
     }
@@ -65,7 +86,7 @@ export class InvitationsService {
   async acceptInvitation(dto: AcceptInvitationDto) {
     const invitation = await this.prisma.invitation.findUnique({
       where: { token: dto.token },
-      include: { invitedBy: true },
+      include: { invitedBy: true, team: true },
     });
 
     if (!invitation) {
@@ -80,24 +101,33 @@ export class InvitationsService {
       throw new BadRequestException('Invitation has expired');
     }
 
+    // Check if user already exists
     const existingUser = await this.prisma.user.findUnique({
       where: { email: invitation.email },
     });
 
+    let user;
+    let isNewUser = false;
+
     if (existingUser) {
-      throw new BadRequestException('User with this email already exists');
+      user = existingUser;
+    } else {
+      // Create new user
+      const hashedPassword = await bcrypt.hash(dto.password, 10);
+      // Use dto.name if provided, otherwise use email username
+      const userName = dto.name || invitation.email.split('@')[0];
+      user = await this.prisma.user.create({
+        data: {
+          email: invitation.email,
+          password: hashedPassword,
+          name: userName,
+          role: 'USER',
+        },
+      });
+      isNewUser = true;
     }
 
-    const hashedPassword = await bcrypt.hash(dto.password, 10);
-    const user = await this.prisma.user.create({
-      data: {
-        email: invitation.email,
-        password: hashedPassword,
-        name: invitation.email.split('@')[0],
-        role: 'USER',
-      },
-    });
-
+    // Update invitation status
     await this.prisma.invitation.update({
       where: { id: invitation.id },
       data: {
@@ -106,10 +136,40 @@ export class InvitationsService {
       },
     });
 
-    try {
-      await this.mailService.sendWelcomeEmail(user.email, user.name);
-    } catch (err) {
-      console.error('Failed to send welcome email:', err);
+    // If teamId exists, add user to team
+    if (invitation.teamId) {
+      // Check if user is already a member of the team
+      const existingMember = await this.prisma.teamMember.findUnique({
+        where: {
+          teamId_userId: {
+            teamId: invitation.teamId,
+            userId: user.id,
+          },
+        },
+      });
+
+      if (!existingMember) {
+        await this.prisma.teamMember.create({
+          data: {
+            teamId: invitation.teamId,
+            userId: user.id,
+            role: 'MEMBER',
+          },
+        });
+      }
+    }
+
+    // Send welcome email to new users
+    if (isNewUser) {
+      try {
+        await this.mailService.sendWelcomeEmail({
+          to: user.email,
+          name: user.name,
+          teamName: invitation.team?.name || 'TaskPilot',
+        });
+      } catch (err) {
+        console.error('Failed to send welcome email:', err);
+      }
     }
 
     return {
@@ -153,13 +213,19 @@ export class InvitationsService {
       },
     });
 
+    const frontendUrl = process.env.FRONTEND_URL || 'http://localhost:3000';
+    const acceptUrl = `${frontendUrl}/accept-invitation?token=${newToken}`;
+
     try {
-      await this.mailService.sendInvitationEmail(
-        invitation.email,
-        invitation.email.split('@')[0],
-        newToken,
-        invitation.invitedById,
-      );
+      await this.mailService.sendInvitationEmail({
+        to: invitation.email,
+        name: invitation.email.split('@')[0],
+        token: newToken,
+        inviterName: invitation.invitedBy?.name || 'Someone',
+        role: 'MEMBER',
+        acceptUrl: acceptUrl,
+      });
+      console.log(`Invitation resent to ${invitation.email}`);
     } catch (err) {
       console.error('Failed to resend invitation email:', err);
     }

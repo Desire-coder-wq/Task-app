@@ -1,13 +1,18 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { IsString, MinLength } from 'class-validator';
+import { IsString, MinLength, IsOptional } from 'class-validator';
 
 export class AcceptInvitationDto {
   @ApiProperty({ example: 'invitation-token-here' })
   @IsString()
-  token!:string;
+  token!: string;
 
   @ApiProperty({ example: 'password123' })
   @IsString()
   @MinLength(6)
-  password!:string;
+  password!: string;
+
+  @ApiProperty({ example: 'New User', required: false })
+  @IsOptional()
+  @IsString()
+  name?: string;
 }
