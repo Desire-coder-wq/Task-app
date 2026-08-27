@@ -1,8 +1,10 @@
 'use client';
 
-import { Search, Settings } from 'lucide-react';
+import { Search, Settings, LogOut } from 'lucide-react';
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
+import toast from 'react-hot-toast';
+import { authService } from '@/services/auth.service';
 
 export function Header() {
   const router = useRouter();
@@ -15,6 +17,17 @@ export function Header() {
       setUserName(parsed.name || 'User');
     }
   }, []);
+
+  const handleLogout = async () => {
+    try {
+      await authService.logout();
+      toast.success('Logged out successfully');
+    } catch {
+      localStorage.removeItem('token');
+      localStorage.removeItem('user');
+    }
+    router.push('/auth/login');
+  };
 
   const initials = userName
     .split(' ')
@@ -43,6 +56,13 @@ export function Header() {
             className="p-2 text-gray-600 hover:bg-gray-100 rounded-lg transition-colors"
           >
             <Settings size={20} />
+          </button>
+          <button
+            onClick={handleLogout}
+            className="p-2 text-gray-600 hover:bg-gray-100 rounded-lg transition-colors"
+            aria-label="Logout"
+          >
+            <LogOut size={20} />
           </button>
 
           <div className="w-8 h-8 bg-blue-600 rounded-full flex items-center justify-center text-white font-semibold text-sm ml-1">

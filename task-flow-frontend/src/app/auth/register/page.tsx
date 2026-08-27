@@ -1,15 +1,16 @@
 'use client'
 
-import { useState, useMemo } from 'react'
+import { useState, useMemo, useEffect } from 'react'
 import Image from 'next/image'
 import Link from 'next/link'
-import { useRouter } from 'next/navigation'
+import { useRouter, useSearchParams } from 'next/navigation'
 import { Eye, EyeOff, Mail, Lock, User, Users, BarChart3, CheckCircle2, XCircle } from 'lucide-react'
 import toast from 'react-hot-toast'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { z } from 'zod'
 import { authService } from '@/services/auth.service'
+import { invitationService } from '@/services/InvitationService'
 
 const registerSchema = z.object({
   name: z.string().min(1, 'Name is required').min(2, 'Name must be at least 2 characters'),
@@ -27,15 +28,26 @@ type RegisterFormData = z.infer<typeof registerSchema>
 
 export default function RegisterPage() {
   const router = useRouter()
+  const searchParams = useSearchParams()
+  const token = searchParams.get('token')
+  
   const [showPassword, setShowPassword] = useState(false)
   const [isLoading, setIsLoading] = useState(false)
   const [agreed, setAgreed] = useState(false)
   const [passwordValue, setPasswordValue] = useState('')
+  const [isInvitation, setIsInvitation] = useState(false)
+
+  useEffect(() => {
+    if (token) {
+      setIsInvitation(true)
+    }
+  }, [token])
 
   const {
     register,
     handleSubmit,
     formState: { errors },
+    setValue,
   } = useForm<RegisterFormData>({
     resolver: zodResolver(registerSchema),
     defaultValues: {
@@ -63,16 +75,45 @@ export default function RegisterPage() {
     setIsLoading(true)
 
     try {
-      const response = await authService.register({
-        name: data.name,
-        email: data.email,
-        password: data.password,
-      })
-
-      toast.success('Account created successfully!')
-      router.push('/auth/login')
+      if (isInvitation && token) {
+        // Accept invitation and create account
+        const response = await invitationService.acceptInvitation(token, data.password, data.name)
+        
+        toast.success('Account created successfully!')
+        
+        // Auto-login after success
+        setTimeout(async () => {
+          try {
+            const loginResponse = await authService.login({
+              email: response.user?.email || data.email,
+              password: data.password,
+            })
+            
+            if (loginResponse.token) {
+              localStorage.setItem('token', loginResponse.token)
+              localStorage.setItem('user', JSON.stringify(loginResponse.user))
+              window.dispatchEvent(new Event('user-login'))
+              router.push('/dashboard')
+            } else {
+              router.push('/auth/login')
+            }
+          } catch (error) {
+            router.push('/auth/login')
+          }
+        }, 1500)
+      } else {
+        // Normal registration
+        await authService.register({
+          name: data.name,
+          email: data.email,
+          password: data.password,
+        })
+        
+        toast.success('Account created successfully!')
+        router.push('/auth/login')
+      }
     } catch (error: any) {
-      toast.error(error.message || 'Registration failed')
+      toast.error(error.response?.data?.message || error.message || 'Registration failed')
     } finally {
       setIsLoading(false)
     }
@@ -96,9 +137,13 @@ export default function RegisterPage() {
 
           <div className="bg-slate-100/80 border border-slate-200 rounded-2xl p-8">
             <div className="text-center mb-8">
-              <h1 className="text-2xl font-bold text-gray-900">Create your account</h1>
+              <h1 className="text-2xl font-bold text-gray-900">
+                {isInvitation ? 'Accept Invitation' : 'Create your account'}
+              </h1>
               <p className="text-gray-500 mt-2 text-sm">
-                Join thousands of teams managing projects efficiently.
+                {isInvitation 
+                  ? 'Create your account to join the team.' 
+                  : 'Join thousands of teams managing projects efficiently.'}
               </p>
             </div>
 
@@ -211,7 +256,7 @@ export default function RegisterPage() {
                 disabled={isLoading}
                 className="w-full py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors font-medium disabled:opacity-50 flex items-center justify-center gap-2"
               >
-                {isLoading ? 'Creating account...' : <>Create Account →</>}
+                {isLoading ? 'Creating account...' : isInvitation ? 'Accept Invitation →' : 'Create Account →'}
               </button>
             </form>
 

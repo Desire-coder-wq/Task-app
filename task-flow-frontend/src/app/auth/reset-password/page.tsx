@@ -32,6 +32,7 @@ export default function ResetPasswordPage() {
   const {
     register,
     handleSubmit,
+    setValue,
     formState: { errors },
   } = useForm<ResetPasswordFormData>({
     resolver: zodResolver(resetPasswordSchema),
@@ -41,9 +42,9 @@ export default function ResetPasswordPage() {
     const params = new URLSearchParams(window.location.search)
     const emailParam = params.get('email')
     if (emailParam) {
-      // Pre-fill email if passed via query param
+      setValue('email', emailParam)
     }
-  }, [])
+  }, [setValue])
 
   const onSubmit = async (data: ResetPasswordFormData) => {
     setIsLoading(true)

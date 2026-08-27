@@ -7,24 +7,32 @@ import { X } from 'lucide-react';
 
 export function TaskModal() {
   const { isModalOpen, modalMode, selectedTask, closeModal } = useTaskStore();
-  const { createTask, updateTask, deleteTask, isCreating, isUpdating, isDeleting } = useTasks();
+  const { createTask, createTaskAsync, updateTask, updateTaskAsync, deleteTask, deleteTaskAsync, isCreating, isUpdating, isDeleting } = useTasks();
 
   if (!isModalOpen) return null;
 
-  const handleSubmit = (data: any) => {
-    if (modalMode === 'create') {
-      createTask(data);
-      closeModal();
-    } else if (modalMode === 'edit' && selectedTask) {
-      updateTask({ id: selectedTask.id, data });
-      closeModal();
+  const handleSubmit = async (data: any) => {
+    try {
+      if (modalMode === 'create') {
+        await createTaskAsync(data);
+        closeModal();
+      } else if (modalMode === 'edit' && selectedTask) {
+        await updateTaskAsync({ id: selectedTask.id, data });
+        closeModal();
+      }
+    } catch {
+      // Error toast already handled by useTasks onError
     }
   };
 
-  const handleDelete = () => {
+  const handleDelete = async () => {
     if (selectedTask) {
-      deleteTask(selectedTask.id);
-      closeModal();
+      try {
+        await deleteTaskAsync(selectedTask.id);
+        closeModal();
+      } catch {
+        // Error toast already handled by useTasks onError
+      }
     }
   };
 

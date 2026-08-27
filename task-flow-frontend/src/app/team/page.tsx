@@ -21,21 +21,12 @@ export default function TeamPage() {
   const [newTeamDescription, setNewTeamDescription] = useState('');
   const [isCreating, setIsCreating] = useState(false);
 
-  // Force reload teams when page loads
   useEffect(() => {
-    console.log('TeamPage mounted, reloading teams...');
     const token = localStorage.getItem('token');
     if (token) {
       loadTeams();
     }
   }, [loadTeams]);
-
-  // Debug: Log teams data
-  useEffect(() => {
-    console.log('Teams in TeamPage:', teams);
-    console.log('Current team in TeamPage:', currentTeam);
-    console.log('Number of teams:', teams.length);
-  }, [teams, currentTeam]);
 
   const handleCreateTeam = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -50,7 +41,6 @@ export default function TeamPage() {
       setNewTeamName('');
       setNewTeamDescription('');
       toast.success('Team created successfully!');
-      // Reload teams after creation
       await loadTeams();
     } catch (error) {
       console.error('Create team error:', error);
@@ -69,11 +59,11 @@ export default function TeamPage() {
       toast.error('Please select a team first');
       return;
     }
-    sendInvitation({ 
-      email: inviteEmail, 
+    sendInvitation({
+      email: inviteEmail,
       name: inviteName,
       role: inviteRole,
-      teamId: currentTeam.id
+      teamId: currentTeam.id,
     });
     setInviteEmail('');
     setInviteName('');
@@ -81,10 +71,13 @@ export default function TeamPage() {
     setIsInviteModalOpen(false);
   };
 
+  const getInitials = (name: string) =>
+    name.split(' ').map((n: string) => n[0]).join('').slice(0, 2).toUpperCase();
+
   if (usersLoading || teamLoading) {
     return (
       <Layout>
-        <div className="flex justify-center py-12">
+        <div className="bg-indigo-50/40 -m-6 p-6 min-h-full flex justify-center items-center py-12">
           <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div>
         </div>
       </Layout>
@@ -94,8 +87,10 @@ export default function TeamPage() {
   if (usersError) {
     return (
       <Layout>
-        <div className="text-center py-12 bg-white rounded-lg shadow-sm">
-          <p className="text-red-600">Error loading team members. Please try again.</p>
+        <div className="bg-indigo-50/40 -m-6 p-6 min-h-full">
+          <div className="text-center py-12 bg-white rounded-2xl shadow-sm">
+            <p className="text-red-600">Error loading team members. Please try again.</p>
+          </div>
         </div>
       </Layout>
     );
@@ -105,128 +100,132 @@ export default function TeamPage() {
   if (!teams || teams.length === 0) {
     return (
       <Layout>
-        <div className="flex flex-col items-center justify-center py-12 bg-white rounded-lg shadow-sm">
-          <div className="inline-flex p-4 bg-blue-100 rounded-full mb-4">
-            <Users className="text-blue-600" size={48} />
-          </div>
-          <h3 className="text-xl font-semibold text-gray-900">Create Your Team</h3>
-          <p className="text-gray-500 mt-2 text-center max-w-md">
-            You haven't created a team yet. Create one to start collaborating with your team members.
-          </p>
-          <button
-            onClick={() => setIsCreateTeamModalOpen(true)}
-            className="mt-6 flex items-center gap-2 px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
-          >
-            <Plus size={20} />
-            Create Team
-          </button>
-        </div>
-
-        {/* Create Team Modal */}
-        {isCreateTeamModalOpen && (
-          <div className="fixed inset-0 bg-gray-800 bg-opacity-60 flex items-center justify-center z-50 p-4 backdrop-blur-sm">
-            <div className="bg-white rounded-xl shadow-xl max-w-md w-full">
-              <div className="flex items-center justify-between p-4 border-b border-gray-200">
-                <h2 className="text-xl font-bold text-gray-900">Create New Team</h2>
-                <button
-                  onClick={() => setIsCreateTeamModalOpen(false)}
-                  className="p-1 text-gray-400 hover:text-gray-600 transition-colors"
-                >
-                  <X size={24} />
-                </button>
-              </div>
-
-              <form onSubmit={handleCreateTeam} className="p-4 space-y-4">
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
-                    Team Name *
-                  </label>
-                  <input
-                    type="text"
-                    placeholder="Enter team name"
-                    value={newTeamName}
-                    onChange={(e) => setNewTeamName(e.target.value)}
-                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                    required
-                  />
-                </div>
-
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
-                    Description (optional)
-                  </label>
-                  <textarea
-                    placeholder="What is this team for?"
-                    value={newTeamDescription}
-                    onChange={(e) => setNewTeamDescription(e.target.value)}
-                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent resize-none"
-                    rows={3}
-                  />
-                </div>
-
-                <div className="flex justify-end gap-3 pt-4 border-t border-gray-200">
-                  <button
-                    type="button"
-                    onClick={() => setIsCreateTeamModalOpen(false)}
-                    className="px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors"
-                  >
-                    Cancel
-                  </button>
-                  <button
-                    type="submit"
-                    disabled={isCreating}
-                    className="px-4 py-2 text-sm font-medium text-white bg-blue-600 border border-transparent rounded-lg hover:bg-blue-700 transition-colors disabled:opacity-50"
-                  >
-                    {isCreating ? 'Creating...' : 'Create Team'}
-                  </button>
-                </div>
-              </form>
+        <div className="bg-indigo-50/40 -m-6 p-6 min-h-full">
+          <div className="flex flex-col items-center justify-center py-16 bg-white rounded-2xl shadow-sm">
+            <div className="inline-flex p-4 bg-indigo-100 rounded-full mb-4">
+              <Users className="text-indigo-600" size={44} />
             </div>
+            <h3 className="text-xl font-semibold text-gray-900">Create Your Team</h3>
+            <p className="text-gray-500 mt-2 text-center max-w-md">
+              You haven&apos;t created a team yet. Create one to start collaborating with your team members.
+            </p>
+            <button
+              onClick={() => setIsCreateTeamModalOpen(true)}
+              className="mt-6 flex items-center gap-2 px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
+            >
+              <Plus size={20} />
+              Create Team
+            </button>
           </div>
-        )}
+
+          {isCreateTeamModalOpen && (
+            <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
+              <div className="bg-white rounded-2xl shadow-xl max-w-md w-full">
+                <div className="flex items-center justify-between p-4 border-b border-gray-100">
+                  <h2 className="text-xl font-bold text-gray-900">Create New Team</h2>
+                  <button
+                    onClick={() => setIsCreateTeamModalOpen(false)}
+                    className="p-1 text-gray-400 hover:text-gray-600 transition-colors"
+                  >
+                    <X size={24} />
+                  </button>
+                </div>
+
+                <form onSubmit={handleCreateTeam} className="p-4 space-y-4">
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                      Team Name *
+                    </label>
+                    <input
+                      type="text"
+                      placeholder="Enter team name"
+                      value={newTeamName}
+                      onChange={(e) => setNewTeamName(e.target.value)}
+                      className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                      required
+                    />
+                  </div>
+
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                      Description (optional)
+                    </label>
+                    <textarea
+                      placeholder="What is this team for?"
+                      value={newTeamDescription}
+                      onChange={(e) => setNewTeamDescription(e.target.value)}
+                      className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent resize-none"
+                      rows={3}
+                    />
+                  </div>
+
+                  <div className="flex justify-end gap-3 pt-4 border-t border-gray-100">
+                    <button
+                      type="button"
+                      onClick={() => setIsCreateTeamModalOpen(false)}
+                      className="px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors"
+                    >
+                      Cancel
+                    </button>
+                    <button
+                      type="submit"
+                      disabled={isCreating}
+                      className="px-4 py-2 text-sm font-medium text-white bg-blue-600 border border-transparent rounded-lg hover:bg-blue-700 transition-colors disabled:opacity-50"
+                    >
+                      {isCreating ? 'Creating...' : 'Create Team'}
+                    </button>
+                  </div>
+                </form>
+              </div>
+            </div>
+          )}
+        </div>
       </Layout>
     );
   }
 
   return (
     <Layout>
-      <div className="space-y-6">
+      <div className="bg-indigo-50/40 -m-6 p-6 min-h-full space-y-6">
         <div className="flex flex-col md:flex-row md:items-center md:justify-between">
           <div>
-            <h1 className="text-2xl font-bold text-gray-900">Team Directory</h1>
-            <p className="text-gray-500">Manage team members and view workload</p>
+            <h1 className="text-3xl font-bold text-gray-900">Team Directory</h1>
+            <p className="text-gray-500 mt-1">Manage team members and view workload</p>
             {currentTeam && (
-              <p className="text-sm text-blue-600 mt-1">Current Team: {currentTeam.name}</p>
+              <p className="text-sm text-blue-600 mt-1 font-medium">Current Team: {currentTeam.name}</p>
             )}
           </div>
           <div className="flex items-center gap-3 mt-4 md:mt-0">
             <button
               onClick={() => setIsCreateTeamModalOpen(true)}
-              className="flex items-center gap-2 px-4 py-2 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 transition-colors"
+              className="flex items-center gap-2 px-4 py-2.5 bg-white border border-gray-200 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors text-sm font-medium"
             >
               <Plus size={18} />
               New Team
             </button>
             <button
               onClick={() => setIsInviteModalOpen(true)}
-              className="flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
+              className="flex items-center gap-2 px-4 py-2.5 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors text-sm font-medium disabled:opacity-50"
               disabled={!currentTeam}
             >
-              <UserPlus size={20} />
+              <UserPlus size={18} />
               Invite Member
             </button>
           </div>
         </div>
 
         {/* Pending Invitations */}
-        {invitations.filter(inv => inv.status === 'PENDING').length > 0 && (
-          <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-4">
-            <h3 className="text-sm font-medium text-yellow-800">Pending Invitations</h3>
+        {invitations.filter((inv) => inv.status === 'PENDING').length > 0 && (
+          <div className="bg-yellow-50 border border-yellow-200 rounded-2xl p-4">
+            <h3 className="text-sm font-semibold text-yellow-800">Pending Invitations</h3>
             <div className="mt-2 space-y-2">
               {invitations
-                .filter(inv => inv.status === 'PENDING')
+                .filter((inv) => inv.status === 'PENDING')
                 .map((inv) => (
-                  <div key={inv.id} className="flex flex-col sm:flex-row sm:items-center sm:justify-between text-sm gap-2">
+                  <div
+                    key={inv.id}
+                    className="flex flex-col sm:flex-row sm:items-center sm:justify-between text-sm gap-2"
+                  >
                     <span className="text-yellow-700">{inv.email}</span>
                     <span className="text-xs text-yellow-600">
                       Expires: {new Date(inv.expiresAt).toLocaleDateString()}
@@ -238,46 +237,44 @@ export default function TeamPage() {
         )}
 
         {users.length === 0 ? (
-          <div className="text-center py-12 bg-white rounded-lg shadow-sm">
-            <div className="inline-flex p-4 bg-gray-100 rounded-full mb-4">
-              <Users className="text-gray-400" size={32} />
+          <div className="text-center py-12 bg-white rounded-2xl shadow-sm">
+            <div className="inline-flex p-4 bg-indigo-100 rounded-full mb-4">
+              <Users className="text-indigo-600" size={32} />
             </div>
             <h3 className="text-lg font-medium text-gray-900">No team members found</h3>
             <p className="text-gray-500 mt-1">Invite your first team member to get started</p>
           </div>
         ) : (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-            {users.map(member => (
+            {users.map((member) => (
               <div
                 key={member.id}
-                className="bg-white rounded-xl shadow-sm hover:shadow-md transition-shadow p-6"
+                className="relative bg-indigo-100/60 rounded-2xl p-6 hover:shadow-md transition-shadow overflow-hidden"
               >
-                <div className="flex items-start justify-between">
+                <div className="absolute -right-4 -top-4 w-20 h-20 rounded-full bg-indigo-200/40" />
+                <div className="relative flex items-start justify-between">
                   <div className="flex items-center gap-3">
-                    <div className={`w-12 h-12 rounded-full flex items-center justify-center text-white font-semibold ${
-                      member.role === 'ADMIN' ? 'bg-purple-500' : 'bg-blue-500'
-                    }`}>
-                      {member.name
-                        .split(' ')
-                        .map((n: string) => n[0])
-                        .join('')
-                        .slice(0, 2)
-                        .toUpperCase()}
+                    <div
+                      className={`w-12 h-12 rounded-full flex items-center justify-center text-white font-semibold shrink-0 ${
+                        member.role === 'ADMIN' ? 'bg-purple-500' : 'bg-blue-500'
+                      }`}
+                    >
+                      {getInitials(member.name)}
                     </div>
                     <div>
                       <h3 className="font-semibold text-gray-900">{member.name}</h3>
                       <p className="text-sm text-gray-500">{member.role || 'Team Member'}</p>
                     </div>
                   </div>
-                  <button className="text-gray-400 hover:text-gray-600">
-                    <MoreVertical size={20} />
+                  <button className="w-8 h-8 rounded-full bg-white flex items-center justify-center text-gray-400 hover:text-gray-600 shrink-0">
+                    <MoreVertical size={18} />
                   </button>
                 </div>
 
-                <div className="mt-4 space-y-2">
+                <div className="relative mt-4 space-y-2">
                   <div className="flex items-center gap-2 text-sm text-gray-500">
                     <Mail size={16} />
-                    <span>{member.email}</span>
+                    <span className="truncate">{member.email}</span>
                   </div>
                 </div>
               </div>
@@ -288,9 +285,9 @@ export default function TeamPage() {
 
       {/* Create Team Modal */}
       {isCreateTeamModalOpen && (
-        <div className="fixed inset-0 bg-gray-800 bg-opacity-60 flex items-center justify-center z-50 p-4 backdrop-blur-sm">
-          <div className="bg-white rounded-xl shadow-xl max-w-md w-full">
-            <div className="flex items-center justify-between p-4 border-b border-gray-200">
+        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
+          <div className="bg-white rounded-2xl shadow-xl max-w-md w-full">
+            <div className="flex items-center justify-between p-4 border-b border-gray-100">
               <h2 className="text-xl font-bold text-gray-900">Create New Team</h2>
               <button
                 onClick={() => setIsCreateTeamModalOpen(false)}
@@ -328,7 +325,7 @@ export default function TeamPage() {
                 />
               </div>
 
-              <div className="flex justify-end gap-3 pt-4 border-t border-gray-200">
+              <div className="flex justify-end gap-3 pt-4 border-t border-gray-100">
                 <button
                   type="button"
                   onClick={() => setIsCreateTeamModalOpen(false)}
@@ -351,9 +348,9 @@ export default function TeamPage() {
 
       {/* Invite Modal */}
       {isInviteModalOpen && (
-        <div className="fixed inset-0 bg-gray-800 bg-opacity-60 flex items-center justify-center z-50 p-4 backdrop-blur-sm">
-          <div className="bg-white rounded-xl shadow-xl max-w-md w-full">
-            <div className="flex items-center justify-between p-4 border-b border-gray-200">
+        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
+          <div className="bg-white rounded-2xl shadow-xl max-w-md w-full">
+            <div className="flex items-center justify-between p-4 border-b border-gray-100">
               <h2 className="text-xl font-bold text-gray-900">Invite Team Member</h2>
               <button
                 onClick={() => setIsInviteModalOpen(false)}
@@ -393,9 +390,7 @@ export default function TeamPage() {
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
-                  Role
-                </label>
+                <label className="block text-sm font-medium text-gray-700 mb-2">Role</label>
                 <input
                   type="text"
                   placeholder="e.g., ADMIN, MANAGER, DEVELOPER"
@@ -408,7 +403,7 @@ export default function TeamPage() {
                 </p>
               </div>
 
-              <div className="flex justify-end gap-3 pt-4 border-t border-gray-200">
+              <div className="flex justify-end gap-3 pt-4 border-t border-gray-100">
                 <button
                   type="button"
                   onClick={() => setIsInviteModalOpen(false)}

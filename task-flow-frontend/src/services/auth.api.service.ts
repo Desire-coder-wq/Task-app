@@ -20,27 +20,30 @@ export interface ResetPasswordRequest {
 
 export class AuthApiService {
   async forgotPassword(data: ForgotPasswordRequest): Promise<{ message: string; devOtp?: string }> {
-    const response = await axios.post<ApiResponse<{ message: string; devOtp?: string }>>(
+    const response = await axios.post<ApiResponse<{ devOtp?: string }>>(
       `${API_URL}/auth/forgot-password`,
       data
     );
-    return response.data.data;
+    return {
+      message: response.data.message,
+      devOtp: response.data.data?.devOtp,
+    };
   }
 
   async verifyOtp(data: VerifyOtpRequest): Promise<{ message: string }> {
-    const response = await axios.post<ApiResponse<{ message: string }>>(
+    const response = await axios.post<ApiResponse<any>>(
       `${API_URL}/auth/verify-otp`,
       data
     );
-    return response.data.data;
+    return { message: response.data.message };
   }
 
   async resetPassword(data: ResetPasswordRequest): Promise<{ message: string }> {
-    const response = await axios.post<ApiResponse<{ message: string }>>(
+    const response = await axios.post<ApiResponse<any>>(
       `${API_URL}/auth/reset-password`,
       data
     );
-    return response.data.data;
+    return { message: response.data.message };
   }
 }
 

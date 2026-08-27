@@ -35,6 +35,13 @@ export class AuthService {
     const response = await axios.post<ApiResponse<AuthResponse>>(`${API_URL}/auth/register`, data);
     return response.data.data;
   }
+
+  async logout(): Promise<{ message: string }> {
+    const response = await axios.post<ApiResponse<{ message: string }>>(`${API_URL}/auth/logout`);
+    localStorage.removeItem('token');
+    localStorage.removeItem('user');
+    return response.data.data;
+  }
 }
 
 export const authService = new AuthService();

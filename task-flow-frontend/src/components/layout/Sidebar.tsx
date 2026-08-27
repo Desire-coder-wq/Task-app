@@ -1,7 +1,7 @@
 'use client';
 
 import Link from 'next/link';
-import { usePathname } from 'next/navigation';
+import { usePathname, useRouter } from 'next/navigation';
 import Image from 'next/image';
 import {
   LayoutDashboard,
@@ -10,6 +10,7 @@ import {
   Settings,
   ChevronLeft,
   ChevronRight,
+  LogOut,
 } from 'lucide-react';
 import { useState, useEffect } from 'react';
 
@@ -22,14 +23,17 @@ const navigationItems = [
 
 export function Sidebar() {
   const pathname = usePathname();
+  const router = useRouter();
   const [isCollapsed, setIsCollapsed] = useState(false);
   const [userName, setUserName] = useState('User');
+  const [userRole, setUserRole] = useState('Team Member');
 
   useEffect(() => {
     const stored = localStorage.getItem('user');
     if (stored) {
       const parsed = JSON.parse(stored);
       setUserName(parsed.name || 'User');
+      setUserRole(parsed.role || 'Team Member');
     }
   }, []);
 
@@ -39,6 +43,12 @@ export function Sidebar() {
     .join('')
     .slice(0, 2)
     .toUpperCase();
+
+  const handleLogout = () => {
+    localStorage.removeItem('token');
+    localStorage.removeItem('user');
+    router.push('/auth/login');
+  };
 
   return (
     <aside
@@ -52,8 +62,8 @@ export function Sidebar() {
             <Image
               src="/images/logo.png"
               alt="TaskPilot Logo"
-              width={32}
-              height={32}
+              width={44}
+              height={44}
               className="rounded-lg"
               priority
             />
@@ -64,8 +74,8 @@ export function Sidebar() {
           <Image
             src="/images/logo.png"
             alt="TaskPilot Logo"
-            width={32}
-            height={32}
+            width={40}
+            height={40}
             className="rounded-lg"
             priority
           />
@@ -79,7 +89,7 @@ export function Sidebar() {
       </div>
 
       <nav className="flex-1 p-4 space-y-1">
-        {navigationItems.map(item => {
+        {navigationItems.map((item) => {
           const Icon = item.icon;
           const isActive = pathname === item.href || pathname?.startsWith(item.href + '/');
 
@@ -88,9 +98,7 @@ export function Sidebar() {
               key={item.href}
               href={item.href}
               className={`flex items-center gap-3 px-3 py-2.5 rounded-lg transition-colors ${
-                isActive
-                  ? 'bg-blue-600 text-white'
-                  : 'hover:bg-gray-200 text-gray-600'
+                isActive ? 'bg-blue-600 text-white' : 'hover:bg-gray-200 text-gray-600'
               }`}
             >
               <Icon size={20} />
@@ -100,22 +108,34 @@ export function Sidebar() {
         })}
       </nav>
 
-      <div className="p-4 border-t border-gray-200">
-        {!isCollapsed ? (
-          <div className="flex items-center gap-3 px-3 py-2">
-            <div className="w-8 h-8 bg-blue-600 rounded-full flex items-center justify-center text-white font-semibold text-sm">
+      <div className="border-t border-gray-200">
+        <div className="p-4 pb-2">
+          {!isCollapsed ? (
+            <div className="flex items-center gap-3 px-3 py-2">
+              <div className="w-8 h-8 bg-blue-600 rounded-full flex items-center justify-center text-white font-semibold text-sm shrink-0">
+                {initials}
+              </div>
+              <div className="min-w-0">
+                <p className="text-sm font-medium text-gray-700 truncate">{userName}</p>
+                <p className="text-xs text-gray-400 truncate">{userRole}</p>
+              </div>
+            </div>
+          ) : (
+            <div className="w-8 h-8 bg-blue-600 rounded-full flex items-center justify-center text-white font-semibold text-sm mx-auto">
               {initials}
             </div>
-            <div>
-              <p className="text-sm font-medium text-gray-700">{userName}</p>
-              <p className="text-xs text-gray-400">Team Member</p>
-            </div>
-          </div>
-        ) : (
-          <div className="w-8 h-8 bg-blue-600 rounded-full flex items-center justify-center text-white font-semibold text-sm mx-auto">
-            {initials}
-          </div>
-        )}
+          )}
+        </div>
+
+        <button
+          onClick={handleLogout}
+          className={`flex items-center gap-3 px-3 py-2.5 mx-4 mb-4 rounded-lg text-red-600 hover:bg-red-50 transition-colors ${
+            isCollapsed ? 'justify-center mx-2' : ''
+          }`}
+        >
+          <LogOut size={20} />
+          {!isCollapsed && <span className="text-sm font-medium">Logout</span>}
+        </button>
       </div>
     </aside>
   );

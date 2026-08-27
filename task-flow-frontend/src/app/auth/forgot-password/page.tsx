@@ -3,6 +3,7 @@
 import { useState } from 'react'
 import Image from 'next/image'
 import Link from 'next/link'
+import { useRouter } from 'next/navigation'
 import { Mail, ArrowLeft } from 'lucide-react'
 import toast from 'react-hot-toast'
 import { useForm } from 'react-hook-form'
@@ -17,6 +18,7 @@ const forgotPasswordSchema = z.object({
 type ForgotPasswordFormData = z.infer<typeof forgotPasswordSchema>
 
 export default function ForgotPasswordPage() {
+  const router = useRouter()
   const [isLoading, setIsLoading] = useState(false)
   const [devOtp, setDevOtp] = useState<string | null>(null)
   const [email, setEmail] = useState('')
@@ -40,6 +42,10 @@ export default function ForgotPasswordPage() {
       if (response.devOtp) {
         setDevOtp(response.devOtp)
       }
+      // Redirect to reset password page with email pre-filled as the token identifier
+      setTimeout(() => {
+        router.push(`/auth/reset-password?email=${encodeURIComponent(data.email)}`)
+      }, 2000)
     } catch (error: any) {
       toast.error(error.message || 'Failed to send OTP')
     } finally {

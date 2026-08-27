@@ -45,11 +45,19 @@ export class AuthController {
     return this.authService.verifyOtp(verifyOtpDto);
   }
 
-  @Post('reset-password')
+   @Post('reset-password')
   @ApiOperation({ summary: 'Reset password with OTP' })
   @ApiResponse({ status: 200, description: 'Password reset successfully' })
   @ApiResponse({ status: 400, description: 'Invalid or expired OTP' })
   async resetPassword(@Body() resetPasswordDto: ResetPasswordDto) {
     return this.authService.resetPassword(resetPasswordDto);
+  }
+
+  @Post('logout')
+  @HttpCode(HttpStatus.OK)
+  @ApiOperation({ summary: 'Logout user' })
+  @ApiResponse({ status: 200, description: 'Logout successful' })
+  async logout() {
+    return this.authService.logout();
   }
 }

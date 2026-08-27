@@ -169,6 +169,12 @@ export class AuthService {
     };
   }
 
+  async logout() {
+    return {
+      message: 'Logged out successfully',
+    };
+  }
+
   private generateToken(userId: string, email: string): string {
     const payload = { sub: userId, email };
     return this.jwtService.sign(payload);
