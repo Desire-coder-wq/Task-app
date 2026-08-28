@@ -140,7 +140,7 @@ export class MailService {
                     
                     <tr>
                       <td style="padding: 40px 30px;">
-                        <h2 style="color: #0f172a; font-size: 22px; font-weight: 600; margin: 0 0 16px;">Hello ${name}! 👋</h2>
+                        <h2 style="color: #0f172a; font-size: 22px; font-weight: 600; margin: 0 0 16px;">Hello ${name}!</h2>
                         
                         <p style="color: #334155; font-size: 16px; line-height: 1.6; margin: 0 0 16px;">
                           You have successfully joined <strong style="color: #0f172a;">${teamName}</strong> on TaskPilot.
@@ -272,7 +272,7 @@ export class MailService {
               <p style="color:#334155; line-height:1.6;">
                 If you received this email, your SMTP configuration is working correctly.
               </p>
-              <p style="color:#0f172a; font-weight:600;">✅ SMTP connection successful</p>
+              <p style="color:#0f172a; font-weight:600;">SMTP connection successful</p>
               <hr style="border:none; border-top:1px solid #e2e8f0; margin:20px 0;">
               <p style="color:#94a3b8; font-size:12px;">TaskPilot - Sent at ${new Date().toISOString()}</p>
             </div>
