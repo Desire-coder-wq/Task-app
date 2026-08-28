@@ -1,0 +1,114 @@
+98cb3a8abe39a944fa59458360d9f263
+"use strict";
+var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
+    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
+    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
+    else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
+    return c > 3 && r && Object.defineProperty(target, key, r), r;
+};
+var __metadata = (this && this.__metadata) || function (k, v) {
+    if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
+};
+var __param = (this && this.__param) || function (paramIndex, decorator) {
+    return function (target, key) { decorator(target, key, paramIndex); }
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.AuthController = void 0;
+const common_1 = require("@nestjs/common");
+const swagger_1 = require("@nestjs/swagger");
+const auth_service_1 = require("./auth.service");
+const login_dto_1 = require("./dto/login.dto");
+const register_dto_1 = require("./dto/register.dto");
+const forgot_password_dto_1 = require("./dto/forgot-password.dto");
+const verify_otp_dto_1 = require("./dto/verify-otp.dto");
+const reset_password_dto_1 = require("./dto/reset-password.dto");
+let AuthController = class AuthController {
+    constructor(authService) {
+        this.authService = authService;
+    }
+    async register(registerDto) {
+        return this.authService.register(registerDto);
+    }
+    async login(loginDto) {
+        return this.authService.login(loginDto);
+    }
+    async forgotPassword(forgotPasswordDto) {
+        return this.authService.forgotPassword(forgotPasswordDto);
+    }
+    async verifyOtp(verifyOtpDto) {
+        return this.authService.verifyOtp(verifyOtpDto);
+    }
+    async resetPassword(resetPasswordDto) {
+        return this.authService.resetPassword(resetPasswordDto);
+    }
+    async logout() {
+        return this.authService.logout();
+    }
+};
+exports.AuthController = AuthController;
+__decorate([
+    (0, common_1.Post)('register'),
+    (0, swagger_1.ApiOperation)({ summary: 'Register a new user' }),
+    (0, swagger_1.ApiResponse)({ status: 201, description: 'User registered successfully' }),
+    (0, swagger_1.ApiResponse)({ status: 409, description: 'User already exists' }),
+    __param(0, (0, common_1.Body)()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [register_dto_1.RegisterDto]),
+    __metadata("design:returntype", Promise)
+], AuthController.prototype, "register", null);
+__decorate([
+    (0, common_1.Post)('login'),
+    (0, common_1.HttpCode)(common_1.HttpStatus.OK),
+    (0, swagger_1.ApiOperation)({ summary: 'Login user' }),
+    (0, swagger_1.ApiResponse)({ status: 200, description: 'Login successful' }),
+    (0, swagger_1.ApiResponse)({ status: 401, description: 'Invalid credentials' }),
+    __param(0, (0, common_1.Body)()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [login_dto_1.LoginDto]),
+    __metadata("design:returntype", Promise)
+], AuthController.prototype, "login", null);
+__decorate([
+    (0, common_1.Post)('forgot-password'),
+    (0, swagger_1.ApiOperation)({ summary: 'Request password reset OTP' }),
+    (0, swagger_1.ApiResponse)({ status: 200, description: 'OTP sent to email' }),
+    (0, swagger_1.ApiResponse)({ status: 404, description: 'User not found' }),
+    __param(0, (0, common_1.Body)()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [forgot_password_dto_1.ForgotPasswordDto]),
+    __metadata("design:returntype", Promise)
+], AuthController.prototype, "forgotPassword", null);
+__decorate([
+    (0, common_1.Post)('verify-otp'),
+    (0, swagger_1.ApiOperation)({ summary: 'Verify OTP for password reset' }),
+    (0, swagger_1.ApiResponse)({ status: 200, description: 'OTP verified successfully' }),
+    (0, swagger_1.ApiResponse)({ status: 400, description: 'Invalid or expired OTP' }),
+    __param(0, (0, common_1.Body)()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [verify_otp_dto_1.VerifyOtpDto]),
+    __metadata("design:returntype", Promise)
+], AuthController.prototype, "verifyOtp", null);
+__decorate([
+    (0, common_1.Post)('reset-password'),
+    (0, swagger_1.ApiOperation)({ summary: 'Reset password with OTP' }),
+    (0, swagger_1.ApiResponse)({ status: 200, description: 'Password reset successfully' }),
+    (0, swagger_1.ApiResponse)({ status: 400, description: 'Invalid or expired OTP' }),
+    __param(0, (0, common_1.Body)()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [reset_password_dto_1.ResetPasswordDto]),
+    __metadata("design:returntype", Promise)
+], AuthController.prototype, "resetPassword", null);
+__decorate([
+    (0, common_1.Post)('logout'),
+    (0, common_1.HttpCode)(common_1.HttpStatus.OK),
+    (0, swagger_1.ApiOperation)({ summary: 'Logout user' }),
+    (0, swagger_1.ApiResponse)({ status: 200, description: 'Logout successful' }),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", []),
+    __metadata("design:returntype", Promise)
+], AuthController.prototype, "logout", null);
+exports.AuthController = AuthController = __decorate([
+    (0, swagger_1.ApiTags)('auth'),
+    (0, common_1.Controller)('auth'),
+    __metadata("design:paramtypes", [auth_service_1.AuthService])
+], AuthController);
+//# sourceMappingURL=data:application/json;charset=utf-8;base64,eyJmaWxlIjoiRDpcXFRhc2tQaWxvdFxcdGFzay1mbG93LWJhY2tlbmRcXHNyY1xcbW9kdWxlc1xcYXV0aFxcYXV0aC5jb250cm9sbGVyLnRzIiwibWFwcGluZ3MiOiI7Ozs7Ozs7Ozs7Ozs7OztBQUFBLDJDQUE4RTtBQUM5RSw2Q0FBcUU7QUFDckUsaURBQTZDO0FBQzdDLCtDQUEyQztBQUMzQyxxREFBaUQ7QUFDakQsbUVBQThEO0FBQzlELHlEQUFvRDtBQUNwRCxpRUFBNEQ7QUFJckQsSUFBTSxjQUFjLEdBQXBCLE1BQU0sY0FBYztJQUN6QixZQUE2QixXQUF3QjtRQUF4QixnQkFBVyxHQUFYLFdBQVcsQ0FBYTtJQUFHLENBQUM7SUFNbkQsQUFBTixLQUFLLENBQUMsUUFBUSxDQUFTLFdBQXdCO1FBQzdDLE9BQU8sSUFBSSxDQUFDLFdBQVcsQ0FBQyxRQUFRLENBQUMsV0FBVyxDQUFDLENBQUM7SUFDaEQsQ0FBQztJQU9LLEFBQU4sS0FBSyxDQUFDLEtBQUssQ0FBUyxRQUFrQjtRQUNwQyxPQUFPLElBQUksQ0FBQyxXQUFXLENBQUMsS0FBSyxDQUFDLFFBQVEsQ0FBQyxDQUFDO0lBQzFDLENBQUM7SUFNSyxBQUFOLEtBQUssQ0FBQyxjQUFjLENBQVMsaUJBQW9DO1FBQy9ELE9BQU8sSUFBSSxDQUFDLFdBQVcsQ0FBQyxjQUFjLENBQUMsaUJBQWlCLENBQUMsQ0FBQztJQUM1RCxDQUFDO0lBTUssQUFBTixLQUFLLENBQUMsU0FBUyxDQUFTLFlBQTBCO1FBQ2hELE9BQU8sSUFBSSxDQUFDLFdBQVcsQ0FBQyxTQUFTLENBQUMsWUFBWSxDQUFDLENBQUM7SUFDbEQsQ0FBQztJQU1LLEFBQU4sS0FBSyxDQUFDLGFBQWEsQ0FBUyxnQkFBa0M7UUFDNUQsT0FBTyxJQUFJLENBQUMsV0FBVyxDQUFDLGFBQWEsQ0FBQyxnQkFBZ0IsQ0FBQyxDQUFDO0lBQzFELENBQUM7SUFNSyxBQUFOLEtBQUssQ0FBQyxNQUFNO1FBQ1YsT0FBTyxJQUFJLENBQUMsV0FBVyxDQUFDLE1BQU0sRUFBRSxDQUFDO0lBQ25DLENB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TSxDQUFDO3FDQUV5QiwwQkFBVztHQUQxQyxjQUFjLENBbUQxQiIsIm5hbWVzIjpbXSwic291cmNlcyI6WyJEOlxcVGFza1BpbG90XFx0YXNrLWZsb3ctYmFja2VuZFxcc3JjXFxtb2R1bGVzXFxhdXRoXFxhdXRoLmNvbnRyb2xsZXIudHMiXSwic291cmNlc0NvbnRlbnQiOlsiaW1wb3J0IHsgQ29udHJvbGxlciwgUG9zdCwgQm9keSwgSHR0cENvZGUsIEh0dHBTdGF0dXMgfSBmcm9tICdAbmVzdGpzL2NvbW1vbic7XG5pbXBvcnQgeyBBcGlUYWdzLCBBcGlPcGVyYXRpb24sIEFwaVJlc3BvbnNlIH0gZnJvbSAnQG5lc3Rqcy9zd2FnZ2VyJztcbmltcG9ydCB7IEF1dGhTZXJ2aWNlIH0gZnJvbSAnLi9hdXRoLnNlcnZpY2UnO1xuaW1wb3J0IHsgTG9naW5EdG8gfSBmcm9tICcuL2R0by9sb2dpbi5kdG8nO1xuaW1wb3J0IHsgUmVnaXN0ZXJEdG8gfSBmcm9tICcuL2R0by9yZWdpc3Rlci5kdG8nO1xuaW1wb3J0IHsgRm9yZ290UGFzc3dvcmREdG8gfSBmcm9tICcuL2R0by9mb3Jnb3QtcGFzc3dvcmQuZHRvJztcbmltcG9ydCB7IFZlcmlmeU90cER0byB9IGZyb20gJy4vZHRvL3ZlcmlmeS1vdHAuZHRvJztcbmltcG9ydCB7IFJlc2V0UGFzc3dvcmREdG8gfSBmcm9tICcuL2R0by9yZXNldC1wYXNzd29yZC5kdG8nO1xuXG5AQXBpVGFncygnYXV0aCcpXG5AQ29udHJvbGxlcignYXV0aCcpXG5leHBvcnQgY2xhc3MgQXV0aENvbnRyb2xsZXIge1xuICBjb25zdHJ1Y3Rvcihwcml2YXRlIHJlYWRvbmx5IGF1dGhTZXJ2aWNlOiBBdXRoU2VydmljZSkge31cblxuICBAUG9zdCgncmVnaXN0ZXInKVxuICBAQXBpT3BlcmF0aW9uKHsgc3VtbWFyeTogJ1JlZ2lzdGVyIGEgbmV3IHVzZXInIH0pXG4gIEBBcGlSZXNwb25zZSh7IHN0YXR1czogMjAxLCBkZXNjcmlwdGlvbjogJ1VzZXIgcmVnaXN0ZXJlZCBzdWNjZXNzZnVsbHknIH0pXG4gIEBBcGlSZXNwb25zZSh7IHN0YXR1czogNDA5LCBkZXNjcmlwdGlvbjogJ1VzZXIgYWxyZWFkeSBleGlzdHMnIH0pXG4gIGFzeW5jIHJlZ2lzdGVyKEBCb2R5KCkgcmVnaXN0ZXJEdG86IFJlZ2lzdGVyRHRvKSB7XG4gICAgcmV0dXJuIHRoaXMuYXV0aFNlcnZpY2UucmVnaXN0ZXIocmVnaXN0ZXJEdG8pO1xuICB9XG5cbiAgQFBvc3QoJ2xvZ2luJylcbiAgQEh0dHBDb2RlKEh0dHBTdGF0dXMuT0spXG4gIEBBcGlPcGVyYXRpb24oeyBzdW1tYXJ5OiAnTG9naW4gdXNlcicgfSlcbiAgQEFwaVJlc3BvbnNlKHsgc3RhdHVzOiAyMDAsIGRlc2NyaXB0aW9uOiAnTG9naW4gc3VjY2Vzc2Z1bCcgfSlcbiAgQEFwaVJlc3BvbnNlKHsgc3RhdHVzOiA0MDEsIGRlc2NyaXB0aW9uOiAnSW52YWxpZCBjcmVkZW50aWFscycgfSlcbiAgYXN5bmMgbG9naW4oQEJvZHkoKSBsb2dpbkR0bzogTG9naW5EdG8pIHtcbiAgICByZXR1cm4gdGhpcy5hdXRoU2VydmljZS5sb2dpbihsb2dpbkR0byk7XG4gIH1cblxuICBAUG9zdCgnZm9yZ290LXBhc3N3b3JkJylcbiAgQEFwaU9wZXJhdGlvbih7IHN1bW1hcnk6ICdSZXF1ZXN0IHBhc3N3b3JkIHJlc2V0IE9UUCcgfSlcbiAgQEFwaVJlc3BvbnNlKHsgc3RhdHVzOiAyMDAsIGRlc2NyaXB0aW9uOiAnT1RQIHNlbnQgdG8gZW1haWwnIH0pXG4gIEBBcGlSZXNwb25zZSh7IHN0YXR1czogNDA0LCBkZXNjcmlwdGlvbjogJ1VzZXIgbm90IGZvdW5kJyB9KVxuICBhc3luYyBmb3Jnb3RQYXNzd29yZChAQm9keSgpIGZvcmdvdFBhc3N3b3JkRHRvOiBGb3Jnb3RQYXNzd29yZER0bykge1xuICAgIHJldHVybiB0aGlzLmF1dGhTZXJ2aWNlLmZvcmdvdFBhc3N3b3JkKGZvcmdvdFBhc3N3b3JkRHRvKTtcbiAgfVxuXG4gIEBQb3N0KCd2ZXJpZnktb3RwJylcbiAgQEFwaU9wZXJhdGlvbih7IHN1bW1hcnk6ICdWZXJpZnkgT1RQIGZvciBwYXNzd29yZCByZXNldCcgfSlcbiAgQEFwaVJlc3BvbnNlKHsgc3RhdHVzOiAyMDAsIGRlc2NyaXB0aW9uOiAnT1RQIHZlcmlmaWVkIHN1Y2Nlc3NmdWxseScgfSlcbiAgQEFwaVJlc3BvbnNlKHsgc3RhdHVzOiA0MDAsIGRlc2NyaXB0aW9uOiAnSW52YWxpZCBvciBleHBpcmVkIE9UUCcgfSlcbiAgYXN5bmMgdmVyaWZ5T3RwKEBCb2R5KCkgdmVyaWZ5T3RwRHRvOiBWZXJpZnlPdHBEdG8pIHtcbiAgICByZXR1cm4gdGhpcy5hdXRoU2VydmljZS52ZXJpZnlPdHAodmVyaWZ5T3RwRHRvKTtcbiAgfVxuXG4gICBAUG9zdCgncmVzZXQtcGFzc3dvcmQnKVxuICBAQXBpT3BlcmF0aW9uKHsgc3VtbWFyeTogJ1Jlc2V0IHBhc3N3b3JkIHdpdGggT1RQJyB9KVxuICBAQXBpUmVzcG9uc2UoeyBzdGF0dXM6IDIwMCwgZGVzY3JpcHRpb246ICdQYXNzd29yZCByZXNldCBzdWNjZXNzZnVsbHknIH0pXG4gIEBBcGlSZXNwb25zZSh7IHN0YXR1czogNDAwLCBkZXNjcmlwdGlvbjogJ0ludmFsaWQgb3IgZXhwaXJlZCBPVFAnIH0pXG4gIGFzeW5jIHJlc2V0UGFzc3dvcmQoQEJvZHkoKSByZXNldFBhc3N3b3JkRHRvOiBSZXNldFBhc3N3b3JkRHRvKSB7XG4gICAgcmV0dXJuIHRoaXMuYXV0aFNlcnZpY2UucmVzZXRQYXNzd29yZChyZXNldFBhc3N3b3JkRHRvKTtcbiAgfVxuXG4gIEBQb3N0KCdsb2dvdXQnKVxuICBASHR0cENvZGUoSHR0cFN0YXR1cy5PSylcbiAgQEFwaU9wZXJhdGlvbih7IHN1bW1hcnk6ICdMb2dvdXQgdXNlcicgfSlcbiAgQEFwaVJlc3BvbnNlKHsgc3RhdHVzOiAyMDAsIGRlc2NyaXB0aW9uOiAnTG9nb3V0IHN1Y2Nlc3NmdWwnIH0pXG4gIGFzeW5jIGxvZ291dCgpIHtcbiAgICByZXR1cm4gdGhpcy5hdXRoU2VydmljZS5sb2dvdXQoKTtcbiAgfVxufVxuIl0sInZlcnNpb24iOjN9
