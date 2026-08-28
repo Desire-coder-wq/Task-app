@@ -1,5 +1,6 @@
 import React from 'react';
 import { render, screen } from '@testing-library/react';
+import { vi } from 'vitest';
 import { TaskCard } from '@/components/tasks/TaskCard';
 import { Task, TaskStatus, TaskPriority } from '@/types/task';
 
@@ -21,12 +22,12 @@ const mockTask: Task = {
 };
 
 describe('TaskCard', () => {
-  const mockOnEdit = jest.fn();
-  const mockOnDelete = jest.fn();
-  const mockOnStatusChange = jest.fn();
+  const mockOnEdit = vi.fn();
+  const mockOnDelete = vi.fn();
+  const mockOnStatusChange = vi.fn();
 
   beforeEach(() => {
-    jest.clearAllMocks();
+    vi.clearAllMocks();
   });
 
   it('renders task information', () => {

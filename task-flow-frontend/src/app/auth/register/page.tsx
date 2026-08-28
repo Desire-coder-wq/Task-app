@@ -256,7 +256,7 @@ export default function RegisterPage() {
                 disabled={isLoading}
                 className="w-full py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors font-medium disabled:opacity-50 flex items-center justify-center gap-2"
               >
-                {isLoading ? 'Creating account...' : isInvitation ? 'Accept Invitation →' : 'Create Account →'}
+                {isLoading ? 'Creating account...' : isInvitation ? 'Accept Invitation' : 'Create Account'}
               </button>
             </form>
 

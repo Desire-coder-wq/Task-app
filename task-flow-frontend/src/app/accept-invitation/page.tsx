@@ -6,6 +6,8 @@ import Link from 'next/link';
 import { AlertCircle, Loader2 } from 'lucide-react';
 import toast from 'react-hot-toast';
 
+export const dynamic = 'force-dynamic';
+
 export default function AcceptInvitationPage() {
   const router = useRouter();
   const searchParams = useSearchParams();

@@ -6,6 +6,8 @@ import { Toaster } from 'react-hot-toast';
 
 const inter = Inter({ subsets: ['latin'] });
 
+export const dynamic = 'force-dynamic';
+
 export const metadata: Metadata = {
   title: 'TaskPilot - Task Management Dashboard',
   description: 'Manage your tasks efficiently with TaskPilot',

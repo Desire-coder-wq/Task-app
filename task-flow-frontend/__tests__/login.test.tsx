@@ -1,32 +1,39 @@
 import React from 'react';
 import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
+import { vi } from 'vitest';
 import LoginPage from '@/app/auth/login/page';
 
-jest.mock('next/navigation', () => ({
+vi.mock('next/navigation', () => ({
   useRouter: () => ({
-    push: jest.fn(),
+    push: vi.fn(),
   }),
 }));
 
-jest.mock('react-hot-toast', () => ({
+vi.mock('react-hot-toast', () => ({
   __esModule: true,
   default: {
-    success: jest.fn(),
-    error: jest.fn(),
+    success: vi.fn(),
+    error: vi.fn(),
   },
   toast: {
-    success: jest.fn(),
-    error: jest.fn(),
+    success: vi.fn(),
+    error: vi.fn(),
   },
-  Toaster: jest.fn(),
+  Toaster: vi.fn(),
 }));
 
-jest.mock('next/image', () => ({
+vi.mock('next/image', () => ({
   __esModule: true,
   default: (props: any) => {
     const { src, alt, width, height, className, priority } = props;
     return React.createElement('img', { src, alt, width, height, className, priority, 'data-testid': 'next-image' });
+  },
+}));
+
+vi.mock('@/services/auth.service', () => ({
+  authService: {
+    login: vi.fn().mockResolvedValue({ id: '1', email: 'test@example.com' }),
   },
 }));
 

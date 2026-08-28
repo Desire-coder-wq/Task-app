@@ -1,35 +1,48 @@
 import React from 'react';
 import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
+import { vi } from 'vitest';
 import RegisterPage from '@/app/auth/register/page';
 
-jest.mock('next/navigation', () => ({
+vi.mock('next/navigation', () => ({
   useRouter: () => ({
-    push: jest.fn(),
+    push: vi.fn(),
   }),
   useSearchParams: () => ({
-    get: jest.fn(),
+    get: vi.fn(),
   }),
 }));
 
-jest.mock('react-hot-toast', () => ({
+vi.mock('react-hot-toast', () => ({
   __esModule: true,
   default: {
-    success: jest.fn(),
-    error: jest.fn(),
+    success: vi.fn(),
+    error: vi.fn(),
   },
   toast: {
-    success: jest.fn(),
-    error: jest.fn(),
+    success: vi.fn(),
+    error: vi.fn(),
   },
-  Toaster: jest.fn(),
+  Toaster: vi.fn(),
 }));
 
-jest.mock('next/image', () => ({
+vi.mock('next/image', () => ({
   __esModule: true,
   default: (props: any) => {
     const { src, alt, width, height, className, priority } = props;
     return React.createElement('img', { src, alt, width, height, className, priority, 'data-testid': 'next-image' });
+  },
+}));
+
+vi.mock('@/services/auth.service', () => ({
+  authService: {
+    register: vi.fn().mockResolvedValue({ id: '1', email: 'test@example.com' }),
+  },
+}));
+
+vi.mock('@/services/InvitationService', () => ({
+  invitationService: {
+    getInvitation: vi.fn().mockResolvedValue(null),
   },
 }));
 
@@ -48,7 +61,7 @@ describe('RegisterPage', () => {
 
     await user.type(screen.getByLabelText(/full name/i), 'Test User');
     await user.type(screen.getByLabelText(/email address/i), 'test@example.com');
-    await user.type(screen.getByLabelText(/^password$/i), 'password123');
+    await user.type(screen.getByLabelText(/^password$/i), 'Password123');
 
     expect(screen.getByLabelText(/full name/i)).toHaveValue('Test User');
     expect(screen.getByLabelText(/email address/i)).toHaveValue('test@example.com');
