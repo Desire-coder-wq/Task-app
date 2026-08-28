@@ -16,13 +16,13 @@ export default function TasksPage() {
   const handleEdit = (task: Task) => {
     console.log('Editing task:', task); // Debug
     setSelectedTask(task);
-    openModal('edit', task); // ✅ Pass the task!
+    openModal('edit', task); // Pass the task object for editing
   };
 
   const handleDelete = (task: Task) => {
     console.log('Deleting task:', task); // Debug
     setSelectedTask(task);
-    openModal('delete', task); // ✅ Pass the task!
+    openModal('delete', task); // Pass the task object for deletion
   };
 
   const handleStatusChange = (task: Task, status: TaskStatus) => {

@@ -1,7 +1,7 @@
 import axios from 'axios';
 import { ApiResponse } from '@/types/api';
 
-const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3002/api';
+const API_URL = process.env.NEXT_PUBLIC_API_URL || 'https://taskflow-backend-yh8o.onrender.com/api';
 
 export interface ForgotPasswordRequest {
   email: string;

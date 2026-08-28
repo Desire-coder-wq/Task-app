@@ -2,7 +2,7 @@ import { useQuery } from '@tanstack/react-query';
 import axios from 'axios';
 import { User } from '@/types/task';
 
-const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3002/api';
+const API_URL = process.env.NEXT_PUBLIC_API_URL || 'https://taskflow-backend-yh8o.onrender.com/api';
 
 const api = axios.create({
   baseURL: API_URL,

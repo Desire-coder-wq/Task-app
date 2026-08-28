@@ -53,7 +53,7 @@ export default function LoginPage() {
       router.push('/dashboard')
     } catch (error: any) {
       if (error.code === 'ECONNREFUSED' || error.message?.includes('Network Error')) {
-        toast.error('Cannot connect to server. Please check if backend is running on http://localhost:3002')
+        toast.error('Cannot connect to server. Please check your connection and try again')
       } else {
         toast.error(error.message || 'Invalid credentials')
       }
