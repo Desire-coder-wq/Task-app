@@ -1,5 +1,5 @@
 import { Injectable } from '@nestjs/common';
-import { PrismaService } from '../../../prisma/prisma.service';
+import { PrismaService } from '../../prisma/prisma.service';
 
 @Injectable()
 export class DashboardService {
@@ -76,7 +76,7 @@ export class DashboardService {
       take: 5,
     });
 
-    return tasks.map(task => ({
+    return tasks.map((task) => ({
       id: task.id,
       title: task.title,
       description: task.description,

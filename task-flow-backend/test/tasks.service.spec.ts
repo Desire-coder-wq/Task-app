@@ -1,6 +1,6 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { TasksService } from '../src/modules/tasks/tasks.service';
-import { PrismaService } from '../prisma/prisma.service';
+import { PrismaService } from '../src/prisma/prisma.service';
 import { NotFoundException } from '@nestjs/common';
 
 describe('TasksService', () => {

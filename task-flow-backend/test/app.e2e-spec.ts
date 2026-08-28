@@ -9,7 +9,7 @@ import { MailService } from '../src/modules/mail/mail.service';
 import { JwtModule, JwtService } from '@nestjs/jwt';
 import { PassportModule } from '@nestjs/passport';
 import { ConfigModule, ConfigService } from '@nestjs/config';
-import { PrismaService } from '../prisma/prisma.service';
+import { PrismaService } from '../src/prisma/prisma.service';
 import * as bcrypt from 'bcrypt';
 
 const mockPrismaService = {

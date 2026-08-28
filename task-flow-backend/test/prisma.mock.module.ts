@@ -1,5 +1,5 @@
 import { Module } from '@nestjs/common';
-import { PrismaService } from '../prisma/prisma.service';
+import { PrismaService } from '../src/prisma/prisma.service';
 
 export const mockPrismaService = {
   $connect: jest.fn(),
