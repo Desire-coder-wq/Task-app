@@ -34,9 +34,11 @@ export class UsersService {
       select: { userId: true, role: true },
     });
 
-    const roleMap = new Map(teamMembers.map((tm) => [tm.userId, tm.role]));
+    const roleMap = new Map<string, string>(
+      teamMembers.map((tm: { userId: string; role: string }) => [tm.userId, tm.role]),
+    );
 
-    return users.map((user) => ({
+    return users.map((user: { id: string }) => ({
       ...user,
       teamRole: roleMap.get(user.id) || null,
     }));
