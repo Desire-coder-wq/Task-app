@@ -9,7 +9,7 @@ import { PaginatedResponse } from '../../common/interfaces/app-response.interfac
 export class TasksService {
   constructor(private prisma: PrismaService) {}
 
-  async findAll(filters: TaskFiltersDto): Promise<PaginatedResponse<any>> {
+  async findAll(filters: TaskFiltersDto, userId?: string): Promise<PaginatedResponse<any>> {
     const page = filters.page || 1;
     const limit = filters.limit || 10;
     const skip = (page - 1) * limit;
@@ -29,6 +29,33 @@ export class TasksService {
         { title: { contains: filters.search, mode: 'insensitive' } },
         { description: { contains: filters.search, mode: 'insensitive' } },
       ];
+    }
+
+    if (userId) {
+      const userTeams = await this.prisma.team.findMany({
+        where: {
+          members: {
+            some: { userId },
+          },
+        },
+        select: {
+          id: true,
+        },
+      });
+
+      const teamIds = userTeams.map(t => t.id);
+
+      where.OR = [
+        ...(where.OR || []),
+        { teamId: { in: teamIds.length > 0 ? teamIds : null } },
+        { createdById: userId },
+      ];
+
+      if (teamIds.length === 0) {
+        where.OR = [
+          { createdById: userId },
+        ];
+      }
     }
 
     const [items, total] = await Promise.all([

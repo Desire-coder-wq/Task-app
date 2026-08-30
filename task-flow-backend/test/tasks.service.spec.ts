@@ -28,6 +28,9 @@ describe('TasksService', () => {
       delete: jest.fn(),
       count: jest.fn(),
     },
+    team: {
+      findMany: jest.fn(),
+    },
   };
 
   beforeEach(async () => {
@@ -49,15 +52,21 @@ describe('TasksService', () => {
   });
 
   describe('findAll', () => {
-    it('should return paginated tasks', async () => {
+    it('should return paginated tasks filtered by user', async () => {
       const filters = { page: 1, limit: 10 };
+      const userId = 'user1';
+      mockPrismaService.team.findMany.mockResolvedValue([{ id: 'team1' }]);
       mockPrismaService.task.findMany.mockResolvedValue([mockTask]);
       mockPrismaService.task.count.mockResolvedValue(1);
 
-      const result = await service.findAll(filters);
+      const result = await service.findAll(filters, userId);
       
       expect(result.items).toHaveLength(1);
       expect(result.total).toBe(1);
+      expect(mockPrismaService.team.findMany).toHaveBeenCalledWith({
+        where: { members: { some: { userId } } },
+        select: { id: true },
+      });
     });
   });
 

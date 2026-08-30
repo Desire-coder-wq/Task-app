@@ -37,7 +37,7 @@ describe('TasksController', () => {
       const result = { items: [], total: 0, page: 1, limit: 10, totalPages: 0 };
       mockTasksService.findAll.mockResolvedValue(result);
 
-      expect(await controller.findAll({})).toBe(result);
+      expect(await controller.findAll({}, { user: { id: 'test-user-id' } })).toBe(result);
     });
   });
 });

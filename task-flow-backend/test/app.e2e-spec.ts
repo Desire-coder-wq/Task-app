@@ -19,6 +19,9 @@ const mockPrismaService = {
     findUnique: jest.fn(),
     create: jest.fn(),
   },
+  team: {
+    create: jest.fn(),
+  },
 };
 
 const mockJwtService = {
@@ -97,6 +100,13 @@ describe('Auth (e2e)', () => {
       avatar: null,
       createdAt: new Date(),
       updatedAt: new Date(),
+    });
+    mockPrismaService.team.create.mockResolvedValue({
+      id: 'team1',
+      name: "Test User's Team",
+      description: 'Personal team for Test User',
+      slug: 'test-user-team-1',
+      createdById: '1',
     });
 
     return request(app.getHttpServer())

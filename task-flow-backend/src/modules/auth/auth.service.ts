@@ -46,6 +46,21 @@ export class AuthService {
       },
     });
 
+    await this.prisma.team.create({
+      data: {
+        name: `${name}'s Team`,
+        description: `Personal team for ${name}`,
+        slug: `${name.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, '')}-${user.id.slice(-6)}`,
+        createdById: user.id,
+        members: {
+          create: {
+            userId: user.id,
+            role: 'OWNER',
+          },
+        },
+      },
+    });
+
     const token = this.generateToken(user.id, user.email);
 
     return {

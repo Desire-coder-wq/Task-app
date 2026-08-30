@@ -27,8 +27,9 @@ export class TasksController {
   @Get()
   @ApiOperation({ summary: 'Get all tasks with filtering and pagination' })
   @ApiResponse({ status: 200, description: 'Tasks retrieved successfully' })
-  async findAll(@Query() filters: TaskFiltersDto) {
-    return this.tasksService.findAll(filters);
+  async findAll(@Query() filters: TaskFiltersDto, @Req() req: any) {
+    const userId = req.user?.id;
+    return this.tasksService.findAll(filters, userId);
   }
 
   @Get(':id')
