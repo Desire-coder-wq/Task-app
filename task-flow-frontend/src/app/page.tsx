@@ -10,7 +10,7 @@ export default function LandingPage() {
       {/* Nav */}
       <nav className="flex items-center justify-between px-8 py-5 bg-slate-50">
         <div className="flex items-center gap-2">
-          <Image src="/images/logo.png" alt="TaskPilot" width={32} height={32} />
+          <Image src="/images/logo.png" alt="TaskPilot" width={48} height={48} />
           <span className="text-xl font-bold text-blue-600">TaskPilot</span>
         </div>
         <div className="flex items-center gap-6">
@@ -36,7 +36,7 @@ export default function LandingPage() {
               with <span className="text-blue-600">TaskPilot</span>
             </h1>
             <p className="mt-6 text-lg text-gray-600 max-w-md">
-              The Full package  task management solution for high-performing teams.
+              The full package  task management solution for high-performing teams.
               Organize projects, track progress, and improve productivity
             </p>
             <Link
@@ -128,7 +128,7 @@ export default function LandingPage() {
         <div className="max-w-6xl mx-auto flex items-center justify-between">
           <div>
             <div className="flex items-center gap-2">
-              <Image src="/images/logo.png" alt="TaskPilot" width={24} height={24} />
+              <Image src="/images/logo.png" alt="TaskPilot" width={32} height={32} />
               <span className="font-semibold text-gray-900">TaskPilot</span>
             </div>
             <p className="text-sm text-gray-500 mt-1">Get more work done </p>

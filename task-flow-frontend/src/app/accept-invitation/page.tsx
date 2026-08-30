@@ -26,7 +26,7 @@ export default function AcceptInvitationPage() {
     const validateToken = async () => {
       try {
         // Check if token is valid by calling a validation endpoint
-        // Or just redirect to register with token
+       
         setIsValid(true);
         // Redirect to register page with token
         router.push(`/auth/register?token=${token}`);

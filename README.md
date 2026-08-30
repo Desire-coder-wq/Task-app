@@ -2,8 +2,8 @@ TaskPilot - Full Stack Task Management Application
       Overview
 TaskPilot is a comprehensive task management dashboard built with modern web technologies. It allows teams to collaborate efficiently by managing tasks, tracking progress, and organizing work through a intuitive interface.
 
-Live Demo: TaskPilot Frontend
-API Documentation: Swagger Docs
+Live Demo: https://task-flow-frontend-0t16.onrender.com/
+API Documentation: https://taskflow-backend-yh8o.onrender.com/api/docs
 
    Features
 Core Features
@@ -28,7 +28,6 @@ Bonus Features
 
  Email Invitations - Send team invitations via email
 
- Dark Mode - Toggle between light and dark themes
 
 Dashboard Analytics - Visual task statistics and distribution
 
@@ -61,41 +60,7 @@ Render	Hosting platform
 GitHub Actions	CI/CD pipeline
 Codecov	Test coverage tracking
 Neon	PostgreSQL database hosting
-    Project Structure
-text
-TaskPilot/
-├── task-flow-backend/
-│   ├── src/
-│   │   ├── modules/
-│   │   │   ├── auth/          Authentication module
-│   │   │   ├── tasks/          Task management
-│   │   │   ├── teams/          Team management
-│   │   │   ├── users/           User management
-│   │   │   ├── invitations/     Team invitations
-│   │   │   └── mail/           Email service
-│   │   ├── common/              Shared utilities
-│   │   ├── prisma/              Database service
-│   │   └── main.ts             Application entry
-│   ├── prisma/
-│   │   └── schema.prisma     Database schema
-│   └── package.json
-│
-├── task-flow-frontend/
-│   ├── src/
-│   │   ├── app/               Next.js App Router
-│   │   │   ├── auth/          Authentication pages
-│   │   │   ├── dashboard/    Dashboard page
-│   │   │   ├── tasks/        Task management page
-│   │   │   ├── team/         Team management page
-│   │   │   └── settings/     User settings page
-│   │   ├── components/       Reusable components
-│   │   ├── hooks/            Custom React hooks
-│   │   ├── services/         API services
-│   │   ├── store/           Zustand stores
-│   │   └── types/           TypeScript types
-│   └── package.json
-│
-└── README.md
+ 
            Getting Started
 Prerequisites
 Node.js 20.0
@@ -127,11 +92,11 @@ JWT_SECRET="your-secret-key"
 PORT=3002
 FRONTEND_URL="http://localhost:3000"
 
-    Email Configuration (SendGrid)
+    Email Configuration (Resend)
 SMTP_HOST=smtp.sendgrid.net
 SMTP_PORT=587
 SMTP_USER=apikey
-SMTP_PASS="your-sendgrid-api-key"
+SMTP_PASS="your-resend-api-key"
 SMTP_FROM="your-email@example.com"
 SMTP_FROM_NAME="TaskPilot"
 Run Database Migrations
@@ -232,11 +197,11 @@ DELETE	/api/teams/:id	Delete team
 All open-source contributors
 
    Links
-Frontend: https://taskflow-frontend.onrender.com
+Frontend: https://task-flow-frontend-0t16.onrender.com/
 
-Backend API: https://taskflow-backend.onrender.com/api
+Backend API: https://taskflow-backend-yh8o.onrender.com/api
 
-Swagger Docs: https://taskflow-backend.onrender.com/api/docs
+Swagger Docs: https://taskflow-backend-yh8o.onrender.com/api/docs
 
 GitHub: https://github.com/Desire-coder-wq/Task-app
 

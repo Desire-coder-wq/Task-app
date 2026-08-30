@@ -73,8 +73,8 @@ export default function ResetPasswordPage() {
             <Image
               src="/images/logo.png"
               alt="TaskPilot"
-              width={56}
-              height={56}
+              width={96}
+              height={96}
               className="mb-3"
               priority
             />

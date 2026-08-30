@@ -72,8 +72,8 @@ export default function LoginPage() {
             <Image
               src="/images/logo.png"
               alt="TaskPilot"
-              width={64}
-              height={64}
+              width={80}
+              height={80}
               className="mb-3"
               priority
             />
@@ -167,7 +167,7 @@ export default function LoginPage() {
           </div>
 
           <p className="mt-6 text-center text-xs text-gray-500">
-            © 2026 TaskPilot Productivity Suite. All rights reserved.
+           © 2026 TaskPilot . All rights reserved.
           </p>
         </div>
       </div>
