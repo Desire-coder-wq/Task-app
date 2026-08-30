@@ -9,3 +9,17 @@ services:
         value: ${DATABASE_URL}
       - key: JWT_SECRET
         value: ${JWT_SECRET}
+      - key: FRONTEND_URL
+        value: https://task-flow-frontend-0t16.onrender.com
+      - key: SMTP_HOST
+        value: ${SMTP_HOST}
+      - key: SMTP_PORT
+        value: ${SMTP_PORT}
+      - key: SMTP_USER
+        value: ${SMTP_USER}
+      - key: SMTP_PASS
+        value: ${SMTP_PASS}
+      - key: SMTP_FROM
+        value: ${SMTP_FROM}
+      - key: SMTP_FROM_NAME
+        value: TaskPilot

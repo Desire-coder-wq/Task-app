@@ -61,7 +61,7 @@ export class InvitationsService {
       },
     });
 
-    const frontendUrl = process.env.FRONTEND_URL || 'http://localhost:3000';
+    const frontendUrl = process.env.FRONTEND_URL || 'https://task-flow-frontend-0t16.onrender.com';
     const acceptUrl = `${frontendUrl}/accept-invitation?token=${token}`;
 
     // Send email
@@ -219,7 +219,7 @@ export class InvitationsService {
       },
     });
 
-    const frontendUrl = process.env.FRONTEND_URL || 'http://localhost:3000';
+    const frontendUrl = process.env.FRONTEND_URL || 'https://task-flow-frontend-0t16.onrender.com';
     const acceptUrl = `${frontendUrl}/accept-invitation?token=${newToken}`;
 
     try {

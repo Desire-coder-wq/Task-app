@@ -151,7 +151,7 @@ export class MailService {
                         </p>
                         
                         <div style="text-align: center; margin: 32px 0;">
-                          <a href="${process.env.FRONTEND_URL || 'http://localhost:3000'}/login" style="display: inline-block; background-color: #2563eb; color: #ffffff; padding: 14px 48px; border-radius: 8px; text-decoration: none; font-weight: 600; font-size: 16px;">
+                          <a href="${process.env.FRONTEND_URL || 'https://task-flow-frontend-0t16.onrender.com'}/login" style="display: inline-block; background-color: #2563eb; color: #ffffff; padding: 14px 48px; border-radius: 8px; text-decoration: none; font-weight: 600; font-size: 16px;">
                             Log In Now
                           </a>
                         </div>
