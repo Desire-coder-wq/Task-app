@@ -12,7 +12,6 @@ import {
   FileText,
   Code2,
   Briefcase,
-  ArrowUp,
   Plus,
   SlidersHorizontal,
 } from 'lucide-react';
@@ -129,12 +128,8 @@ export default function DashboardPage() {
             <div className="relative flex items-start justify-between">
               <div>
                 <p className="text-xs font-semibold tracking-wide text-gray-500">TOTAL TASKS</p>
-                <div className="flex items-baseline gap-1.5 mt-1">
+                <div className="mt-1">
                   <p className="text-3xl font-bold text-gray-900">{stats.total}</p>
-                  <span className="text-xs font-semibold text-blue-600 flex items-center gap-0.5">
-                    <ArrowUp size={12} />
-                    12%
-                  </span>
                 </div>
               </div>
               <div className="w-9 h-9 rounded-full bg-white flex items-center justify-center shrink-0">
