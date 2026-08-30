@@ -30,15 +30,14 @@ export default function LandingPage() {
       <section className="bg-slate-50 px-8 pt-16 pb-24">
         <div className="max-w-6xl mx-auto grid lg:grid-cols-2 gap-12 items-center">
           <div>
-            <span className="inline-block w-2.5 h-2.5 rounded-full bg-blue-600 mb-6" />
             <h1 className="text-5xl font-extrabold text-gray-900 leading-tight">
-              Master Your Workflow
+              Manage Your Workflow
               <br />
               with <span className="text-blue-600">TaskPilot</span>
             </h1>
             <p className="mt-6 text-lg text-gray-600 max-w-md">
-              The all-in-one task management solution for high-performing teams.
-              Organize projects, track progress, and accelerate productivity.
+              The Full package  task management solution for high-performing teams.
+              Organize projects, track progress, and improve productivity
             </p>
             <Link
               href="/auth/register"
@@ -65,40 +64,39 @@ export default function LandingPage() {
       <section className="bg-indigo-50/60 px-8 py-20">
         <div className="max-w-6xl mx-auto">
           <h2 className="text-3xl font-bold text-gray-900 text-center mb-14">
-            Everything you need to ship faster
+            Everything you need to finish your tasks 
           </h2>
 
           <div className="grid md:grid-cols-3 gap-6">
             <div className="bg-slate-50 rounded-xl p-6">
-              <div className="w-11 h-11 rounded-lg bg-blue-100 flex items-center justify-center mb-5">
-                <Users className="text-blue-600" size={22} />
+              <div className="flex items-center justify-center w-11 h-11 mb-5">
+                <Users className="text-blue-600" size={28} />
               </div>
               <h3 className="font-semibold text-gray-900 text-lg mb-2">Team Collaboration</h3>
               <p className="text-gray-600 text-sm leading-relaxed">
-                Organized workspaces and real-time updates keep everyone on the same
+                Organized workspaces and real time updates keep everyone on the same
                 page.
               </p>
             </div>
 
             <div className="bg-slate-50 rounded-xl p-6">
-              <div className="w-11 h-11 rounded-lg bg-blue-100 flex items-center justify-center mb-5">
-                <TrendingUp className="text-blue-600" size={22} />
+              <div className="flex items-center justify-center w-11 h-11 mb-5">
+                <TrendingUp className="text-blue-600" size={28} />
               </div>
               <h3 className="font-semibold text-gray-900 text-lg mb-2">Progress Tracking</h3>
               <p className="text-gray-600 text-sm leading-relaxed">
-                Intelligent dashboards and visual milestones provide absolute clarity
+                Intelligent dashboards and visual milestones provide clarity
                 on project status.
               </p>
             </div>
 
             <div className="bg-slate-50 rounded-xl p-6">
-              <div className="w-11 h-11 rounded-lg bg-orange-100 flex items-center justify-center mb-5">
-                <Zap className="text-orange-500" size={22} />
+              <div className="flex items-center justify-center w-11 h-11 mb-5">
+                <Zap className="text-orange-500" size={28} />
               </div>
               <h3 className="font-semibold text-gray-900 text-lg mb-2">Efficiency</h3>
               <p className="text-gray-600 text-sm leading-relaxed">
-                Automated workflows and smart prioritization algorithms ensure focus
-                on high-impact tasks.
+                The app organises your work by its self and shows the most important tasks first
               </p>
             </div>
           </div>
@@ -111,11 +109,10 @@ export default function LandingPage() {
           <div className="flex items-center justify-between mb-14 max-w-6xl mx-auto absolute left-0 right-0 px-8 -mt-20 lg:static lg:mb-0">
           </div>
           <h2 className="text-4xl font-extrabold text-gray-900">
-            Ready to boost your productivity?
+            Ready to get more work done?
           </h2>
           <p className="mt-4 text-gray-600">
-            Join thousands of high-performing teams already using TaskPilot to
-            conquer their goals.
+          Start using TaskPilot today .
           </p>
           <Link
             href="/auth/register"
@@ -134,9 +131,9 @@ export default function LandingPage() {
               <Image src="/images/logo.png" alt="TaskPilot" width={24} height={24} />
               <span className="font-semibold text-gray-900">TaskPilot</span>
             </div>
-            <p className="text-sm text-gray-500 mt-1">Productivity, accelerated.</p>
+            <p className="text-sm text-gray-500 mt-1">Get more work done </p>
           </div>
-          <p className="text-sm text-gray-500">© 2026 TaskPilot Inc.</p>
+          <p className="text-sm text-gray-500">© 2026 TaskPilot . All rights reserved</p>
         </div>
       </footer>
     </div>

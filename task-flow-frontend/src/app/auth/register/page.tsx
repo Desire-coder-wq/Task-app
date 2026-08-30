@@ -269,7 +269,7 @@ export default function RegisterPage() {
           </div>
 
           <p className="mt-6 text-center text-xs text-gray-500">
-            © 2024 TaskPilot Productivity Suite. All rights reserved.
+            © 2026 TaskPilot . All rights reserved.
           </p>
         </div>
       </div>
@@ -287,8 +287,8 @@ export default function RegisterPage() {
 
         <div className="relative z-10 w-full max-w-sm px-8 space-y-6">
           <div className="bg-white rounded-xl p-5 shadow-lg flex gap-4 items-start">
-            <div className="w-11 h-11 rounded-full bg-blue-600 flex items-center justify-center shrink-0">
-              <Users className="text-white" size={20} />
+            <div className="w-11 h-11 flex items-center justify-center shrink-0">
+              <Users className="text-blue-600" size={24} />
             </div>
             <div>
               <p className="font-semibold text-gray-900">Team Collaboration</p>
@@ -299,8 +299,8 @@ export default function RegisterPage() {
           </div>
 
           <div className="bg-white rounded-xl p-5 shadow-lg flex gap-4 items-start">
-            <div className="w-11 h-11 rounded-lg bg-orange-600 flex items-center justify-center shrink-0">
-              <BarChart3 className="text-white" size={20} />
+            <div className="w-11 h-11 flex items-center justify-center shrink-0">
+              <BarChart3 className="text-orange-500" size={24} />
             </div>
             <div>
               <p className="font-semibold text-gray-900">Progress Tracking</p>
