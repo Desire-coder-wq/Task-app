@@ -14,8 +14,9 @@ async function bootstrap() {
         'http://localhost:3002', 
         'http://localhost:3003', 
         'https://taskflow-frontend.onrender.com',
-         process.env.FRONTEND_URL,
-        ],
+        'https://taskflow-frontend-mzod.onrender.com',
+        process.env.FRONTEND_URL,
+         ],
     credentials: true,
   });
 

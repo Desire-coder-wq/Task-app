@@ -1,0 +1,11 @@
+services:
+  - type: web
+    name: task-flow-frontend
+    runtime: node
+    buildCommand: npm install && npm run build
+    startCommand: npm start
+    envVars:
+      - key: NEXT_PUBLIC_API_URL
+        value: https://taskflow-backend-yh8o.onrender.com/api
+      - key: NODE_ENV
+        value: production

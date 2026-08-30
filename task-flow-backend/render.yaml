@@ -1,0 +1,13 @@
+services:
+  - type: web
+    name: task-flow-backend
+    runtime: node
+    buildCommand: npm install --legacy-peer-deps && npx prisma generate && npm run build
+    startCommand: npm run start:prod
+    envVars:
+      - key: DATABASE_URL
+        value: ${DATABASE_URL}
+      - key: JWT_SECRET
+        value: ${JWT_SECRET}
+      - key: NODE_ENV
+        value: production
