@@ -17,8 +17,6 @@ services:
         value: 587
       - key: SMTP_USER
         value: resend
-      - key: SMTP_PASS
-        value: ${SMTP_PASS}
       - key: SMTP_FROM
         value: onboarding@resend.dev
       - key: SMTP_FROM_NAME
