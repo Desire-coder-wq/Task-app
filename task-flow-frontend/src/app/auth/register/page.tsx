@@ -132,7 +132,7 @@ export default function RegisterPage() {
               className="mb-3"
               priority
             />
-            <span className="text-2xl font-bold text-gray-900">TaskPilot</span>
+           
           </div>
 
           <div className="bg-slate-100/80 border border-slate-200 rounded-2xl p-8">

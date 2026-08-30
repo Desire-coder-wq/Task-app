@@ -93,12 +93,12 @@ PORT=3002
 FRONTEND_URL="http://localhost:3000"
 
     Email Configuration (Resend)
-SMTP_HOST=smtp.sendgrid.net
+SMTP_HOST=smtp.resend.com
 SMTP_PORT=587
-SMTP_USER=apikey
+SMTP_USER=resend
 SMTP_PASS="your-resend-api-key"
-SMTP_FROM="your-email@example.com"
-SMTP_FROM_NAME="TaskPilot"
+SMTP_FROM=onboarding@resend.dev
+SMTP_FROM_NAME=TaskPilot
 Run Database Migrations
 
 bash
